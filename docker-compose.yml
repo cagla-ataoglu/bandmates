@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=cognito,s3,dynamodb
+      - DEFAULT_REGION=us-east-1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./localstack-data:/tmp/localstack"
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - LOCALSTACK_URL=http://localstack:4566
+    depends_on:
+      - localstack
+
+  post-service:
+    build: ./post-service
+    ports:
+      - "4000:3000"
+    environment:
+      - PORT=3000
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - LOCALSTACK_URL=http://localstack:4566
+    depends_on:
+      - localstack
