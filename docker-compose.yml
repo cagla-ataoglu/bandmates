@@ -1,38 +1,30 @@
 version: '3.8'
+
 services:
   localstack:
     image: localstack/localstack
+    networks:
+      - bandmates-backend
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=cognito,s3,dynamodb
-      - DEFAULT_REGION=us-east-1
-      - DATA_DIR=/tmp/localstack/data
-    volumes:
-      - "./localstack-data:/tmp/localstack"
+      - SERVICES=dynamodb,s3
+      - PERSISTENCE=1
 
   user-service:
     build: ./user-service
-    ports:
-      - "3000:3000"
-    environment:
-      - PORT=3000
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_REGION=us-east-1
-      - LOCALSTACK_URL=http://localstack:4566
     depends_on:
       - localstack
+    networks:
+      - bandmates-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - LOCALSTACK_HOSTNAME=localstack
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
 
-  post-service:
-    build: ./post-service
-    ports:
-      - "4000:3000"
-    environment:
-      - PORT=3000
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_REGION=us-east-1
-      - LOCALSTACK_URL=http://localstack:4566
-    depends_on:
-      - localstack
+networks:
+  bandmates-backend:
+    driver: bridge
