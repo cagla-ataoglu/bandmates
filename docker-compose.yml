@@ -2,13 +2,14 @@ version: '3.8'
 
 services:
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack-pro
     networks:
       - bandmates-backend
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=dynamodb,s3
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - SERVICES=dynamodb,s3, cognito-idp
       - PERSISTENCE=1
 
   user-service:
@@ -24,6 +25,8 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
+      - USER_POOL_NAME=${USER_POOL_NAME}
+      - CLIENT_NAME=${CLIENT_NAME}
 
 networks:
   bandmates-backend:
