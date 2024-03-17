@@ -22,14 +22,14 @@ class PostService:
 
         self.posts_table = self.dynamodb.Table(self.table_name)
 
-    def create_post(self, post_id, title, content, author_id, timestamp, video_url):
+    def create_post(self, post_id, title, content, user_id, timestamp, video_url):
         try:
             self.posts_table.put_item(
                 Item={
                     'PostId': post_id,
                     'Title': title,
                     'Content': content,
-                    'AuthorId': author_id,
+                    'UserId': user_id,
                     'Timestamp': timestamp,
                     'VideoUrl': video_url
                 }
@@ -47,4 +47,16 @@ class PostService:
                 return None
         except Exception as e:
             raise RuntimeError(f"Error retrieving post: {e}")
+        
+    def edit_post(self, post_id, updated_content):
+        try:
+            post = self.get_post(post_id)
+            if post:
+                post['Content'] = updated_content
+                self.posts_table.put_item(Item=post)
+                print('Post edited successfully.')
+            else:
+                print('Post not found.')
+        except Exception as e:
+            raise RuntimeError(f"Error editing post: {e}")
 

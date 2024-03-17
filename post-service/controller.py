@@ -19,11 +19,11 @@ class PostController:
             post_id = input_json.get('post_id')
             title = input_json.get('title')
             content = input_json.get('content')
-            author_id = input_json.get('author_id')
+            user_id = input_json.get('user_id')
             timestamp = input_json.get('timestamp')
             video_url = input_json.get('video_url')
 
-            self.post_service.create_post(post_id, title, content, author_id, timestamp, video_url)
+            self.post_service.create_post(post_id, title, content, user_id, timestamp, video_url)
             return {'status': 'success', 'message': 'Post creation successful.'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
@@ -39,7 +39,21 @@ class PostController:
                 return {'status': 'error', 'message': 'Post not found'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def edit_post(self):
+        try:
+            input_json = cherrypy.request.json
+            post_id = input_json.get('post_id')
+            updated_content = input_json.get('content')
 
+            self.post_service.edit_post(post_id, updated_content)
+            return {'status': 'success', 'message': 'Post edit successful.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+        
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8090})
