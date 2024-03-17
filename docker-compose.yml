@@ -42,6 +42,21 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
+
+
+  profile-service:
+    build: ./profile-service
+    depends_on:
+      - localstack
+    networks:
+      - bandmates-backend
+    ports:
+      - "8081:8081"
+    environment:
+      - LOCALSTACK_HOSTNAME=localstack
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
       
 networks:
   bandmates-backend:
