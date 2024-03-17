@@ -12,8 +12,8 @@ services:
       - SERVICES=dynamodb,s3, cognito-idp
       - PERSISTENCE=1
 
-  user-service:
-    build: ./user-service
+  auth-service:
+    build: ./auth-service
     depends_on:
       - localstack
     networks:

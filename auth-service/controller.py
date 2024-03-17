@@ -2,7 +2,7 @@ import cherrypy
 from services.cognito_service import CognitoService
 from services.dynamodb_service import DynamoDBService
 
-class UserService:
+class AuthService:
 
     def __init__(self):
         self.cognito_service = CognitoService()
@@ -11,7 +11,7 @@ class UserService:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def index(self):
-        return {"message": "Welcome to the User Service"}
+        return {"message": "Welcome to the Auth Service"}
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -56,4 +56,4 @@ class UserService:
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8080})
-    cherrypy.quickstart(UserService())
+    cherrypy.quickstart(AuthService())
