@@ -1,0 +1,4 @@
+CherryPy
+boto3
+jwt
+requests
