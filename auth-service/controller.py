@@ -1,17 +1,15 @@
 import cherrypy
 from services.cognito_service import CognitoService
-from services.dynamodb_service import DynamoDBService
 
-class UserService:
+class AuthController:
 
     def __init__(self):
         self.cognito_service = CognitoService()
-        self.dynamodb_service = DynamoDBService()
     
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def index(self):
-        return {"message": "Welcome to the User Service"}
+        return {"message": "Welcome to the Auth Service"}
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -24,7 +22,6 @@ class UserService:
             email = input_json.get('email')
 
             self.cognito_service.signup_user(username, password, email)
-            self.dynamodb_service.signup_user(username, email)
             return {'status': 'success', 'message': 'User registration successful.'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
@@ -39,11 +36,9 @@ class UserService:
 
         try:
             tokens = self.cognito_service.authenticate_user(username, password)
-            user = self.dynamodb_service.get_user(username)
             return {
                 'status': 'success',
-                'tokens': tokens,
-                'user': user
+                'tokens': tokens
             }
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
@@ -56,4 +51,4 @@ class UserService:
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8080})
-    cherrypy.quickstart(UserService())
+    cherrypy.quickstart(AuthController())

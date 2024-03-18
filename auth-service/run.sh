@@ -2,4 +2,4 @@
 
 python controller.py
 
-echo "User controller is ready."
+echo "Auth controller is ready."
