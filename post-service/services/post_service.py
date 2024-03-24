@@ -35,18 +35,34 @@ class PostService:
                 }
             )
             print('Post created successfully.')
+            created_post = {
+            'PostId': post_id,
+            'Title': title,
+            'Content': content,
+            'UserId': user_id,
+            'Timestamp': timestamp,
+            'VideoUrl': video_url
+            }
+            
+            return created_post
+        
         except Exception as e:
             raise RuntimeError(f"Error creating post: {e}")
 
-    def get_post(self, post_id):
-        try:
-            response = self.posts_table.get_item(Key={'PostId': post_id})
-            if 'Item' in response:
-                return response['Item']
-            else:
-                return None
-        except Exception as e:
-            raise RuntimeError(f"Error retrieving post: {e}")
+    # def get_post(self, user_id):
+    #     try:
+    #         response = self.posts_table.query(
+    #             KeyConditionExpression=Key('UserId').eq(user_id),
+    #             ScanIndexForward=False,  
+    #             Limit=1  
+    #         )
+    #         items = response['Items']
+    #         if items:
+    #             return items[0]
+    #         else:
+    #             return None
+    #     except Exception as e:
+    #         raise RuntimeError(f"Error retrieving latest post for user: {e}")
         
     def edit_post(self, post_id, updated_content):
         try:
