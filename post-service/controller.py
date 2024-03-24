@@ -1,5 +1,6 @@
 import cherrypy
 from services.post_service import PostService
+import uuid
 
 class PostController:
     def __init__(self):
@@ -15,30 +16,35 @@ class PostController:
     @cherrypy.tools.json_in()
     def create_post(self):
         try:
+
+            post_id = str(uuid.uuid4())
+
             input_json = cherrypy.request.json
-            post_id = input_json.get('post_id')
             title = input_json.get('title')
             content = input_json.get('content')
             user_id = input_json.get('user_id')
             timestamp = input_json.get('timestamp')
             video_url = input_json.get('video_url')
+            
+            created_post = self.post_service.create_post(post_id, title, content, user_id, timestamp, video_url)
 
-            self.post_service.create_post(post_id, title, content, user_id, timestamp, video_url)
-            return {'status': 'success', 'message': 'Post creation successful.'}
+            #print("Created post:", created_post)
+
+            return {'status': 'success', 'message': 'Post creation successful.', 'post': created_post}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
 
-    @cherrypy.expose
-    @cherrypy.tools.json_out()
-    def get_post(self, post_id):
-        try:
-            post = self.post_service.get_post(post_id)
-            if post:
-                return {'status': 'success', 'post': post}
-            else:
-                return {'status': 'error', 'message': 'Post not found'}
-        except Exception as e:
-            return {'status': 'error', 'message': str(e)}
+    # @cherrypy.expose
+    # @cherrypy.tools.json_out()
+    # def get_post(self, post_id):
+    #     try:
+    #         post = self.post_service.get_post(post_id)
+    #         if post:
+    #             return {'status': 'success', 'post': post}
+    #         else:
+    #             return {'status': 'error', 'message': 'Post not found'}
+    #     except Exception as e:
+    #         return {'status': 'error', 'message': str(e)}
         
     @cherrypy.expose
     @cherrypy.tools.json_out()
