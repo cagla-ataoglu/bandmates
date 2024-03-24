@@ -1,6 +1,7 @@
 import cherrypy
 from services.post_service import PostService
 import uuid
+import time
 
 class PostController:
     def __init__(self):
@@ -18,12 +19,12 @@ class PostController:
         try:
 
             post_id = str(uuid.uuid4())
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
 
             input_json = cherrypy.request.json
             title = input_json.get('title')
             content = input_json.get('content')
             user_id = input_json.get('user_id')
-            timestamp = input_json.get('timestamp')
             video_url = input_json.get('video_url')
             
             created_post = self.post_service.create_post(post_id, title, content, user_id, timestamp, video_url)
