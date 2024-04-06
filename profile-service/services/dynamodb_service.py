@@ -64,3 +64,15 @@ class DynamoDBService:
         else:
             print(f'No profile found for {username}.')
             return None
+        
+    def updateDisplayName(self, username, new_display_name):
+        try:
+            response = self.profiles_table.update_item(
+                Key={'username': username},
+                UpdateExpression='SET #display_name = :display_name',
+                ExpressionAttributeNames={'#display_name': 'display_name'},
+                ExpressionAttributeValues={':display_name': new_display_name}
+            )
+            print(f'Display name updated for {username} to {new_display_name}')
+        except Exception as e:
+            print(f'Error updating display name for {username}: {e}')

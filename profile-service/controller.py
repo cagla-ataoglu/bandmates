@@ -53,6 +53,23 @@ class ProfileService:
             return profile
         else:
             raise cherrypy.HTTPError(404, f"No profile found for {username}.")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def update_display_name(self):
+        data = cherrypy.request.json
+        username = data.get('username')
+        new_display_name = data.get('display_name')
+        if not username or not new_display_name:
+            raise cherrypy.HTTPError(400, 'Username and display name required.')
+        
+        try:
+            self.dynamodb_service.updateDisplayName(username, new_display_name)
+            return {"message": f"Display name updated for {username} to {new_display_name}."}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f"Error updating display name for {username}: {e}")
+
     
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
