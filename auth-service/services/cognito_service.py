@@ -3,6 +3,7 @@ import os
 import jwt
 import requests
 import time
+import json
 
 class CognitoService:
     def __init__(self):
@@ -10,7 +11,7 @@ class CognitoService:
         self.jwks_cache = None
         self.jwks_last_updated = 0
         self.jwks_cache_duration = 3600  # 1 hour cache duration
-        
+
         self.pool_name = os.getenv('USER_POOL_NAME')
         self.pool_id = ''
         pools = self.cognito.list_user_pools(MaxResults=10)
@@ -48,7 +49,18 @@ class CognitoService:
         )
         print('cognito done')
         return response
-            
+
+    def change_password(self, access_token, old_password, new_password):
+        try:
+            response = self.cognito.change_password(
+                PreviousPassword=old_password,
+                ProposedPassword=new_password,
+                AccessToken=access_token
+            )
+            return {'status': 'success', 'message': 'Password changed successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
     def authenticate_user(self, username, password):
         response = self.cognito.initiate_auth(
             AuthFlow='USER_PASSWORD_AUTH',
@@ -60,11 +72,11 @@ class CognitoService:
             'access_token': response['AuthenticationResult']['AccessToken'],
             'refresh_token': response['AuthenticationResult']['RefreshToken'],
         }
-    
+
     def get_jwks(self):
         current_time = time.time()
         if not self.jwks_cache or current_time - self.jwks_last_updated > self.jwks_cache_duration:
-            jwks_url = f"https://cognito-idp.{os.getenv('AWS_DEFAULT_REGION')}.amazonaws.com/{self.pool_id}/.well-known/jwks.json"
+            jwks_url = f"http://localstack:4566/{self.pool_id}/.well-known/jwks.json"
             self.jwks_cache = requests.get(jwks_url).json()
             self.jwks_last_updated = current_time
         return self.jwks_cache
@@ -72,9 +84,13 @@ class CognitoService:
     def validate_token(self, token):
         try:
             jwks = self.get_jwks()
-            headers = jwt.get_unverified_headers(token)
-            public_key = next(key for key in jwks['keys'] if key['kid'] == headers['kid'])
-            jwt.decode(token, jwt.algorithms.RSAAlgorithm.from_jwk(public_key), audience=self.client_id)
+            public_keys = {}
+            for jwk in jwks['keys']:
+                kid = jwk['kid']
+                public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
+            kid = jwt.get_unverified_header(token)['kid']
+            public_key = public_keys[kid]
+            jwt.decode(token, key=public_key, algorithms=['RS256'])
             return {'status': 'success', 'message': 'Token is valid.'}
         except jwt.exceptions.InvalidTokenError as e:
             return {'status': 'error', 'message': str(e)}

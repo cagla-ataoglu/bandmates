@@ -30,3 +30,37 @@ class DynamoDBService:
             else:
                 raise
         self.profiles_table = self.dynamodb.Table('Profiles')
+
+    def createMusicianProfile(self, username, display_name, instruments, genres, location):
+        profile_item = {
+            'username': username,
+            'display_name': display_name,
+            'profile_type': 'musician',
+            'instruments': instruments,
+            'genres': genres,
+            'location': location
+        }
+
+        self.profiles_table.put_item(Item=profile_item)
+        print(f"Musician profile created for {username}.")
+
+    def createBandProfile(self, username, band_name, members, genres, location):
+        profile_item = {
+            'username': username,
+            'band_name': band_name,
+            'profile_type': 'band',
+            'members': members,
+            'genres': genres,
+            'location': location
+        }
+
+        self.profiles_table.put_item(Item=profile_item)
+        print(f"Band profile created for {username}.")
+
+    def getProfile(self, username):
+        response = self.profiles_table.get_item(Key={'username': username})
+        if 'Item' in response:
+            return response['Item']
+        else:
+            print(f"No profile found for username '{username}'.")
+            return None
