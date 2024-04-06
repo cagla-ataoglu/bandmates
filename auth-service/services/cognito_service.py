@@ -11,7 +11,7 @@ class CognitoService:
         self.jwks_cache = None
         self.jwks_last_updated = 0
         self.jwks_cache_duration = 3600  # 1 hour cache duration
-        
+
         self.pool_name = os.getenv('USER_POOL_NAME')
         self.pool_id = ''
         pools = self.cognito.list_user_pools(MaxResults=10)
@@ -49,7 +49,18 @@ class CognitoService:
         )
         print('cognito done')
         return response
-            
+
+    def change_password(self, access_token, old_password, new_password):
+        try:
+            response = self.cognito.change_password(
+                PreviousPassword=old_password,
+                ProposedPassword=new_password,
+                AccessToken=access_token
+            )
+            return {'status': 'success', 'message': 'Password changed successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
     def authenticate_user(self, username, password):
         response = self.cognito.initiate_auth(
             AuthFlow='USER_PASSWORD_AUTH',
@@ -61,7 +72,7 @@ class CognitoService:
             'access_token': response['AuthenticationResult']['AccessToken'],
             'refresh_token': response['AuthenticationResult']['RefreshToken'],
         }
-    
+
     def get_jwks(self):
         current_time = time.time()
         if not self.jwks_cache or current_time - self.jwks_last_updated > self.jwks_cache_duration:

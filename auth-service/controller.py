@@ -5,7 +5,7 @@ class AuthController:
 
     def __init__(self):
         self.cognito_service = CognitoService()
-    
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def index(self):
@@ -47,6 +47,18 @@ class AuthController:
     @cherrypy.tools.json_out()
     def validate(self, token):
         return self.cognito_service.validate_token(token)
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def change_password(self):
+        input_json = cherrypy.request.json
+        access_token = input_json.get('access_token')
+        old_password = input_json.get('old_password')
+        new_password = input_json.get('new_password')
+
+        result = self.cognito_service.change_password(access_token, old_password, new_password)
+        return result
 
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
