@@ -37,12 +37,12 @@ class ProfileService:
         if not username:
             raise cherrypy.HTTPError(400, 'Username is required.')
         
-        band_name = data.get('band_name')
+        display_name = data.get('display_name')
         members = data.get('members')
         genres = data.get('genres')
         location = data.get('location')
 
-        self.dynamodb_service.createBandProfile(username, band_name, members, genres, location)
+        self.dynamodb_service.createBandProfile(username, display_name, members, genres, location)
         return {"message": f"Band profile created for {username}."}
 
     @cherrypy.expose
