@@ -38,13 +38,14 @@ class DynamoDBService:
             'username': username,
             'display_name': display_name,
             'profile_type': 'musician',
-            'instruments': instruments,
-            'genres': genres,
             'location': location
         }
 
         if genres:
-            profile_item['genres'] = genres 
+            profile_item['genres'] = genres
+
+        if instruments:
+            profile_item['instruments'] = instruments
 
         self.profiles_table.put_item(Item=profile_item)
         print(f'Musician profile created for {username}.')
@@ -105,6 +106,30 @@ class DynamoDBService:
             ExpressionAttributeValues={':genre': set([genre])}
         )
         print(f'Genre {genre} removed from {username}.')
+
+    def addInstrument(self, username, instrument):
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='ADD instruments :instrument',
+            ConditionExpression='profile_type = :musician',
+            ExpressionAttributeValues={
+                ':instrument': set([instrument]),
+                ':musician': 'musician'
+            }
+        )
+        print(f'Instrument {instrument} added to musician {username}.')
+
+    def removeInstrument(self, username, instrument):
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='DELERE instruments :instrument',
+            ConditionExpression='profile_type = :musician',
+            ExpressionAttributeValues={
+                ':instrument': set([instrument]),
+                ':musician': 'musician'
+            }
+        )
+        print(f'Instrument {instrument} removed from musician {username}.')
 
 def sets_to_lists(data):
     if isinstance(data, set):

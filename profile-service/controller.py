@@ -113,6 +113,36 @@ class ProfileService:
             return {'message': f'Genre {genre} removed from {username}.'}
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error removing genre from {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def add_instrument(self, username):
+        data = cherrypy.request.json
+        instrument = data.get('instrument')
+        if not username or not instrument:
+            raise cherrypy.HTTPError(400, 'Username and instrument required.')
+        
+        try:
+            self.dynamodb_service.addInstrument(username, instrument)
+            return {'message': f'Instrument {instrument} added to musician {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error adding instrument to {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def remove_instrument(self, username):
+        data = cherrypy.request.json
+        instrument = data.get('instrument')
+        if not username or not instrument:
+            raise cherrypy.HTTPError(400, 'Username and instrument required.')
+        
+        try:
+            self.dynamodb_service.removeInstrument(username, instrument)
+            return {'message': f'Instrument {instrument} removed from musician {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error removing instrument from {username}: {e}')
 
 
     
