@@ -9,7 +9,7 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def index(self):
-        return {"message": "Welcome to Profile Service"}
+        return {'message': 'Welcome to Profile Service'}
     
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -26,7 +26,7 @@ class ProfileService:
         location = data.get('location')
 
         self.dynamodb_service.createMusicianProfile(username, display_name, instruments, genres, location)
-        return {"message": f"Musician profile created for {username}."}
+        return {'message': f'Musician profile created for {username}.'}
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -43,7 +43,7 @@ class ProfileService:
         location = data.get('location')
 
         self.dynamodb_service.createBandProfile(username, display_name, members, genres, location)
-        return {"message": f"Band profile created for {username}."}
+        return {'message': f'Band profile created for {username}.'}
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -52,7 +52,7 @@ class ProfileService:
         if profile:
             return profile
         else:
-            raise cherrypy.HTTPError(404, f"No profile found for {username}.")
+            raise cherrypy.HTTPError(404, f'No profile found for {username}.')
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -66,9 +66,9 @@ class ProfileService:
         
         try:
             self.dynamodb_service.updateDisplayName(username, new_display_name)
-            return {"message": f"Display name updated for {username} to {new_display_name}."}
+            return {'message': f'Display name updated for {username} to {new_display_name}.'}
         except Exception as e:
-            raise cherrypy.HTTPError(500, f"Error updating display name for {username}: {e}")
+            raise cherrypy.HTTPError(500, f'Error updating display name for {username}: {e}')
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
