@@ -1,5 +1,4 @@
 import boto3
-from boto3.dynamodb.types import TypeSerializer
 
 class GroupService:
     def __init__(self):
@@ -8,7 +7,7 @@ class GroupService:
 
         try:
             self.dynamodb.Table(self.table_name).load()
-            print(f"Table '{self.table_name}' already exists. Loading it.")
+            print(f"Table '{self.table_name}' already exists. Loading it. Change test")
         except self.dynamodb.meta.client.exceptions.ResourceNotFoundException:
             table = self.dynamodb.create_table(
                 TableName=self.table_name,
@@ -25,12 +24,17 @@ class GroupService:
 
     def create_group(self, group_id, group_name, description, user_id):
         try:
+            print("Creating group with the following attributes:")
+            print(f"Group ID: {group_id}")
+            print(f"Group Name: {group_name}")
+            print(f"Description: {description}")
+            print(f"Creator User ID: {user_id}")
             self.groups_table.put_item(
                 Item={
-                    'GroupId': serializer.serialize(group_id),
-                    'GroupName': serializer.serialize(group_name),
-                    'Description': serializer.serialize(description),
-                    'CreatorUserId': serializer.serialize(user_id)
+                    'GroupId': str(group_id),
+                    'GroupName': str(group_name),
+                    'Description': str(description),
+                    'CreatorUserId': str(user_id)
                 }
             )
             print('Group created successfully.')
@@ -44,7 +48,7 @@ class GroupService:
             return created_group
         
         except Exception as e:
-            raise RuntimeError(f"Error creating group: {e}")
+            raise RuntimeError(f"Error creating group: {e} Change test ")
 
     def get_group(self, user_id):
         try:

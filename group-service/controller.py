@@ -21,11 +21,17 @@ class GroupController:
             group_id = str(uuid.uuid4())
 
             input_json = cherrypy.request.json
-            group_id = input_json.get('group_id')
+            #group_id = input_json.get('group_id')
             group_name = input_json.get('group_name')
             description = input_json.get('description')
             user_id = input_json.get('user_id')
-            
+
+            print("Creating group with the following attributes:")
+            print(f"Group ID: {group_id}")
+            print(f"Group Name: {group_name}")
+            print(f"Description: {description}")
+            print(f"Creator User ID: {user_id}")
+
             created_group = self.group_service.create_group(group_id, group_name, description, user_id)
 
 
@@ -43,7 +49,7 @@ class GroupController:
             group_id = input_json.get('group_id')
             updated_description = input_json.get('description')
 
-            self.group_service.edit_group(group_id, updated_description)
+            self.group_service.edit_group_description(group_id, updated_description)
             return {'status': 'success', 'message': 'Group edit successful.'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
