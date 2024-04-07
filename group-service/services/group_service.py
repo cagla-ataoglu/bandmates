@@ -1,4 +1,5 @@
 import boto3
+from boto3.dynamodb.types import TypeSerializer
 
 class GroupService:
     def __init__(self):
@@ -26,10 +27,10 @@ class GroupService:
         try:
             self.groups_table.put_item(
                 Item={
-                    'GroupId': group_id,
-                    'GroupName': group_name,
-                    'Description': description,
-                    'CreatorUserId': user_id
+                    'GroupId': serializer.serialize(group_id),
+                    'GroupName': serializer.serialize(group_name),
+                    'Description': serializer.serialize(description),
+                    'CreatorUserId': serializer.serialize(user_id)
                 }
             )
             print('Group created successfully.')
