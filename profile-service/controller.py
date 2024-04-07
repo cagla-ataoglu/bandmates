@@ -21,11 +21,9 @@ class ProfileService:
             raise cherrypy.HTTPError(400, 'Username is required.')
         
         display_name = data.get('display_name')
-        instruments = data.get('instruments')
-        genres = data.get('genres')
         location = data.get('location')
 
-        self.dynamodb_service.createMusicianProfile(username, display_name, instruments, genres, location)
+        self.dynamodb_service.createMusicianProfile(username, display_name, location)
         return {'message': f'Musician profile created for {username}.'}
 
     @cherrypy.expose
@@ -38,11 +36,9 @@ class ProfileService:
             raise cherrypy.HTTPError(400, 'Username is required.')
         
         display_name = data.get('display_name')
-        members = data.get('members')
-        genres = data.get('genres')
         location = data.get('location')
 
-        self.dynamodb_service.createBandProfile(username, display_name, members, genres, location)
+        self.dynamodb_service.createBandProfile(username, display_name, location)
         return {'message': f'Band profile created for {username}.'}
 
     @cherrypy.expose

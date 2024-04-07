@@ -33,7 +33,7 @@ class DynamoDBService:
         self.profiles_table = self.dynamodb.Table('Profiles')
         
 
-    def createMusicianProfile(self, username, display_name, instruments, genres, location):
+    def createMusicianProfile(self, username, display_name, location):
         profile_item = {
             'username': username,
             'display_name': display_name,
@@ -41,28 +41,16 @@ class DynamoDBService:
             'location': location
         }
 
-        if genres:
-            profile_item['genres'] = genres
-
-        if instruments:
-            profile_item['instruments'] = instruments
-
         self.profiles_table.put_item(Item=profile_item)
         print(f'Musician profile created for {username}.')
 
-    def createBandProfile(self, username, display_name, members, genres, location):
+    def createBandProfile(self, username, display_name, location):
         profile_item = {
             'username': username,
             'display_name': display_name,
             'profile_type': 'band',
             'location': location
         }
-
-        if genres:
-            profile_item['genres'] = genres 
-
-        if members:
-            profile_item['members'] = members
 
         self.profiles_table.put_item(Item=profile_item)
         print(f'Band profile created for {username}.')
