@@ -19,14 +19,14 @@ class GroupController:
         try:
 
             group_id = str(uuid.uuid4())
-            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
 
             input_json = cherrypy.request.json
-            title = input_json.get('title')
-            content = input_json.get('content')
+            group_id = input_json.get('group_id')
+            group_name = input_json.get('group_name')
+            description = input_json.get('description')
             user_id = input_json.get('user_id')
             
-            created_group = self.group_service.create_group(group_id, title, content, user_id, timestamp)
+            created_group = self.group_service.create_group(group_id, group_name, description, user_id)
 
 
             return {'status': 'success', 'message': 'Group creation successful.', 'group': created_group}
@@ -37,16 +37,22 @@ class GroupController:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def edit_group(self):
+    def edit_group_description(self):
         try:
             input_json = cherrypy.request.json
             group_id = input_json.get('group_id')
-            updated_content = input_json.get('content')
+            updated_description = input_json.get('description')
 
-            self.group_service.edit_group(group_id, updated_content)
+            self.group_service.edit_group(group_id, updated_description)
             return {'status': 'success', 'message': 'Group edit successful.'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
+
+
+    #TODO: Add join group
+    #TODO: Add leave group
+    #TODO: Add get group members
+    #TODO: (Possibly) Add post service
         
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
