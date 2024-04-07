@@ -69,6 +69,22 @@ class ProfileService:
             return {"message": f"Display name updated for {username} to {new_display_name}."}
         except Exception as e:
             raise cherrypy.HTTPError(500, f"Error updating display name for {username}: {e}")
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def update_location(self):
+        data = cherrypy.request.json
+        username = data.get('username')
+        new_location = data.get('location')
+        if not username or not new_location:
+            raise cherrypy.HTTPError(400, 'Username and location required.')
+        
+        try:
+            self.dynamodb_service.updateLocation(username, new_location)
+            return {'message': f'Location updated for {username} to {new_location}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error updating location for {username}: {e}')
 
     
 if __name__ == '__main__':
