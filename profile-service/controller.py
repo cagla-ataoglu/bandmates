@@ -143,6 +143,36 @@ class ProfileService:
             return {'message': f'Instrument {instrument} removed from musician {username}.'}
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error removing instrument from {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def add_member(self, username):
+        data = cherrypy.request.json
+        member = data.get('member')
+        if not username or not member:
+            raise cherrypy.HTTPError(400, 'Username and member required.')
+        
+        try:
+            self.dynamodb_service.addMember(username, member)
+            return {'message': f'Member {member} added to band {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error adding member to {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def remove_member(self, username):
+        data = cherrypy.request.json
+        member = data.get('member')
+        if not username or not member:
+            raise cherrypy.HTTPError(400, 'Username and member required.')
+        
+        try:
+            self.dynamodb_service.removeMember(username, member)
+            return {'message': f'Member {member} removed from band {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error removing member from {username}: {e}')
 
 
     

@@ -55,12 +55,14 @@ class DynamoDBService:
             'username': username,
             'display_name': display_name,
             'profile_type': 'band',
-            'members': members,
             'location': location
         }
 
         if genres:
             profile_item['genres'] = genres 
+
+        if members:
+            profile_item['members'] = members
 
         self.profiles_table.put_item(Item=profile_item)
         print(f'Band profile created for {username}.')
@@ -122,7 +124,7 @@ class DynamoDBService:
     def removeInstrument(self, username, instrument):
         response = self.profiles_table.update_item(
             Key={'username': username},
-            UpdateExpression='DELERE instruments :instrument',
+            UpdateExpression='DELETE instruments :instrument',
             ConditionExpression='profile_type = :musician',
             ExpressionAttributeValues={
                 ':instrument': set([instrument]),
@@ -130,6 +132,30 @@ class DynamoDBService:
             }
         )
         print(f'Instrument {instrument} removed from musician {username}.')
+
+    def addMember(self, username, member):
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='ADD members :member',
+            ConditionExpression='profile_type = :band',
+            ExpressionAttributeValues={
+                ':member': set([member]),
+                ':band': 'band'
+            }
+        )
+        print(f'Member {member} added to band {username}.')
+
+    def removeMember(self, username, member):
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='DELETE members :member',
+            ConditionExpression='profile_type = :band',
+            ExpressionAttributeValues={
+                ':member': set([member]),
+                ':band': 'band'
+            }
+        )
+        print(f'Member {member} removed from band {username}.')
 
 def sets_to_lists(data):
     if isinstance(data, set):
