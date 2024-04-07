@@ -66,25 +66,19 @@ class DynamoDBService:
             return None
         
     def updateDisplayName(self, username, new_display_name):
-        try:
-            response = self.profiles_table.update_item(
-                Key={'username': username},
-                UpdateExpression='SET #display_name = :display_name',
-                ExpressionAttributeNames={'#display_name': 'display_name'},
-                ExpressionAttributeValues={':display_name': new_display_name}
-            )
-            print(f'Display name updated for {username} to {new_display_name}.')
-        except Exception as e:
-            print(f'Error updating display name for {username}: {e}')
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET #display_name = :display_name',
+            ExpressionAttributeNames={'#display_name': 'display_name'},
+            ExpressionAttributeValues={':display_name': new_display_name}
+        )
+        print(f'Display name updated for {username} to {new_display_name}.')
 
     def updateLocation(self, username, new_location):
-        try:
-            response = self.profiles_table.update_item(
-                Key={'username': username},
-                UpdateExpression='SET #location = :location',
-                ExpressionAttributeNames={'#location': 'location'},
-                ExpressionAttributeValues={':location': new_location}
-            )
-            print(f'Location updated for {username} to {new_location}.')
-        except Exception as e:
-            print(f'Error updating location for {username}: {e}')
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET #location = :location',
+            ExpressionAttributeNames={'#location': 'location'},
+            ExpressionAttributeValues={':location': new_location}
+        )
+        print(f'Location updated for {username} to {new_location}.')
