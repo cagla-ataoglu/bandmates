@@ -83,6 +83,37 @@ class ProfileService:
             return {'message': f'Location updated for {username} to {new_location}.'}
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error updating location for {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def add_genre(self, username):
+        data = cherrypy.request.json
+        genre = data.get('genre')
+        if not username or not genre:
+            raise cherrypy.HTTPError(400, 'Username and genre required.')
+        
+        try:
+            self.dynamodb_service.addGenre(username, genre)
+            return {'message': f'Genre {genre} added to {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error adding genre to {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def remove_genre(self, username):
+        data = cherrypy.request.json
+        genre = data.get('genre')
+        if not username or not genre:
+            raise cherrypy.HTTPError(400, 'Username and genre required.')
+        
+        try:
+            self.dynamodb_service.removeGenre(username, genre)
+            return {'message': f'Genre {genre} removed from {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error removing genre from {username}: {e}')
+
 
     
 if __name__ == '__main__':

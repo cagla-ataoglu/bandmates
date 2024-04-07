@@ -1,4 +1,5 @@
 import boto3
+import json
 
 class DynamoDBService:
     def __init__(self):
@@ -30,6 +31,7 @@ class DynamoDBService:
             else:
                 raise
         self.profiles_table = self.dynamodb.Table('Profiles')
+        
 
     def createMusicianProfile(self, username, display_name, instruments, genres, location):
         profile_item = {
@@ -41,6 +43,9 @@ class DynamoDBService:
             'location': location
         }
 
+        if genres:
+            profile_item['genres'] = genres 
+
         self.profiles_table.put_item(Item=profile_item)
         print(f'Musician profile created for {username}.')
 
@@ -50,9 +55,11 @@ class DynamoDBService:
             'display_name': display_name,
             'profile_type': 'band',
             'members': members,
-            'genres': genres,
             'location': location
         }
+
+        if genres:
+            profile_item['genres'] = genres 
 
         self.profiles_table.put_item(Item=profile_item)
         print(f'Band profile created for {username}.')
@@ -60,7 +67,7 @@ class DynamoDBService:
     def getProfile(self, username):
         response = self.profiles_table.get_item(Key={'username': username})
         if 'Item' in response:
-            return response['Item']
+            return sets_to_lists(response['Item'])
         else:
             print(f'No profile found for {username}.')
             return None
@@ -82,3 +89,29 @@ class DynamoDBService:
             ExpressionAttributeValues={':location': new_location}
         )
         print(f'Location updated for {username} to {new_location}.')
+
+    def addGenre(self, username, genre):
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='ADD genres :genre',
+            ExpressionAttributeValues={':genre': set([genre])}
+        )
+        print(f'Genre {genre} added to {username}.')
+
+    def removeGenre(self, username, genre):
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='DELETE genres :genre',
+            ExpressionAttributeValues={':genre': set([genre])}
+        )
+        print(f'Genre {genre} removed from {username}.')
+
+def sets_to_lists(data):
+    if isinstance(data, set):
+        return list(data)
+    elif isinstance(data, dict):
+        return {key: sets_to_lists(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [sets_to_lists(item) for item in data]
+    else:
+        return data
