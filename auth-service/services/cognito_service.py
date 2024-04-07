@@ -90,7 +90,12 @@ class CognitoService:
                 public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
             kid = jwt.get_unverified_header(token)['kid']
             public_key = public_keys[kid]
-            jwt.decode(token, key=public_key, algorithms=['RS256'])
-            return {'status': 'success', 'message': 'Token is valid.'}
+
+            # Decode the token, which also validates it
+            decoded_token = jwt.decode(token, key=public_key, algorithms=['RS256'])
+
+            # At this point, decoded_token is a dictionary containing the JWT's claims
+            # You can return this dictionary directly or extract specific user info fields
+            return {'status': 'success', 'user_info': decoded_token}
         except jwt.exceptions.InvalidTokenError as e:
             return {'status': 'error', 'message': str(e)}

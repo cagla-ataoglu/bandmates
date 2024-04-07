@@ -1,4 +1,8 @@
 import boto3
+import os
+import json
+import time
+import uuid
 
 class PostService:
     def __init__(self):
@@ -21,13 +25,27 @@ class PostService:
             raise RuntimeError(f"Error initializing DynamoDB table: {e}")
 
         self.posts_table = self.dynamodb.Table(self.table_name)
+        self.s3 = boto3.client('s3', endpoint_url='http://localstack:4566')
+        self.bucket_name = 'bandmates-media-storage'
+        try:
+            self.s3.head_bucket(Bucket=self.bucket_name)
+            print(f"Bucket {self.bucket_name} exists.")
+        except Exception as e:
+            self.s3.create_bucket(Bucket=self.bucket_name)
+            print(f"Bucket {self.bucket_name} created.")
 
     def create_post(self, post_id, content, user_id, timestamp):
+        file_name = content.filename
+        file_content = content.file
+        unique_file_name = f"{post_id}_{file_name}"
+        self.s3.put_object(Bucket=self.bucket_name, Key=unique_file_name, Body=file_content)
+        url = f"http://localstack:4566/{self.bucket_name}/{unique_file_name}"
+
         try:
             self.posts_table.put_item(
                 Item={
                     'PostId': post_id,
-                    'Content': content,
+                    'url': url,
                     'UserId': user_id,
                     'Timestamp': timestamp
                 }
@@ -35,15 +53,25 @@ class PostService:
             print('Post created successfully.')
             created_post = {
                 'PostId': post_id,
-                'Content': content,
+                'url': url,
                 'UserId': user_id,
                 'Timestamp': timestamp
             }
-            
+
             return created_post
-            
+
         except Exception as e:
             raise RuntimeError(f"Error creating post: {e}")
+
+    def get_post_by_id(self, post_id):
+        try:
+            response = self.posts_table.get_item(Key={'PostId': post_id})
+            if 'Item' in response:
+                return response['Item']
+            else:
+                return None
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving post with post_id {post_id}: {e}")
 
     def clear_all_posts(self):
         try:
