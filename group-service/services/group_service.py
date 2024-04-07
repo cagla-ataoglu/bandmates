@@ -1,4 +1,5 @@
 import boto3
+from boto3.dynamodb.conditions import Key
 
 class GroupService:
     def __init__(self):
@@ -50,7 +51,7 @@ class GroupService:
         except Exception as e:
             raise RuntimeError(f"Error creating group: {e} Change test ")
 
-    def get_group(self, user_id):
+    def get_group(self, group_id):
         try:
             response = self.groups_table.query(
                  KeyConditionExpression=Key('GroupId').eq(group_id),
@@ -76,6 +77,7 @@ class GroupService:
                 print('Group not found.')
         except Exception as e:
             raise RuntimeError(f"Error editing group description: {e}")
+
 
     #def add_user(self, user_id, group_id):
     #    try:

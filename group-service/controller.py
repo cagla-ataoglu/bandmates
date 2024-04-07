@@ -55,6 +55,18 @@ class GroupController:
             return {'status': 'error', 'message': str(e)}
 
 
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_group(self, group_id):
+        try:
+            group = self.group_service.get_group(group_id)
+            if group:
+                return {'status': 'success', 'group': group}
+            else:
+                return {'status': 'error', 'message': 'Group not found'}
+        except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+
     #TODO: Add join group
     #TODO: Add leave group
     #TODO: Add get group members
