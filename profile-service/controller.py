@@ -57,9 +57,8 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def update_display_name(self):
+    def update_display_name(self, username):
         data = cherrypy.request.json
-        username = data.get('username')
         new_display_name = data.get('display_name')
         if not username or not new_display_name:
             raise cherrypy.HTTPError(400, 'Username and display name required.')
@@ -73,9 +72,8 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def update_location(self):
+    def update_location(self, username):
         data = cherrypy.request.json
-        username = data.get('username')
         new_location = data.get('location')
         if not username or not new_location:
             raise cherrypy.HTTPError(400, 'Username and location required.')
