@@ -16,7 +16,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def create_post(self, content):
+    def create_post(self, user_id=None, content=None):
         if cherrypy.request.method == 'OPTIONS':
             cherrypy.response.headers['Access-Control-Allow-Methods'] = 'POST'
             cherrypy.response.headers['Access-Control-Allow-Headers'] = 'content-type'
@@ -30,12 +30,7 @@ class PostController:
                 post_id = str(uuid.uuid4())
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
 
-                input_json = cherrypy.request.json
-                title = input_json.get('title')
-                user_id = input_json.get('user_id')
-                video_url = input_json.get('video_url')
-
-                created_post = self.post_service.create_post(post_id, title, content, user_id, timestamp)
+                created_post = self.post_service.create_post(post_id, content, user_id, timestamp)
 
                 return {'status': 'success', 'message': 'Post creation successful.', 'post': created_post}
             except Exception as e:
