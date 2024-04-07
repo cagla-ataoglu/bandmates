@@ -37,7 +37,7 @@ class PostService:
     def create_post(self, post_id, content, user_id, timestamp):
         file_name = content.filename
         file_content = content.file
-        unique_file_name = f"{uuid.uuid4()}_{file_name}"
+        unique_file_name = f"{post_id}_{file_name}"
         self.s3.put_object(Bucket=self.bucket_name, Key=unique_file_name, Body=file_content)
         url = f"http://localstack:4566/{self.bucket_name}/{unique_file_name}"
 
@@ -62,6 +62,16 @@ class PostService:
 
         except Exception as e:
             raise RuntimeError(f"Error creating post: {e}")
+
+    def get_post_by_id(self, post_id):
+        try:
+            response = self.posts_table.get_item(Key={'PostId': post_id})
+            if 'Item' in response:
+                return response['Item']
+            else:
+                return None
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving post with post_id {post_id}: {e}")
 
     def clear_all_posts(self):
         try:

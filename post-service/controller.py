@@ -1,7 +1,7 @@
 import cherrypy
 import os
 import json
-
+import requests
 from services.post_service import PostService
 import uuid
 import time
@@ -37,6 +37,38 @@ class PostController:
                 return {'status': 'error', 'message': str(e)}
         else:
             raise cherrypy.HTTPError(405, "Method Not Allowed")
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_post_by_id(self, post_id=None):
+        if post_id is None:
+            return {'status': 'error', 'message': 'No post_id provided'}
+
+        try:
+            post = self.post_service.get_post_by_id(post_id)
+            if post:
+                return {'status': 'success', 'post': post}
+            else:
+                return {'status': 'error', 'message': 'Post not found'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    def download_post_content(self, post_id=None):
+        if post_id is None:
+            return "No post_id provided"
+
+        try:
+            post = self.post_service.get_post_by_id(post_id)
+            content_url = post['url']
+            content_response = requests.get(content_url)
+
+            cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
+            cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{post_id}.png"'
+
+            return content_response.content
+        except Exception as e:
+            return str(e)
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
