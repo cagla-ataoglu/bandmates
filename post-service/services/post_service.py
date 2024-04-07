@@ -22,57 +22,43 @@ class PostService:
 
         self.posts_table = self.dynamodb.Table(self.table_name)
 
-    def create_post(self, post_id, title, content, user_id, timestamp, video_url):
+    def create_post(self, post_id, content, user_id, timestamp):
         try:
             self.posts_table.put_item(
                 Item={
                     'PostId': post_id,
-                    'Title': title,
                     'Content': content,
                     'UserId': user_id,
-                    'Timestamp': timestamp,
-                    'VideoUrl': video_url
+                    'Timestamp': timestamp
                 }
             )
             print('Post created successfully.')
             created_post = {
-            'PostId': post_id,
-            'Title': title,
-            'Content': content,
-            'UserId': user_id,
-            'Timestamp': timestamp,
-            'VideoUrl': video_url
+                'PostId': post_id,
+                'Content': content,
+                'UserId': user_id,
+                'Timestamp': timestamp
             }
             
             return created_post
-        
+            
         except Exception as e:
             raise RuntimeError(f"Error creating post: {e}")
 
-    # def get_post(self, user_id):
-    #     try:
-    #         response = self.posts_table.query(
-    #             KeyConditionExpression=Key('UserId').eq(user_id),
-    #             ScanIndexForward=False,  
-    #             Limit=1  
-    #         )
-    #         items = response['Items']
-    #         if items:
-    #             return items[0]
-    #         else:
-    #             return None
-    #     except Exception as e:
-    #         raise RuntimeError(f"Error retrieving latest post for user: {e}")
-        
-    def edit_post(self, post_id, updated_content):
+    def clear_all_posts(self):
         try:
-            post = self.get_post(post_id)
-            if post:
-                post['Content'] = updated_content
-                self.posts_table.put_item(Item=post)
-                print('Post edited successfully.')
-            else:
-                print('Post not found.')
+            response = self.posts_table.scan()
+            items = response['Items']
+            for item in items:
+                self.posts_table.delete_item(Key={'PostId': item['PostId']})
+            print("All posts deleted successfully.")
         except Exception as e:
-            raise RuntimeError(f"Error editing post: {e}")
+            raise RuntimeError(f"Error clearing posts: {e}")
 
+    def get_all_posts(self):
+        try:
+            response = self.posts_table.scan()
+            items = response['Items']
+            return items
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving posts: {e}")
