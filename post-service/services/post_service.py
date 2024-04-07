@@ -1,4 +1,8 @@
 import boto3
+import os
+import json
+import time
+import uuid
 
 class PostService:
     def __init__(self):
@@ -21,58 +25,68 @@ class PostService:
             raise RuntimeError(f"Error initializing DynamoDB table: {e}")
 
         self.posts_table = self.dynamodb.Table(self.table_name)
+        self.s3 = boto3.client('s3', endpoint_url='http://localstack:4566')
+        self.bucket_name = 'bandmates-media-storage'
+        try:
+            self.s3.head_bucket(Bucket=self.bucket_name)
+            print(f"Bucket {self.bucket_name} exists.")
+        except Exception as e:
+            self.s3.create_bucket(Bucket=self.bucket_name)
+            print(f"Bucket {self.bucket_name} created.")
 
-    def create_post(self, post_id, title, content, user_id, timestamp, video_url):
+    def create_post(self, post_id, content, user_id, timestamp):
+        file_name = content.filename
+        file_content = content.file
+        unique_file_name = f"{post_id}_{file_name}"
+        self.s3.put_object(Bucket=self.bucket_name, Key=unique_file_name, Body=file_content)
+        url = f"http://localstack:4566/{self.bucket_name}/{unique_file_name}"
+
         try:
             self.posts_table.put_item(
                 Item={
                     'PostId': post_id,
-                    'Title': title,
-                    'Content': content,
+                    'url': url,
                     'UserId': user_id,
-                    'Timestamp': timestamp,
-                    'VideoUrl': video_url
+                    'Timestamp': timestamp
                 }
             )
             print('Post created successfully.')
             created_post = {
-            'PostId': post_id,
-            'Title': title,
-            'Content': content,
-            'UserId': user_id,
-            'Timestamp': timestamp,
-            'VideoUrl': video_url
+                'PostId': post_id,
+                'url': url,
+                'UserId': user_id,
+                'Timestamp': timestamp
             }
-            
+
             return created_post
-        
+
         except Exception as e:
             raise RuntimeError(f"Error creating post: {e}")
 
-    # def get_post(self, user_id):
-    #     try:
-    #         response = self.posts_table.query(
-    #             KeyConditionExpression=Key('UserId').eq(user_id),
-    #             ScanIndexForward=False,  
-    #             Limit=1  
-    #         )
-    #         items = response['Items']
-    #         if items:
-    #             return items[0]
-    #         else:
-    #             return None
-    #     except Exception as e:
-    #         raise RuntimeError(f"Error retrieving latest post for user: {e}")
-        
-    def edit_post(self, post_id, updated_content):
+    def get_post_by_id(self, post_id):
         try:
-            post = self.get_post(post_id)
-            if post:
-                post['Content'] = updated_content
-                self.posts_table.put_item(Item=post)
-                print('Post edited successfully.')
+            response = self.posts_table.get_item(Key={'PostId': post_id})
+            if 'Item' in response:
+                return response['Item']
             else:
-                print('Post not found.')
+                return None
         except Exception as e:
-            raise RuntimeError(f"Error editing post: {e}")
+            raise RuntimeError(f"Error retrieving post with post_id {post_id}: {e}")
 
+    def clear_all_posts(self):
+        try:
+            response = self.posts_table.scan()
+            items = response['Items']
+            for item in items:
+                self.posts_table.delete_item(Key={'PostId': item['PostId']})
+            print("All posts deleted successfully.")
+        except Exception as e:
+            raise RuntimeError(f"Error clearing posts: {e}")
+
+    def get_all_posts(self):
+        try:
+            response = self.posts_table.scan()
+            items = response['Items']
+            return items
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving posts: {e}")
