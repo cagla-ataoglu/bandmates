@@ -16,13 +16,28 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def create_post(self, user_id=None, content=None):
+    def create_post(self, content=None):
         if cherrypy.request.method == 'OPTIONS':
             cherrypy.response.headers['Access-Control-Allow-Methods'] = 'POST'
             cherrypy.response.headers['Access-Control-Allow-Headers'] = 'content-type'
             cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
             return ''
         elif cherrypy.request.method == 'POST':
+            auth_header = cherrypy.request.headers.get('Authorization')
+            if not auth_header:
+                return {'status': 'error', 'message': 'Authorization header missing'}
+
+            token = auth_header.split(" ")[1]
+
+            payload = {'token': token}
+            response = requests.post('http://auth-service:8080/validate', json=payload)
+            response = response.json()
+            if response['status'] != 'success':
+                return {'status': 'error', 'message': 'Token validation failed'}
+
+            user_info = response['user_info']
+            username = user_info['username']
+
             if not content:
                 return {"error": "No file uploaded"}
 
@@ -30,7 +45,7 @@ class PostController:
                 post_id = str(uuid.uuid4())
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
 
-                created_post = self.post_service.create_post(post_id, content, user_id, timestamp)
+                created_post = self.post_service.create_post(post_id, content, username, timestamp)
 
                 return {'status': 'success', 'message': 'Post creation successful.', 'post': created_post}
             except Exception as e:

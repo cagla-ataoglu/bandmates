@@ -44,8 +44,11 @@ class AuthController:
             return {'status': 'error', 'message': str(e)}
 
     @cherrypy.expose
+    @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def validate(self, token):
+    def validate(self):
+        input_json = cherrypy.request.json
+        token = input_json.get('token')
         return self.cognito_service.validate_token(token)
 
     @cherrypy.expose

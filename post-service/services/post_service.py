@@ -34,7 +34,7 @@ class PostService:
             self.s3.create_bucket(Bucket=self.bucket_name)
             print(f"Bucket {self.bucket_name} created.")
 
-    def create_post(self, post_id, content, user_id, timestamp):
+    def create_post(self, post_id, content, username, timestamp):
         file_name = content.filename
         file_content = content.file
         unique_file_name = f"{post_id}_{file_name}"
@@ -46,7 +46,7 @@ class PostService:
                 Item={
                     'PostId': post_id,
                     'url': url,
-                    'UserId': user_id,
+                    'username': username,
                     'Timestamp': timestamp
                 }
             )
@@ -54,7 +54,7 @@ class PostService:
             created_post = {
                 'PostId': post_id,
                 'url': url,
-                'UserId': user_id,
+                'username': username,
                 'Timestamp': timestamp
             }
 
