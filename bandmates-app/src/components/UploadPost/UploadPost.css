@@ -4,11 +4,12 @@
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    display: flex; /* Make the container a flex container */
+    display: flex;
+    flex-direction: column; /* Ensure children stack vertically */
+    justify-content: space-between; /* Vertically align children */
   }
   
   .wrapper {
-    flex: 1; /* Occupy all available space within the container */
     padding: 10px;
   }
   
@@ -26,13 +27,13 @@
   }
   
   .input-field {
-    width: 80%;
+    width: calc(100% - 40px); /* Adjust width to accommodate icon */
     outline: none;
     border: none;
   }
   
   .divider {
-    margin: 20px;
+    margin: 0 0 10px 0; /* Adjust margin to create space between sections */
     border: none;
     border-top: 1px solid #ddd;
   }
