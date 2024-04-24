@@ -1,0 +1,65 @@
+.custom-container{
+    width: 100%;
+    border-radius: 0.375rem;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pc{
+    width: 90%;
+    margin: 20px;
+    border-radius: 4px;
+    padding-bottom: 20px;
+    background: #ffffff;
+}
+
+.gradiant{
+    background-image: linear-gradient(#f480ff, #0000ff);
+    height: 125px;
+    border-radius: 4px 4px 0px 0px;
+}
+
+.profile-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-down img{
+    height: 150px;
+    width: 150px;
+    border-radius: 100px;
+    margin-top: -75px;
+    padding: 5px;
+    background-color: #ffffff;
+}
+
+.profile-title{
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.profile-description{
+    padding: 20px 40px;
+    font-size: 16px;
+}
+
+.profile-button{
+    font-size: 16px;
+    background: #0000ff;
+    margin: 10px 100px;
+    padding-top: 8px;
+    padding-bottom: 10px;
+    border-radius: 40px;
+}
+
+.profile-button a{
+    text-decoration: none;
+    color: #ffffff;
+}
