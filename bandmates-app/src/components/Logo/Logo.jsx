@@ -1,8 +1,10 @@
 import React from 'react'
+import logo from "../../assets/logo.png"
 
 const Logo = () => {
   return (
-    <h1 className='text-white font-extrabold text-xl ml-[24px]'>BandMates</h1>
+    <img src={logo} alt="bandmates logo" />
+
   )
 }
 

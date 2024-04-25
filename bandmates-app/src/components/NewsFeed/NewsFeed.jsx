@@ -29,7 +29,7 @@ const NewsFeed = () => {
   };
 
   return (
-    <div style={{ flex: 5.5 }}>
+    <div className="newsfeed-container">
       <UploadPost onPostCreated={handlePostCreated} />
       {/* Render posts */}
       {posts.map((post, index) => (

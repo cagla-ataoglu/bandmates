@@ -1,0 +1,5 @@
+.newsfeed-container {
+    flex: 5.5;
+    background: #f0f4f7;
+    padding: 20px; /* Add padding to provide space around the content */
+  }
