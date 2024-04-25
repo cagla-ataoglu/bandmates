@@ -13,7 +13,8 @@
     padding: 10px;
   }
   
-  .top {
+  .post-card {
+    width: 60px;
     display: flex;
     align-items: center;
   }
