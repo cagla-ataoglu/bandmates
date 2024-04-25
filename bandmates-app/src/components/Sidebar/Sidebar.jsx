@@ -1,11 +1,7 @@
 import React from 'react'
-import { FaHome } from "react-icons/fa";
-import { FaPhotoVideo } from "react-icons/fa";
+import { FaPhotoVideo, FaBookmark, FaCalendarAlt } from "react-icons/fa";
 import { MdGroups } from "react-icons/md";
-import { BsChatSquareDotsFill } from "react-icons/bs";
-import { FaBookmark } from "react-icons/fa";
-import { FaBriefcase } from "react-icons/fa";
-import { FaCalendarAlt } from "react-icons/fa";
+import ProfileCard from '../../components/ProfileCard/ProfileCard'
 import profilePic from "../../assets/janedoe_pfp.jpg"
 
 const Sidebar = () => {
@@ -13,10 +9,6 @@ const Sidebar = () => {
     <div style={{flex: 2, height:"calc(100vh - 50px)"}} className="custom-scrollbar overflow-y-auto">
         <div className="p-[20px]">
             <ul className="sidebarList m-0 p-0">
-               <li>
-                <FaHome/>
-                <span>Home</span>
-                </li> 
                 <li>
                 <FaPhotoVideo/>
                 <span>Videos</span>
@@ -26,16 +18,8 @@ const Sidebar = () => {
                 <span>Groups</span>
                 </li> 
                 <li>
-                <BsChatSquareDotsFill/>
-                <span>Chats</span>
-                </li>
-                <li>
                 <FaBookmark/>
                 <span>Bookmarks</span>
-                </li>
-                <li>
-                <FaBriefcase/>
-                <span>Jobs</span>
                 </li>
                 <li>
                 <FaCalendarAlt/>

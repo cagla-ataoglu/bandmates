@@ -24,7 +24,7 @@ const UploadPost = ({ onPostCreated }) => {
     return (
         <div className="w-full h-[170px] rounded-lg shadow-lg">
             <div className="wrapper p-[10px] ">
-                <div className="top flex items-center">
+                <div className="post-card">
                     <img src={profilePic} alt="profilepic" className="w-[30px] h-[30px] rounded-full mr-[10px] object-cover" />
                     <input type="text" placeholder="What is on your mind?" value={content} onChange={(e) => setContent(e.target.value)} className="w-[80%] focus:outline-none" />
                 </div>
@@ -34,18 +34,6 @@ const UploadPost = ({ onPostCreated }) => {
                         <div className="flex items-center mr-[15px] cursor-pointer">
                             <MdPermMedia className="mr-[3px] text-orange-500" />
                             <span>Photo or Video</span>
-                        </div>
-                        <div className="flex items-center mr-[15px] cursor-pointer">
-                            <MdLabel className="mr-[3px] text-green-500" />
-                            <span>Tags</span>
-                        </div>
-                        <div className="flex items-center mr-[15px] cursor-pointer">
-                            <MdEmojiEmotions className="mr-[3px] text-yellow-500" />
-                            <span>Emojis</span>
-                        </div>
-                        <div className="flex items-center mr-[15px] cursor-pointer">
-                            <MdLocationPin className="mr-[3px] text-red-500" />
-                            <span>Location</span>
                         </div>
                     </div>
                     <button onClick={handleSubmit} className="bg-blue-700 text-white p-[7px] rounded-lg font-bold">Upload</button>
