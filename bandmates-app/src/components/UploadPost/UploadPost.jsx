@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import profilePic from '../../assets/musician_pfp.jpg';
-import { MdLabel, MdPermMedia, MdEmojiEmotions, MdLocationPin } from "react-icons/md";
+import { MdPermMedia } from "react-icons/md";
+import './UploadPost.css';
 import axios from 'axios';
 
 const UploadPost = ({ onPostCreated }) => {
@@ -22,21 +23,21 @@ const UploadPost = ({ onPostCreated }) => {
     };
 
     return (
-        <div className="w-full h-[170px] rounded-lg shadow-lg">
-            <div className="wrapper p-[10px] ">
-                <div className="post-card">
-                    <img src={profilePic} alt="profilepic" className="w-[30px] h-[30px] rounded-full mr-[10px] object-cover" />
-                    <input type="text" placeholder="What is on your mind?" value={content} onChange={(e) => setContent(e.target.value)} className="w-[80%] focus:outline-none" />
+        <div className="upload-post-container">
+            <div className="upload-post-wrapper">
+                <div className="upload-post-top-container">
+                    <img src={profilePic} alt="profilepic" className="upload-post-profile-pic" />
+                    <input type="text" placeholder="What is on your mind?" value={content} onChange={(e) => setContent(e.target.value)} className="upload-post-input" />
                 </div>
-                <hr className="m-[20px]" />
-                <div className="bottom flex items-center justify-between">
-                    <div className="flex ml-[20px]">
-                        <div className="flex items-center mr-[15px] cursor-pointer">
-                            <MdPermMedia className="mr-[3px] text-orange-500" />
+                <hr className="divider" />
+                <div className="bottom">
+                    <div className="options">
+                        <div className="option">
+                            <MdPermMedia className="upload-post-icon"/>
                             <span>Photo or Video</span>
                         </div>
                     </div>
-                    <button onClick={handleSubmit} className="bg-blue-700 text-white p-[7px] rounded-lg font-bold">Upload</button>
+                    <button onClick={handleSubmit} className="upload-post-button">Upload</button>
                 </div>
             </div>
         </div>

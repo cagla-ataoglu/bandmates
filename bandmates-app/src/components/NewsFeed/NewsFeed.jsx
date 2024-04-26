@@ -1,7 +1,7 @@
 // NewsFeed.js
 import React, { useState, useEffect } from 'react';
-import UploadPost from '../UploadPost/UploadPost';
 import Post from '../Post/Post';
+import './NewsFeed.css';
 import axios from 'axios';
 
 const NewsFeed = () => {
@@ -24,13 +24,18 @@ const NewsFeed = () => {
     }
   };
 
-  const handlePostCreated = (newPost) => {
-    setPosts(prevPosts => [...prevPosts, newPost]);
-  };
-
   return (
-    <div className="newsfeed-container">
-      <UploadPost onPostCreated={handlePostCreated} />
+    <div className="newsfeed-card">
+      <ul className="newsfeed-list"> 
+        {/* AFTER CONNECTING THE DATABASE DELETE THIS PART BELOW  AND LEAVE RENDER POSTS*/}
+        {[...Array(10)].map((_, index) => (
+          <li key={index}>
+            <p>Random Post Here</p>
+            {index !== 9 && <div className="separator"></div>}
+          </li>
+        ))}
+      </ul>
+
       {/* Render posts */}
       {posts.map((post, index) => (
         <Post key={index} post={post} />
