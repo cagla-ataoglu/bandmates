@@ -67,11 +67,86 @@ class GroupController:
         except Exception as e:
                 return {'status': 'error', 'message': str(e)}
 
-    #TODO: Add join group
-    #TODO: Add leave group
-    #TODO: Add get group members
-    #TODO: (Possibly) Add post service
-        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def join_group(self):
+        try:
+            input_json = cherrypy.request.json
+            group_id = input_json.get('group_id')
+            user_id = input_json.get('user_id')
+
+            self.group_service.add_user_to_group(user_id, group_id)
+            return {'status': 'success', 'message': 'Joined group successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def leave_group(self):
+        try:
+            input_json = cherrypy.request.json
+            group_id = input_json.get('group_id')
+            user_id = input_json.get('user_id')
+
+            self.group_service.remove_user_from_group(user_id, group_id)
+            return {'status': 'success', 'message': 'Left group successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_group_members(self, group_id):
+        try:
+            members = self.group_service.get_group_members(group_id)
+            return {'status': 'success', 'members': members}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def create_post(self):
+        try:
+            input_json = cherrypy.request.json
+            group_id = input_json.get('group_id')
+            content = input_json.get('content')
+            posted_by = input_json.get('posted_by')
+
+            self.group_service.create_post(group_id, content, posted_by)
+            return {'status': 'success', 'message': 'Post created successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def edit_post(self):
+        try:
+            input_json = cherrypy.request.json
+            group_id = input_json.get('group_id')
+            post_id = input_json.get('post_id')
+            updated_content = input_json.get('content')
+
+            self.group_service.edit_post(group_id, post_id, updated_content)
+            return {'status': 'success', 'message': 'Post updated successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def delete_post(self, group_id, post_id):
+        try:
+            self.group_service.delete_post(group_id, post_id)
+            return {'status': 'success', 'message': 'Post deleted successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8088})

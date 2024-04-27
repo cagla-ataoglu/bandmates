@@ -114,6 +114,26 @@ class GroupService:
         except Exception as e:
             raise RuntimeError(f"Error removing user from group: {e}")
 
+
+    def get_group_members(self, group_id):
+        try:
+            # Setting up the table
+            users_groups_table = self.dynamodb.Table(self.users_groups_table_name)
+        
+            # Querying the UsersGroups table using the GroupId as the key
+            response = users_groups_table.query(
+                IndexName='GroupIdIndex',  # Ensure this GSI is setup in your table
+                KeyConditionExpression=Key('GroupId').eq(group_id)
+            )
+        
+            # Extracting user IDs from the response
+            members = [item['UserId'] for item in response['Items']]
+        
+            return members
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving group members for group {group_id}: {e}")
+
+
     def create_post(self, group_id, content, posted_by):
         try:
             timestamp = int(time.time() * 1000)
