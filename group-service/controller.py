@@ -19,9 +19,7 @@ class GroupController:
         try:
 
             group_id = str(uuid.uuid4())
-
             input_json = cherrypy.request.json
-            #group_id = input_json.get('group_id')
             group_name = input_json.get('group_name')
             description = input_json.get('description')
             user_id = input_json.get('user_id')

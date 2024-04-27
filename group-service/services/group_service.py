@@ -152,7 +152,7 @@ class GroupService:
                 KeyConditionExpression=Key('GroupId').eq(group_id)
             )
 
-            # Extracting user IDs from the response
+            # Filtering user IDs from the response
             members = [item['UserId'] for item in response['Items']]
         
             return members
