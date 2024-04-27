@@ -39,6 +39,63 @@ class GroupService:
         except Exception as e:
             raise RuntimeError(f"Error initializing DynamoDB table '{table_name}': {e}")
 
+
+    def create_group(self, group_id, group_name, description, user_id):
+        try:
+            print("Creating group with the following attributes:")
+            print(f"Group ID: {group_id}")
+            print(f"Group Name: {group_name}")
+            print(f"Description: {description}")
+            print(f"Creator User ID: {user_id}")
+            self.groups_table.put_item(
+                Item={
+                    'GroupId': str(group_id),
+                    'GroupName': str(group_name),
+                    'Description': str(description),
+                    'CreatorUserId': str(user_id)
+                }
+            )
+            print('Group created successfully.')
+            created_group = {
+            'GroupId': group_id,
+            'GroupName': group_name,
+            'Description': description,
+            'CreatorUserId': user_id
+            }
+            
+            return created_group
+        
+        except Exception as e:
+            raise RuntimeError(f"Error creating group: {e} Change test ")
+
+    def get_group(self, group_id):
+        try:
+            response = self.groups_table.query(
+                 KeyConditionExpression=Key('GroupId').eq(group_id),
+                 ScanIndexForward=False,  
+                 Limit=1  
+             )
+            items = response['Items']
+            if items:
+                return items[0]
+            else:
+                return None
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving group: {e}")
+        
+    def edit_group_description(self, group_id, updated_description):
+        try:
+            group = self.get_group(group_id)
+            if group:
+                group['Description'] = updated_description
+                self.groups_table.put_item(Item=group)
+                print('Group description edited successfully.')
+            else:
+                print('Group not found.')
+        except Exception as e:
+            raise RuntimeError(f"Error editing group description: {e}")
+
+
     def add_user_to_group(self, user_id, group_id):
         try:
             self.dynamodb.Table(self.users_groups_table_name).put_item(
@@ -101,69 +158,12 @@ class GroupService:
         except Exception as e:
             raise RuntimeError(f"Error deleting post: {e}")
 
-
-
-    def create_group(self, group_id, group_name, description, user_id):
+    
+    def get_posts_in_group(self, group_id):
         try:
-            print("Creating group with the following attributes:")
-            print(f"Group ID: {group_id}")
-            print(f"Group Name: {group_name}")
-            print(f"Description: {description}")
-            print(f"Creator User ID: {user_id}")
-            self.groups_table.put_item(
-                Item={
-                    'GroupId': str(group_id),
-                    'GroupName': str(group_name),
-                    'Description': str(description),
-                    'CreatorUserId': str(user_id)
-                }
+            response = self.group_posts_table.query(
+                KeyConditionExpression=Key('GroupId').eq(group_id)
             )
-            print('Group created successfully.')
-            created_group = {
-            'GroupId': group_id,
-            'GroupName': group_name,
-            'Description': description,
-            'CreatorUserId': user_id
-            }
-            
-            return created_group
-        
+            return response['Items']
         except Exception as e:
-            raise RuntimeError(f"Error creating group: {e} Change test ")
-
-    def get_group(self, group_id):
-        try:
-            response = self.groups_table.query(
-                 KeyConditionExpression=Key('GroupId').eq(group_id),
-                 ScanIndexForward=False,  
-                 Limit=1  
-             )
-            items = response['Items']
-            if items:
-                return items[0]
-            else:
-                return None
-        except Exception as e:
-            raise RuntimeError(f"Error retrieving group: {e}")
-        
-    def edit_group_description(self, group_id, updated_description):
-        try:
-            group = self.get_group(group_id)
-            if group:
-                group['Description'] = updated_description
-                self.groups_table.put_item(Item=group)
-                print('Group description edited successfully.')
-            else:
-                print('Group not found.')
-        except Exception as e:
-            raise RuntimeError(f"Error editing group description: {e}")
-
-
-    #def add_user(self, user_id, group_id):
-    #    try:
-    #        group: self.get_group(group_id)
-    #        if group:
-    #            group['Members'] 
-
-
-
+            raise RuntimeError(f"Error retrieving posts for group {group_id}: {e}")
