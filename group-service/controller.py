@@ -8,7 +8,7 @@ class GroupController:
         self.group_service = GroupService()
 
     @cherrypy.expose
-    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_out() 
     def index(self):
         return {"message": "Welcome to the Group Service"}
 
@@ -70,12 +70,8 @@ class GroupController:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def join_group(self):
+    def join_group(self, user_id, group_id):
         try:
-            input_json = cherrypy.request.json
-            group_id = input_json.get('group_id')
-            user_id = input_json.get('user_id')
-
             self.group_service.add_user_to_group(user_id, group_id)
             return {'status': 'success', 'message': 'Joined group successfully.'}
         except Exception as e:
@@ -85,12 +81,8 @@ class GroupController:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def leave_group(self):
+    def leave_group(self, user_id, group_id):
         try:
-            input_json = cherrypy.request.json
-            group_id = input_json.get('group_id')
-            user_id = input_json.get('user_id')
-
             self.group_service.remove_user_from_group(user_id, group_id)
             return {'status': 'success', 'message': 'Left group successfully.'}
         except Exception as e:
@@ -110,12 +102,10 @@ class GroupController:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def create_post(self):
+    def create_post(self, group_id, posted_by):
         try:
             input_json = cherrypy.request.json
-            group_id = input_json.get('group_id')
             content = input_json.get('content')
-            posted_by = input_json.get('posted_by')
 
             self.group_service.create_post(group_id, content, posted_by)
             return {'status': 'success', 'message': 'Post created successfully.'}
@@ -125,11 +115,9 @@ class GroupController:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
-    def edit_post(self):
+    def edit_post(self, group_id, post_id):
         try:
             input_json = cherrypy.request.json
-            group_id = input_json.get('group_id')
-            post_id = input_json.get('post_id')
             updated_content = input_json.get('content')
 
             self.group_service.edit_post(group_id, post_id, updated_content)

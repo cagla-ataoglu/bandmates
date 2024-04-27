@@ -140,7 +140,7 @@ class GroupService:
             self.dynamodb.Table(self.group_posts_table_name).put_item(
                 Item={
                     'GroupId': group_id,
-                    'PostId': timestamp,
+                    'PostId': str(timestamp),
                     'Content': content,
                     'PostedBy': posted_by,
                     'Timestamp': timestamp
