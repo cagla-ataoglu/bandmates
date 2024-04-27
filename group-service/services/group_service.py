@@ -1,27 +1,107 @@
 import boto3
 from boto3.dynamodb.conditions import Key
+import time
 
 class GroupService:
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
         self.table_name = 'Groups'
+        self.users_groups_table_name = 'UsersGroups'
+        self.group_posts_table_name = 'GroupPosts'
 
+        # Initialize Groups table
+        self.initialize_table(self.table_name, 'GroupId')
+        
+        # Initialize UsersGroups table
+        self.initialize_table(self.users_groups_table_name, 'UserId', 'GroupId')
+        
+        # Initialize GroupPosts table
+        self.initialize_table(self.group_posts_table_name, 'GroupId', 'PostId')
+
+    def initialize_table(self, table_name, hash_key, sort_key=None):
         try:
-            self.dynamodb.Table(self.table_name).load()
-            print(f"Table '{self.table_name}' already exists. Loading it. Change test")
+            self.dynamodb.Table(table_name).load()
+            print(f"Table '{table_name}' already exists. Loading it.")
         except self.dynamodb.meta.client.exceptions.ResourceNotFoundException:
+            key_schema = [{'AttributeName': hash_key, 'KeyType': 'HASH'}]
+            attribute_definitions = [{'AttributeName': hash_key, 'AttributeType': 'S'}]
+            if sort_key:
+                key_schema.append({'AttributeName': sort_key, 'KeyType': 'RANGE'})
+                attribute_definitions.append({'AttributeName': sort_key, 'AttributeType': 'S'})
             table = self.dynamodb.create_table(
-                TableName=self.table_name,
-                KeySchema=[{'AttributeName': 'GroupId', 'KeyType': 'HASH'}],
-                AttributeDefinitions=[{'AttributeName': 'GroupId', 'AttributeType': 'S'}],
+                TableName=table_name,
+                KeySchema=key_schema,
+                AttributeDefinitions=attribute_definitions,
                 ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
             )
-            table.meta.client.get_waiter('table_exists').wait(TableName=self.table_name)
-            print("Groups table created.")
+            table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
+            print(f"Table '{table_name}' created.")
         except Exception as e:
-            raise RuntimeError(f"Error initializing DynamoDB table: {e}")
+            raise RuntimeError(f"Error initializing DynamoDB table '{table_name}': {e}")
 
-        self.groups_table = self.dynamodb.Table(self.table_name)
+    def add_user_to_group(self, user_id, group_id):
+        try:
+            self.dynamodb.Table(self.users_groups_table_name).put_item(
+                Item={'UserId': user_id, 'GroupId': group_id}
+            )
+            print('User added to group successfully.')
+        except Exception as e:
+            raise RuntimeError(f"Error adding user to group: {e}")
+
+    def remove_user_from_group(self, user_id, group_id):
+        try:
+            self.dynamodb.Table(self.users_groups_table_name).delete_item(
+                Key={'UserId': user_id, 'GroupId': group_id}
+            )
+            print('User removed from group successfully.')
+        except Exception as e:
+            raise RuntimeError(f"Error removing user from group: {e}")
+
+    def create_post(self, group_id, content, posted_by):
+        try:
+            timestamp = int(time.time() * 1000)
+            self.dynamodb.Table(self.group_posts_table_name).put_item(
+                Item={
+                    'GroupId': group_id,
+                    'PostId': timestamp,
+                    'Content': content,
+                    'PostedBy': posted_by,
+                    'Timestamp': timestamp
+                }
+            )
+            print('Post created successfully.')
+        except Exception as e:
+            raise RuntimeError(f"Error creating post: {e}")
+
+    def edit_post(self, group_id, post_id, updated_content):
+        try:
+            # Get the current post to check it exists
+            response = self.dynamodb.Table(self.group_posts_table_name).get_item(
+                Key={'GroupId': group_id, 'PostId': post_id}
+            )
+            post = response.get('Item')
+            if not post:
+                print('Post not found.')
+                return
+        
+            # Update the post content
+            post['Content'] = updated_content
+            self.dynamodb.Table(self.group_posts_table_name).put_item(Item=post)
+            print('Post edited successfully.')
+        except Exception as e:
+            raise RuntimeError(f"Error editing post: {e}")
+
+    
+    def delete_post(self, group_id, post_id):
+        try:
+            self.dynamodb.Table(self.group_posts_table_name).delete_item(
+                Key={'GroupId': group_id, 'PostId': post_id}
+            )
+            print('Post deleted successfully.')
+        except Exception as e:
+            raise RuntimeError(f"Error deleting post: {e}")
+
+
 
     def create_group(self, group_id, group_name, description, user_id):
         try:
