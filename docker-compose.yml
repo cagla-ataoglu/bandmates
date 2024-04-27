@@ -73,6 +73,22 @@ services:
       - USER_POOL_NAME=${USER_POOL_NAME}
       - CLIENT_NAME=${CLIENT_NAME}
 
+  group-service:
+    build: ./group-service
+    depends_on:
+      - localstack
+    networks:
+      - bandmates-backend
+    ports:
+      - "8088:8088"
+    environment:
+      - LOCALSTACK_HOSTNAME=localstack
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - USER_POOL_NAME=${USER_POOL_NAME}
+      - CLIENT_NAME=${CLIENT_NAME}
+
 networks:
   bandmates-backend:
     driver: bridge
