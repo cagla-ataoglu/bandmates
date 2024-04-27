@@ -6,7 +6,7 @@ import time
 class GroupController:
     def __init__(self):
         self.group_service = GroupService()
-
+    
     @cherrypy.expose
     @cherrypy.tools.json_out() 
     def index(self):
@@ -69,7 +69,6 @@ class GroupController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    @cherrypy.tools.json_in()
     def join_group(self, user_id, group_id):
         try:
             self.group_service.add_user_to_group(user_id, group_id)
@@ -80,7 +79,6 @@ class GroupController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    @cherrypy.tools.json_in()
     def leave_group(self, user_id, group_id):
         try:
             self.group_service.remove_user_from_group(user_id, group_id)
@@ -133,6 +131,24 @@ class GroupController:
             return {'status': 'success', 'message': 'Post deleted successfully.'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_group_posts(self, group_id):
+        try:
+            # Retrieve all posts for the given group_id from the GroupService
+            posts = self.group_service.get_posts_in_group(group_id)
+        
+            # Check if the list of posts is empty
+            if not posts:
+                return {'status': 'error', 'message': 'No posts found in this group.'}
+        
+            # Return the list of posts
+            return {'status': 'success', 'posts': posts}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    
 
 
 if __name__ == '__main__':

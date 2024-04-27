@@ -1,6 +1,7 @@
 import boto3
 from boto3.dynamodb.conditions import Key
 import time
+import decimal
 
 class GroupService:
     def __init__(self):
@@ -13,14 +14,24 @@ class GroupService:
         self.initialize_table(self.table_name, 'GroupId')
         
         # Initialize UsersGroups table
-        self.initialize_table(self.users_groups_table_name, 'UserId', 'GroupId')
+        self.initialize_table(
+            self.users_groups_table_name,
+            'UserId',
+            'GroupId',
+            gsi={'name': 'GroupIdIndex', 'hash_key': 'GroupId'}
+        )
         
         # Initialize GroupPosts table
         self.initialize_table(self.group_posts_table_name, 'GroupId', 'PostId')
 
-    def initialize_table(self, table_name, hash_key, sort_key=None):
+        self.groups_table = self.dynamodb.Table(self.table_name)
+        self.users_groups_table = self.dynamodb.Table(self.users_groups_table_name)
+        self.group_posts_table = self.dynamodb.Table(self.group_posts_table_name)
+
+    def initialize_table(self, table_name, hash_key, sort_key=None, gsi=None):
         try:
-            self.dynamodb.Table(table_name).load()
+            table = self.dynamodb.Table(table_name)
+            table.load()
             print(f"Table '{table_name}' already exists. Loading it.")
         except self.dynamodb.meta.client.exceptions.ResourceNotFoundException:
             key_schema = [{'AttributeName': hash_key, 'KeyType': 'HASH'}]
@@ -28,16 +39,34 @@ class GroupService:
             if sort_key:
                 key_schema.append({'AttributeName': sort_key, 'KeyType': 'RANGE'})
                 attribute_definitions.append({'AttributeName': sort_key, 'AttributeType': 'S'})
+
+            # Prepare GSI if specified
+            gsi_definitions = []
+            if gsi:
+                gsi_definitions = [{
+                    'IndexName': gsi['name'],
+                    'KeySchema': [{'AttributeName': gsi['hash_key'], 'KeyType': 'HASH'}],
+                    'Projection': {'ProjectionType': 'ALL'},
+                    'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+                }]
+                if 'sort_key' in gsi:
+                    gsi['KeySchema'].append({'AttributeName': gsi['sort_key'], 'KeyType': 'RANGE'})
+                attribute_definitions.append({'AttributeName': gsi['hash_key'], 'AttributeType': 'S'})  # Adjust type as necessary
+                if 'sort_key' in gsi:
+                    attribute_definitions.append({'AttributeName': gsi['sort_key'], 'AttributeType': 'S'})  # Adjust type as necessary
+
             table = self.dynamodb.create_table(
                 TableName=table_name,
                 KeySchema=key_schema,
                 AttributeDefinitions=attribute_definitions,
-                ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+                ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5},
+                GlobalSecondaryIndexes=gsi_definitions if gsi_definitions else None
             )
             table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
             print(f"Table '{table_name}' created.")
         except Exception as e:
             raise RuntimeError(f"Error initializing DynamoDB table '{table_name}': {e}")
+
 
 
     def create_group(self, group_id, group_name, description, user_id):
@@ -117,15 +146,12 @@ class GroupService:
 
     def get_group_members(self, group_id):
         try:
-            # Setting up the table
-            users_groups_table = self.dynamodb.Table(self.users_groups_table_name)
-        
             # Querying the UsersGroups table using the GroupId as the key
-            response = users_groups_table.query(
-                IndexName='GroupIdIndex',  # Ensure this GSI is setup in your table
+            response = self.users_groups_table.query(
+                IndexName='GroupIdIndex', 
                 KeyConditionExpression=Key('GroupId').eq(group_id)
             )
-        
+
             # Extracting user IDs from the response
             members = [item['UserId'] for item in response['Items']]
         
@@ -143,7 +169,7 @@ class GroupService:
                     'PostId': str(timestamp),
                     'Content': content,
                     'PostedBy': posted_by,
-                    'Timestamp': timestamp
+                    'Timestamp': str(timestamp)
                 }
             )
             print('Post created successfully.')
@@ -178,7 +204,7 @@ class GroupService:
         except Exception as e:
             raise RuntimeError(f"Error deleting post: {e}")
 
-    
+
     def get_posts_in_group(self, group_id):
         try:
             response = self.group_posts_table.query(
