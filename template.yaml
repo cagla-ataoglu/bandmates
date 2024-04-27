@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  SignupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth/lambdas
+      Handler: signup.handler
+      Runtime: python3.8
+      Events:
+        SignupApi:
+          Type: Api
+          Properties:
+            Path: /signup
+            Method: get

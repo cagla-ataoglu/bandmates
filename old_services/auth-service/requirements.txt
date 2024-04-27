@@ -1,4 +1,0 @@
-CherryPy
-boto3
-pyjwt[crypto]
-requests

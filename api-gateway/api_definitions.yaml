@@ -1,0 +1,39 @@
+openapi: 3.0.1
+info:
+  title: Simple Lambda API
+  description: This API interfaces with a Lambda function to return a greeting.
+  version: 1.0.0
+
+servers:
+  - url: https://your-api-id.execute-api.region.amazonaws.com/{basePath}
+    variables:
+      basePath:
+        default: prod  # This could be different depending on your API Gateway stage
+
+paths:
+  /auth/signup:
+    get:
+      summary: User signup
+      operationId: signup
+      responses:
+        '200':
+          description: A successful response from signup
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request
+        '500':
+          description: Error in the function execution
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:region:lambda:path/2015-03-31/functions/arn:aws:lambda:region:account-id:function:function-name/invocations
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
