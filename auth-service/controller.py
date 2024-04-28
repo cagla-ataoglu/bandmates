@@ -67,22 +67,26 @@ class AuthController:
     @cherrypy.tools.json_out()
     @cherrypy.tools.cors()
     def validate(self):
-        input_json = cherrypy.request.json
-        token = input_json.get('token')
-        return self.cognito_service.validate_token(token)
+        if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            token = input_json.get('token')
+            return self.cognito_service.validate_token(token)
+        return ''
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
     @cherrypy.tools.cors()
     def change_password(self):
-        input_json = cherrypy.request.json
-        access_token = input_json.get('access_token')
-        old_password = input_json.get('old_password')
-        new_password = input_json.get('new_password')
+        if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            access_token = input_json.get('access_token')
+            old_password = input_json.get('old_password')
+            new_password = input_json.get('new_password')
 
-        result = self.cognito_service.change_password(access_token, old_password, new_password)
-        return result
+            result = self.cognito_service.change_password(access_token, old_password, new_password)
+            return result
+        return ''
 
 if __name__ == '__main__':
     config = {
