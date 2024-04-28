@@ -20,7 +20,8 @@ const NewsFeed = () => {
 
       const data = await response.json();
       if (data.status === 'success') {
-        setPosts(data.posts);
+        const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+        setPosts(sortedPosts);
       } else {
         console.error('Failed to fetch posts:', data.message);
       }

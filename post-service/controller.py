@@ -9,7 +9,7 @@ import time
 def cors_tool():
     if cherrypy.request.method == 'OPTIONS':
         cherrypy.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-        cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
         cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
         return True
     else:
@@ -27,8 +27,14 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def create_post(self, content=None, description=''):
-        if cherrypy.request.method == 'POST':
+        if cherrypy.request.method == 'OPTIONS':
+            cherrypy.response.headers['Access-Control-Allow-Methods'] = 'POST'
+            cherrypy.response.headers['Access-Control-Allow-Headers'] = 'content-type'
+            cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
+            return ''
+        elif cherrypy.request.method == 'POST':
             auth_header = cherrypy.request.headers.get('Authorization')
             if not auth_header:
                 return {'status': 'error', 'message': 'Authorization header missing'}
@@ -60,6 +66,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def get_post_by_id(self, post_id=None):
         if cherrypy.request.method == 'POST':
             if post_id is None:
@@ -76,6 +83,7 @@ class PostController:
         return ''
 
     @cherrypy.expose
+    @cherrypy.tools.cors()
     def download_post_content(self, post_id=None):
         if cherrypy.request.method == 'POST':
             if post_id is None:
