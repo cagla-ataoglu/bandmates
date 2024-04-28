@@ -48,7 +48,8 @@ class DynamoDBService:
             'display_name': display_name,
             'profile_type': 'musician',
             'location': location,
-            'looking_for_gigs': False
+            'looking_for_gigs': False,
+            'profile_picture': ''
         }
 
         self.profiles_table.put_item(Item=profile_item)
@@ -60,7 +61,8 @@ class DynamoDBService:
             'display_name': display_name,
             'profile_type': 'band',
             'location': location,
-            'looking_for_members': False
+            'looking_for_members': False,
+            'profile_picture': ''
         }
 
         self.profiles_table.put_item(Item=profile_item)
@@ -192,13 +194,14 @@ class DynamoDBService:
         self.s3.put_object(Bucket=self.bucket_name, Key=file_name, Body=file_content)
         url = f'http://localstack:4566/{self.bucket_name}/{file_name}'
 
+
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='SET #profile_picture = :profile_picture',
             ExpressionAttributeNames={'#profile_picture': 'profile_picture'},
             ExpressionAttributeValues={':profile_picture': url}
         )
-        print(f'Profile picture updated for {username}.')
+        print(f'service: Profile picture updated for {username}.')
 
 
 def sets_to_lists(data):

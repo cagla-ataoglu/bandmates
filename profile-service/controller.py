@@ -204,17 +204,15 @@ class ProfileService:
         
 
     @cherrypy.expose
-    @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def update_profile_picture(self, username):
-        data = cherrypy.request.json
-        picture = data.get('profile_picture')
-
+    def update_profile_picture(self, picture=None):
+        username = "thebeatles"
         if not username or not picture:
             raise cherrypy.HTTPError(400, 'Username and profile picture required.')
-        
+                        
         try:
             self.dynamodb_service.updateProfilePicture(username, picture)
+            return {'message:' f'Profile picture updated for {username}.'}
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error updating profile picture for {username}: {e}')
 
