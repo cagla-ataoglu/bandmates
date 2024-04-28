@@ -92,7 +92,7 @@ if __name__ == '__main__':
     config = {
         '/': {
             'tools.sessions.on': True,
-            'tools.cors.on': True  # Enable CORS
+            'tools.cors.on': True
         }
     }
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})

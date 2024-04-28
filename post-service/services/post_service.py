@@ -34,17 +34,18 @@ class PostService:
             self.s3.create_bucket(Bucket=self.bucket_name)
             print(f"Bucket {self.bucket_name} created.")
 
-    def create_post(self, post_id, content, username, timestamp):
+    def create_post(self, post_id, description, content, username, timestamp):
         file_name = content.filename
         file_content = content.file
         unique_file_name = f"{post_id}_{file_name}"
         self.s3.put_object(Bucket=self.bucket_name, Key=unique_file_name, Body=file_content)
-        url = f"http://localstack:4566/{self.bucket_name}/{unique_file_name}"
+        url = f"http://localhost:4566/{self.bucket_name}/{unique_file_name}"
 
         try:
             self.posts_table.put_item(
                 Item={
                     'PostId': post_id,
+                    'description': description,
                     'url': url,
                     'username': username,
                     'Timestamp': timestamp
@@ -53,6 +54,7 @@ class PostService:
             print('Post created successfully.')
             created_post = {
                 'PostId': post_id,
+                'description': description,
                 'url': url,
                 'username': username,
                 'Timestamp': timestamp
