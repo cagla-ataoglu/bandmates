@@ -169,6 +169,54 @@ class ProfileService:
             return {'message': f'Member {member} removed from band {username}.'}
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error removing member from {username}: {e}')
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def update_looking_for_gigs(self, username):
+        data = cherrypy.request.json
+        state = data.get('looking_for_gigs')
+
+        if not username or not state:
+            raise cherrypy.HTTPError(400, 'Username and looking for gigs state required.')
+        
+        try:
+            self.dynamodb_service.updateLookingForGigs(username, state)
+            return {'message': f'Looking for gigs set to {state} for musician {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error setting looking for gigs state for {username}: {e}')
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def update_looking_for_members(self, username):
+        data = cherrypy.request.json
+        state = data.get('looking_for_members')
+
+        if not username or not state:
+            raise cherrypy.HTTPError(400, 'Username and looking for members state required.')
+        
+        try:
+            self.dynamodb_service.updateLookingForMembers(username, state)
+            return {'message': f'Looking for members set to {state} for band {username}.'}
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error setting looking for members state for {username}: {e}')
+        
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def update_profile_picture(self, username):
+        data = cherrypy.request.json
+        picture = data.get('profile_picture')
+
+        if not username or not picture:
+            raise cherrypy.HTTPError(400, 'Username and profile picture required.')
+        
+        try:
+            self.dynamodb_service.updateProfilePicture(username, picture)
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error updating profile picture for {username}: {e}')
 
 
     

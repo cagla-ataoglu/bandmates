@@ -31,6 +31,15 @@ class DynamoDBService:
             else:
                 raise
         self.profiles_table = self.dynamodb.Table('Profiles')
+
+        self.s3 = boto3.client('s3', endpoint_url='http://localstack:4566')
+        self.bucket_name = 'profile-pictures'
+        try:
+            self.s3.head_bucket(Bucket=self.bucket_name)
+            print(f'Bucket {self.bucket_name} exists.')
+        except Exception as e:
+            self.s3.create_bucket(Bucket=self.bucket_name)
+            print(f'Bucket {self.bucket_name} created.')
         
 
     def createMusicianProfile(self, username, display_name, location):
@@ -38,7 +47,8 @@ class DynamoDBService:
             'username': username,
             'display_name': display_name,
             'profile_type': 'musician',
-            'location': location
+            'location': location,
+            'looking_for_gigs': False
         }
 
         self.profiles_table.put_item(Item=profile_item)
@@ -49,7 +59,8 @@ class DynamoDBService:
             'username': username,
             'display_name': display_name,
             'profile_type': 'band',
-            'location': location
+            'location': location,
+            'looking_for_members': False
         }
 
         self.profiles_table.put_item(Item=profile_item)
@@ -144,6 +155,51 @@ class DynamoDBService:
             }
         )
         print(f'Member {member} removed from band {username}.')
+
+    def updateLookingForGigs(self, username, state):
+        state_bool = state.lower() == 'true'
+
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET #looking_for_gigs = :state',
+            ConditionExpression='profile_type = :musician',
+            ExpressionAttributeNames={'#looking_for_gigs': 'looking_for_gigs'},
+            ExpressionAttributeValues={
+                ':state': state_bool,
+                ':musician': 'musician'
+            }
+        )
+        print(f'Looking for gigs set to {state_bool} for musician {username}.')
+
+    def updateLookingForMembers(self, username, state):
+        state_bool = state.lower() == 'true'
+
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET #looking_for_members = :state',
+            ConditionExpression='profile_type = :band',
+            ExpressionAttributeNames={'#looking_for_members': 'looking_for_members'},
+            ExpressionAttributeValues={
+                ':state': state_bool,
+                ':band': 'band'
+            }
+        )
+        print(f'Looking for members set to {state_bool} for band {username}.')
+
+    def updateProfilePicture(self, username, picture):
+        file_name = f'{username}_{picture.filename}'
+        file_content = picture.file
+        self.s3.put_object(Bucket=self.bucket_name, Key=file_name, Body=file_content)
+        url = f'http://localstack:4566/{self.bucket_name}/{file_name}'
+
+        response = self.profiles_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET #profile_picture = :profile_picture',
+            ExpressionAttributeNames={'#profile_picture': 'profile_picture'},
+            ExpressionAttributeValues={':profile_picture': url}
+        )
+        print(f'Profile picture updated for {username}.')
+
 
 def sets_to_lists(data):
     if isinstance(data, set):
