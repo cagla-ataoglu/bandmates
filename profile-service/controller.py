@@ -201,6 +201,22 @@ class ProfileService:
             return {'message': f'Looking for members set to {state} for band {username}.'}
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error setting looking for members state for {username}: {e}')
+        
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def update_profile_picture(self, username):
+        data = cherrypy.request.json
+        picture = data.get('profile_picture')
+
+        if not username or not picture:
+            raise cherrypy.HTTPError(400, 'Username and profile picture required.')
+        
+        try:
+            self.dynamodb_service.updateProfilePicture(username, picture)
+        except Exception as e:
+            raise cherrypy.HTTPError(500, f'Error updating profile picture for {username}: {e}')
 
 
     
