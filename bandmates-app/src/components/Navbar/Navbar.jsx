@@ -4,8 +4,10 @@ import Logo from '../Logo/Logo';
 import { IoChatboxEllipsesSharp, IoPersonSharp, IoSearch, IoSettingsSharp, IoNotifications } from "react-icons/io5";
 import { FaHome, FaGuitar } from "react-icons/fa";
 import profilePic from "../../assets/musician_pfp.jpg";
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate()
   return (
     <div className="navbar">
       <div className="left">
@@ -46,7 +48,7 @@ const Navbar = () => {
             <div className="tabText">Settings</div>
           </div>
         </div>
-        <div className="profilePicDiv">
+        <div className="profilePicDiv" onClick={() => navigate('/profile')}>
           <img src={profilePic} alt="" className="profilePic" />
         </div>
       </div>
