@@ -1,4 +1,25 @@
 .home-container {
-    display: flex;
-    margin: 20px;
-  }
+  color: #000000;
+  background: #f0f4f7;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.home-content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  flex: 1;
+}
+
+.home-vertical-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.home-vertical-content > *:not(:last-child) {
+  margin-bottom: 20px;
+}

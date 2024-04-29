@@ -7,7 +7,7 @@ const Profile = () => {
     <>
       <Navbar />
       <div className="flex">
-        <ProfileCard />
+        <ProfileCard username={"thebeatles"} />
       </div>
     </>
   )

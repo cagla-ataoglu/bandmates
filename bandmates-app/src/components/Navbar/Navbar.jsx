@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="left">
-        <Logo />
+        <Logo size={30}/>
         <div className="searchBar">
           <IoSearch className="searchIcon" />
           <input type="text" className="searchInput" />

@@ -1,8 +1,6 @@
-// NewsFeed.js
 import React, { useState, useEffect } from 'react';
-import UploadPost from '../UploadPost/UploadPost';
 import Post from '../Post/Post';
-import axios from 'axios';
+import './NewsFeed.css';
 
 const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
@@ -13,28 +11,35 @@ const NewsFeed = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:8090/display_posts');
-      if (response.data.status === 'success') {
-        setPosts(response.data.posts);
+      const response = await fetch('http://localhost:8090/display_posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+        setPosts(sortedPosts);
       } else {
-        console.error('Failed to fetch posts:', response.data.message);
+        console.error('Failed to fetch posts:', data.message);
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
 
-  const handlePostCreated = (newPost) => {
-    setPosts(prevPosts => [...prevPosts, newPost]);
-  };
-
   return (
-    <div className="newsfeed-container">
-      <UploadPost onPostCreated={handlePostCreated} />
-      {/* Render posts */}
-      {posts.map((post, index) => (
-        <Post key={index} post={post} />
-      ))}
+    <div className="newsfeed-card">
+      <ul className="newsfeed-list"> 
+        {posts.map((post, index) => (
+          <li key={post.PostId}>
+            <Post post={post} />
+            {index !== posts.length - 1 && <div className="separator"></div>}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
