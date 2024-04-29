@@ -1,6 +1,17 @@
 import cherrypy
 from services.dynamodb_service import DynamoDBService
 
+def cors_tool():
+    if cherrypy.request.method == 'OPTIONS':
+        cherrypy.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
+        return True
+    else:
+        cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
+
+cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
+
 class ProfileService:
 
     def __init__(self):
@@ -44,11 +55,16 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def get_profile(self, username):
-        profile = self.dynamodb_service.getProfile(username)
-        if profile:
-            return profile
-        else:
-            raise cherrypy.HTTPError(404, f'No profile found for {username}.')
+        if cherrypy.request.method == 'GET':
+            try:
+                profile = self.dynamodb_service.getProfile(username)
+                if profile:
+                    return profile
+                else:
+                    raise cherrypy.HTTPError(404, f'No profile found for {username}.')
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -173,6 +189,14 @@ class ProfileService:
 
     
 if __name__ == '__main__':
+    config = {
+        '/': {
+            'tools.sessions.on': True,
+            'tools.cors.on': True
+        }
+    }
+
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8081})
-    cherrypy.quickstart(ProfileService())
+
+    cherrypy.quickstart(ProfileService(), '/', config)
