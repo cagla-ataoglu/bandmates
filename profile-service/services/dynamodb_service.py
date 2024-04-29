@@ -192,7 +192,7 @@ class DynamoDBService:
         file_name = f'{username}_{picture.filename}'
         file_content = picture.file
         self.s3.put_object(Bucket=self.bucket_name, Key=file_name, Body=file_content)
-        url = f'http://localstack:4566/{self.bucket_name}/{file_name}'
+        url = f'http://localhost:4566/{self.bucket_name}/{file_name}'
 
 
         response = self.profiles_table.update_item(
