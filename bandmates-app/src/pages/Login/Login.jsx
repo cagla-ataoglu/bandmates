@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Login.css';
 import Logo from '../../components/Logo/Logo';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -25,13 +27,22 @@ const LoginPage = () => {
             if (response.ok) {
                 localStorage.setItem('access_token', data.tokens.access_token);
                 localStorage.setItem('refresh_token', data.tokens.refresh_token);
+                setShowPopup(true);
+                setPopupMessage('Login successful');
                 navigate('/');
             } else {
-                alert('Signin failed. ' + data.message);
+                setShowPopup(true);
+                setPopupMessage('Login failed. ' + data.message);
             }
         } catch (error) {
-            alert(`Login failed: ${error.message}`);
+            setShowPopup(true);
+            setPopupMessage(`Login failed: ${error.message}`);
         }
+    };
+
+    const closePopup = () => {
+        setShowPopup(false);
+        setPopupMessage('');
     };
 
     return (
@@ -63,6 +74,14 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
+            {showPopup && (
+                <div className="popup">
+                    <div className="popup-content">
+                        <span className="close" onClick={closePopup}>&times;</span>
+                        <p>{popupMessage}</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
