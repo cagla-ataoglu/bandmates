@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MdOutlineMoreVert } from 'react-icons/md';
+import likeIcon from '../../assets/like.png';
 
 const Post = ({ post }) => {
-  // Extract the updated fields from the post object
-  const { username, Timestamp, description, url } = post;
+  const { username, Timestamp, description, url, likes, comments } = post;
+
+  const [optionsVisible, setOptionsVisible] = useState(false);
 
   return (
     <div className="w-full rounded-md shadow-lg mt-[30px] mb-[30px] p-[20px]">
@@ -14,8 +16,14 @@ const Post = ({ post }) => {
             <span className="font-bold ml-[10px] mr-[10px]">{username}</span>
             <span className="text-sm">{new Date(Timestamp).toLocaleString()}</span> 
           </div>
-          <div>
-            <MdOutlineMoreVert className="text-xl cursor-pointer" />
+          <div className="relative">
+            <MdOutlineMoreVert className="text-xl cursor-pointer" onClick={() => setOptionsVisible(!optionsVisible)} />
+            {optionsVisible && (
+              <div className="absolute right-0 top-[10px] bg-white border rounded-md shadow-lg mt-2">
+                <button className="block w-full text-left px-4 py-2 hover:bg-gray-100" onClick={() => console.log("Edit clicked")}>Edit</button>
+                <button className="block w-full text-left px-4 py-2 hover:bg-gray-100" onClick={() => console.log("Delete clicked")}>Delete</button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -23,16 +31,12 @@ const Post = ({ post }) => {
         <p>{description}</p>
         {url && <img src={url} alt="Post media" className="mt-[20px] w-full object-contain" style={{ maxHeight: "500px" }} />}
       </div>
-      {/* Assuming no interactive like and comment features are currently supported */}
-      {/* <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[5px]">
+      <div className="flex items-center justify-between">
+        {/* <div className="flex items-center gap-[5px]">
           <img src={likeIcon} alt="Like Icon" className="w-[24px] h-[24px]" />
-          <span className="text-sm">{likes} likes</span>
-        </div>
-        <div>
-          <span className="cursor-pointer border-b-[1px] border-slate-300 text-sm">{comments} comments</span>
-        </div>
-      </div> */}
+          <span className="text-sm">{likes} Likes</span>
+        </div> */}
+      </div>
     </div>
   );
 };

@@ -78,3 +78,12 @@
 .upload-post-button:hover {
   background-color: #0053ad; /* green-700 */
 }
+
+.upload-post-input {
+  width: 95%;
+}
+
+.upload-post-input:focus {
+  outline: none;
+}
+
