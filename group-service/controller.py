@@ -6,9 +6,9 @@ import time
 class GroupController:
     def __init__(self):
         self.group_service = GroupService()
-
+    
     @cherrypy.expose
-    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_out() 
     def index(self):
         return {"message": "Welcome to the Group Service"}
 
@@ -19,9 +19,7 @@ class GroupController:
         try:
 
             group_id = str(uuid.uuid4())
-
             input_json = cherrypy.request.json
-            #group_id = input_json.get('group_id')
             group_name = input_json.get('group_name')
             description = input_json.get('description')
             user_id = input_json.get('user_id')
@@ -67,11 +65,90 @@ class GroupController:
         except Exception as e:
                 return {'status': 'error', 'message': str(e)}
 
-    #TODO: Add join group
-    #TODO: Add leave group
-    #TODO: Add get group members
-    #TODO: (Possibly) Add post service
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def join_group(self, user_id, group_id):
+        try:
+            self.group_service.add_user_to_group(user_id, group_id)
+            return {'status': 'success', 'message': 'Joined group successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def leave_group(self, user_id, group_id):
+        try:
+            self.group_service.remove_user_from_group(user_id, group_id)
+            return {'status': 'success', 'message': 'Left group successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_group_members(self, group_id):
+        try:
+            members = self.group_service.get_group_members(group_id)
+            return {'status': 'success', 'members': members}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def create_post(self, group_id, posted_by):
+        try:
+            input_json = cherrypy.request.json
+            content = input_json.get('content')
+
+            self.group_service.create_post(group_id, content, posted_by)
+            return {'status': 'success', 'message': 'Post created successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def edit_post(self, group_id, post_id):
+        try:
+            input_json = cherrypy.request.json
+            updated_content = input_json.get('content')
+
+            self.group_service.edit_post(group_id, post_id, updated_content)
+            return {'status': 'success', 'message': 'Post updated successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def delete_post(self, group_id, post_id):
+        try:
+            self.group_service.delete_post(group_id, post_id)
+            return {'status': 'success', 'message': 'Post deleted successfully.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_group_posts(self, group_id):
+        try:
+            # Retrieve all posts for the given group_id from the GroupService
+            posts = self.group_service.get_posts_in_group(group_id)
         
+            # Check if the list of posts is empty
+            if not posts:
+                return {'status': 'error', 'message': 'No posts found in this group.'}
+        
+            # Return the list of posts
+            return {'status': 'success', 'posts': posts}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+    
+
+
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8088})
