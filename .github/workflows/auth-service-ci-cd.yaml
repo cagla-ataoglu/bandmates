@@ -1,4 +1,4 @@
-name: Unified CI/CD Pipeline for Multiple Services
+name: Auth Service CI/CD Pipeline
 
 on:
   push:
@@ -10,16 +10,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        service: ['auth-service']
-        include:
-          - service: 'auth-service'
-            path: 'auth-service'
-            ecr_repo: 'auth-service'
-            eb_env: 'Auth-service-env'
-            eb_app: 'auth-service'
 
     steps:
     - name: Checkout code
@@ -38,11 +28,11 @@ jobs:
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        docker build ./${{ matrix.path }} -t ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
+        docker build ./auth-service -t ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
         docker push ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
 
     - name: Generate deployment package
-      run: zip deploy.zip Dockerrun.aws.json
+      run: zip deploy.zip ./Dockerrun.aws/auth-service/Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
@@ -50,8 +40,8 @@ jobs:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         region: us-east-1
-        application_name: ${{ matrix.eb_app }}
-        environment_name: ${{ matrix.eb_env }}
+        application_name: auth-service
+        environment_name: Auth-service-env
         version_label: ${{ github.sha }}
         deployment_package: deploy.zip
         use_existing_version_if_available: true
