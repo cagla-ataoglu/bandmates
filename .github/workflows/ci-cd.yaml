@@ -25,6 +25,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -33,25 +36,27 @@ jobs:
         aws-region: us-east-1
 
     - name: Login to Amazon ECR
-      id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
         TIMESTAMP=$(date +%Y%m%d%H%M%S)
         echo "VERSION_LABEL=$TIMESTAMP" >> $GITHUB_ENV
-        docker build -t ${{ steps.login-ecr.outputs.registry }}/auth-service:${TIMESTAMP} . 
-        docker push ${{ steps.login-ecr.outputs.registry }}/auth-service:${TIMESTAMP}
+        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:$TIMESTAMP ./${{ matrix.path }}
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:$TIMESTAMP
+
+    - name: Update Dockerrun.aws.json with new image tag
+      run: |
+        jq '.Image.Name |= "${{ steps.login-ecr.outputs.registry }}/auth-service:${{ env.VERSION_LABEL }}"' Dockerrun.aws.json > Dockerrun.tmp.json
+        mv Dockerrun.tmp.json Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v18
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: auth-service
-        environment_name: Auth-service-env
-        version_label: ${{ env.VERSION_LABEL }}
         region: us-east-1
-        file: Dockerrun.aws.json
-        wait_for_deployment: true
-        recovery_wait_time: 30
+        application_name: ${{ matrix.eb_app }}
+        environment_name: ${{ matrix.eb_env }}
+        version_label: ${{ env.VERSION_LABEL }}
+        deployment_package: ./Dockerrun.aws.json
