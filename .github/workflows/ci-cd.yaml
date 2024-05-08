@@ -38,16 +38,23 @@ jobs:
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }} ./${{ matrix.path }}
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        IMAGE_TAG=${{ steps.login-ecr.outputs.registry }}/auth-service:$TIMESTAMP
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        docker build -t $IMAGE_TAG ./${{ matrix.path }}
+        docker push $IMAGE_TAG
+
+    - name: Prepare Dockerrun.aws.json
+      run: |
+        jq --arg image "$IMAGE_TAG" '.Image.Name = $image' Dockerrun.aws.json > temp.json && mv temp.json Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v18
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: us-east-1 
+        region: us-east-1
         application_name: ${{ matrix.eb_app }}
         environment_name: ${{ matrix.eb_env }}
         version_label: ${{ github.sha }}
-        deployment_package: ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}
+        deployment_package: Dockerrun.aws.json
