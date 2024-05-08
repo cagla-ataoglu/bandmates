@@ -28,8 +28,8 @@ jobs:
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        docker build ./auth-service -t ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
-        docker push ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
+        docker build ./auth-service -t ${{ steps.login-ecr.outputs.registry }}/auth-service:${{ github.sha }} -t ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
+        docker push -a ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
 
     - name: Generate deployment package
       run: zip deploy.zip ./Dockerrun.aws/auth-service/Dockerrun.aws.json
