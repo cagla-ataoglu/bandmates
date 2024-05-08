@@ -40,23 +40,17 @@ jobs:
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        TIMESTAMP=$(date +%Y%m%d%H%M%S)
-        echo "VERSION_LABEL=$TIMESTAMP" >> $GITHUB_ENV
-        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:$TIMESTAMP ./${{ matrix.path }}
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:$TIMESTAMP
-
-    - name: Update Dockerrun.aws.json with new image tag
-      run: |
-        jq '.Image.Name |= "${{ steps.login-ecr.outputs.registry }}/auth-service:${{ env.VERSION_LABEL }}"' Dockerrun.aws.json > Dockerrun.tmp.json
-        mv Dockerrun.tmp.json Dockerrun.aws.json
+        echo "VERSION_LABEL=${{ github.sha }}" >> $GITHUB_ENV
+        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }} ./${{ matrix.path }}
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v18
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: us-east-1
+        region: us-east-1 
         application_name: ${{ matrix.eb_app }}
         environment_name: ${{ matrix.eb_env }}
-        version_label: ${{ env.VERSION_LABEL }}
+        version_label: ${{ github.sha }}
         deployment_package: ./Dockerrun.aws.json
