@@ -1,0 +1,17 @@
+{
+    "AWSEBDockerrunVersion": "2",
+    "containerDefinitions": [
+        {
+            "name": "auth-service",
+            "image": "381491972991.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest",
+            "essential": true,
+            "portMappings": [
+                {
+                    "ContainerPort": 8080,
+                    "HostPort": 8080
+                }
+            ]
+        }
+    ]
+}
+  
