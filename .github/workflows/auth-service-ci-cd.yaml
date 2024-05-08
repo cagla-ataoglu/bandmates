@@ -32,7 +32,7 @@ jobs:
         docker push -a ${{ steps.login-ecr.outputs.registry }}/auth-service
 
     - name: Generate deployment package
-      run: 
+      run: |
         cd auth-service
         zip deploy.zip Dockerrun.aws.json
 
