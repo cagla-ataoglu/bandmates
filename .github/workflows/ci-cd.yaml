@@ -46,7 +46,7 @@ jobs:
 
     - name: Prepare Dockerrun.aws.json
       run: |
-        jq --arg image "$IMAGE_TAG" '.Image.Name = $image' Dockerrun.aws.json > temp.json && mv temp.json Dockerrun.aws.json
+        jq --arg image "$IMAGE_TAG" '.Image.Name = $image' ./Dockerrun.aws.json > temp.json && mv temp.json ./Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v18
