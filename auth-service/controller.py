@@ -87,7 +87,7 @@ class AuthController:
             result = self.cognito_service.change_password(access_token, old_password, new_password)
             return result
         return ''
-# Test chan
+# Test cha
 if __name__ == '__main__':
     config = {
         '/': {
