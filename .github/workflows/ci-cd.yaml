@@ -1,0 +1,53 @@
+name: Unified CI/CD Pipeline for Multiple Services
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'auth-service/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service: ['auth-service']
+        include:
+          - service: 'auth-service'
+            path: 'auth-service'
+            ecr_repo: 'auth-service'
+            eb_env: 'Auth-service-env'
+            eb_app: 'auth-service'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push Docker image to Amazon ECR
+      run: |
+        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }} ./${{ matrix.path }}
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}
+
+    - name: Deploy Docker image to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v18
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region: us-east-1 
+        application_name: ${{ matrix.eb_app }}
+        environment_name: ${{ matrix.eb_env }}
+        version_label: ${{ github.sha }}
+        deployment_package: ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}

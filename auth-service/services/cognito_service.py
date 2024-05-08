@@ -7,7 +7,13 @@ import json
 
 class CognitoService:
     def __init__(self):
-        self.cognito = boto3.client('cognito-idp', endpoint_url='http://localstack:4566')
+        environment = os.getenv('ENV', 'development')  # Default to 'development' if not set
+
+        if environment == 'production':
+            self.cognito = boto3.client('cognito-idp')
+        else:
+            self.cognito = boto3.client('cognito-idp', endpoint_url='http://localstack:4566')
+
         self.jwks_cache = None
         self.jwks_last_updated = 0
         self.jwks_cache_duration = 3600  # 1 hour cache duration
