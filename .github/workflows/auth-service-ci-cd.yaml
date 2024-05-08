@@ -32,7 +32,9 @@ jobs:
         docker push -a ${{ steps.login-ecr.outputs.registry }}/auth-service
 
     - name: Generate deployment package
-      run: zip deploy.zip Dockerrun.aws.json
+      run: 
+        cd auth-service
+        zip deploy.zip Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
