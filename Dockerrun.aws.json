@@ -5,13 +5,14 @@
             "name": "auth-service",
             "image": "381491972991.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest",
             "essential": true,
+            "memory": 128,
             "portMappings": [
                 {
-                    "ContainerPort": 8080,
-                    "HostPort": 8080
+                    "hostPort": 8080,
+                    "containerPort": 8080
                 }
             ]
-        }
+          }
     ]
 }
   
