@@ -1,7 +1,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-        "Name": "381491972991.dkr.ecr.us-east-1.amazonaws.com/auth-service:VERSION_LABEL",
+        "Name": "381491972991.dkr.ecr.us-east-1.amazonaws.com/auth-service:$VERSION_LABEL",
         "Update": "true"
     },
     "Ports": [
