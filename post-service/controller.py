@@ -44,7 +44,7 @@ class PostController:
             token = auth_header.split(" ")[1]
 
             payload = {'token': token}
-            response = requests.post('http://auth-service:8080/validate', json=payload)
+            response = requests.post(self.auth_endpoint_url + '/validate', json=payload)
             response = response.json()
             if response['status'] != 'success':
                 return {'status': 'error', 'message': 'Token validation failed'}
@@ -109,7 +109,6 @@ class PostController:
     def display_posts(self):
         if cherrypy.request.method == 'POST':
             try:
-                # Fetch posts from the database
                 posts = self.post_service.get_all_posts()
                 return {'status': 'success', 'posts': posts}
             except Exception as e:
