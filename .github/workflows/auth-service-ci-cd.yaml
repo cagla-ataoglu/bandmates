@@ -34,7 +34,7 @@ jobs:
     - name: Generate deployment package
       run: |
         cd auth-service
-        zip deploy.zip Dockerrun.aws.json
+        zip ../deploy-auth.zip Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
@@ -45,5 +45,5 @@ jobs:
         application_name: auth-service
         environment_name: Auth-service-env
         version_label: ${{ github.sha }}
-        deployment_package: deploy.zip
+        deployment_package: ../deploy-auth.zip
         use_existing_version_if_available: true
