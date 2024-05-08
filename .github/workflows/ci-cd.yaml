@@ -38,17 +38,20 @@ jobs:
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }} ./${{ matrix.path }}
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        echo "VERSION_LABEL=$TIMESTAMP" >> $GITHUB_ENV
+        docker build -t ${{ steps.login-ecr.outputs.registry }}/auth-service:${TIMESTAMP} . 
+        docker push ${{ steps.login-ecr.outputs.registry }}/auth-service:${TIMESTAMP}
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v18
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: us-east-1 
-        application_name: ${{ matrix.eb_app }}
-        environment_name: ${{ matrix.eb_env }}
-        version_label: ${{ github.sha }}
-        deployment_package: ${{ steps.login-ecr.outputs.registry }}/${{ matrix.ecr_repo }}:${{ github.sha }}
-        file: './Dockerrun.aws.json'
+        application_name: auth-service
+        environment_name: Auth-service-env
+        version_label: ${{ env.VERSION_LABEL }}
+        region: us-east-1
+        file: Dockerrun.aws.json
+        wait_for_deployment: true
+        recovery_wait_time: 30
