@@ -7,16 +7,17 @@ import json
 
 class CognitoService:
     def __init__(self):
-        environment = os.getenv('ENV', 'development')  # Default to 'development' if not set
+        self.environment = os.getenv('ENV', 'development')
+        self.region = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
 
-        if environment == 'production':
+        if self.environment == 'production':
             self.cognito = boto3.client('cognito-idp')
         else:
             self.cognito = boto3.client('cognito-idp', endpoint_url='http://localstack:4566')
 
         self.jwks_cache = None
         self.jwks_last_updated = 0
-        self.jwks_cache_duration = 3600  # 1 hour cache duration
+        self.jwks_cache_duration = 3600
 
         self.pool_name = os.getenv('USER_POOL_NAME')
         self.pool_id = ''
@@ -42,6 +43,12 @@ class CognitoService:
             self.client_id = response['UserPoolClient']['ClientId']
             print("Client created.")
 
+        if self.environment == 'production':
+            self.jwks_url_base =f"https://cognito-idp.{self.region}.amazonaws.com/{self.pool_id}"
+        else:
+            self.jwks_url_base = f"http://localstack:4566/{self.pool_id}"
+        
+
     def signup_user(self, username, password, email):
         response = self.cognito.sign_up(
             ClientId=self.client_id,
@@ -53,7 +60,6 @@ class CognitoService:
             UserPoolId=self.pool_id,
             Username=username
         )
-        print('cognito done')
         return response
 
     def change_password(self, access_token, old_password, new_password):
@@ -82,7 +88,7 @@ class CognitoService:
     def get_jwks(self):
         current_time = time.time()
         if not self.jwks_cache or current_time - self.jwks_last_updated > self.jwks_cache_duration:
-            jwks_url = f"http://localstack:4566/{self.pool_id}/.well-known/jwks.json"
+            jwks_url = self.jwks_url_base + "/.well-known/jwks.json"
             self.jwks_cache = requests.get(jwks_url).json()
             self.jwks_last_updated = current_time
         return self.jwks_cache
