@@ -7,7 +7,7 @@ import uuid
 class PostService:
     def __init__(self):
         self.environment = os.getenv('ENV', 'development')
-        if environment == 'production':
+        if self.environment == 'production':
             self.dynamodb = boto3.resource('dynamodb')
             self.s3 = boto3.client('s3')
             self.url_base = "https://{bucket_name}.s3.amazonaws.com/{key}"
