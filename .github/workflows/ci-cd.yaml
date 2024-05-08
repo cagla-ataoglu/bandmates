@@ -33,16 +33,15 @@ jobs:
         aws-region: us-east-1
 
     - name: Login to Amazon ECR
-      id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        TIMESTAMP=$(date +%Y%m%d%H%M%S)
-        IMAGE_TAG=${{ steps.login-ecr.outputs.registry }}/auth-service:$TIMESTAMP
-        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-        docker build -t $IMAGE_TAG ./${{ matrix.path }}
-        docker push $IMAGE_TAG
+        docker build ./${{ matrix.path }} -t ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
+        docker push ${{ steps.login-ecr.outputs.registry }}/auth-service:latest
+
+    - name: Generate deployment package
+      run: zip deploy.zip Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
@@ -53,4 +52,4 @@ jobs:
         application_name: ${{ matrix.eb_app }}
         environment_name: ${{ matrix.eb_env }}
         version_label: ${{ github.sha }}
-        deployment_package: $IMAGE_TAG
+        deployment_package: deploy.zip
