@@ -57,4 +57,4 @@ jobs:
         application_name: ${{ matrix.eb_app }}
         environment_name: ${{ matrix.eb_env }}
         version_label: ${{ github.sha }}
-        deployment_package: Dockerrun.aws.json
+        deployment_package: ./Dockerrun.aws.json
