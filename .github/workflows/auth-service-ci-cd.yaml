@@ -45,5 +45,5 @@ jobs:
         application_name: auth-service
         environment_name: Auth-service-env
         version_label: ${{ github.sha }}
-        deployment_package: ../deploy-auth.zip
+        deployment_package: deploy-auth.zip
         use_existing_version_if_available: true
