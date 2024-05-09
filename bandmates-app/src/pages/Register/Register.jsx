@@ -36,8 +36,6 @@ const Register = () => {
         })
       });
 
-      const data = await signup_response.json();
-
       if (signup_response.ok) {
         const signin_response = await fetch('http://localhost:8080/signin', {
           method: 'POST',
