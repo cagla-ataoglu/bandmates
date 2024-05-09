@@ -106,6 +106,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def display_posts(self):
         if cherrypy.request.method == 'POST':
             try:
@@ -118,6 +119,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def clear_all_posts(self):
         if cherrypy.request.method == 'POST':
             try:
@@ -126,6 +128,21 @@ class PostController:
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
         return ''
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def delete_post(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                self.post_service.delete_post(post_id)
+                return {'status': 'success', 'message': 'Post deleted successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+
 
 if __name__ == '__main__':
     config = {

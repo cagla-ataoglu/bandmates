@@ -99,3 +99,21 @@ class PostService:
             return items
         except Exception as e:
             raise RuntimeError(f"Error retrieving posts: {e}")
+        
+    def delete_post(self, post_id):
+        try:
+            self.posts_table.delete_item(Key={'PostId': post_id})
+            print(f'Post with id {post_id} deleted successfully.')
+        except Exception as e:
+            raise RuntimeError(f'Error deleting post with post_id {post_id}: {e}')
+        
+    def edit_post_description(self, post_id, new_description):
+        try:
+            self.posts_table.update_item(
+            Key={'PostId': post_id},
+            UpdateExpression='SET #description = :new_description',
+            ExpressionAttributeNames={'#description': 'description'},
+            ExpressionAttributeValues={':new_descriptipn': new_description}
+        )
+        except Exception as e:
+            raise RuntimeError(f'Error e')
