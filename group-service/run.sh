@@ -2,4 +2,4 @@
 
 python controller.py
 
-echo "Post controller is ready"
+echo "Group controller is ready"

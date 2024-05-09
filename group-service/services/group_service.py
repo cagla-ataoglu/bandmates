@@ -5,7 +5,7 @@ import decimal
 
 class GroupService:
     def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
+        self.dynamodb = self._get_dynamodb_resource()
         self.table_name = 'Groups'
         self.users_groups_table_name = 'UsersGroups'
         self.group_posts_table_name = 'GroupPosts'
@@ -27,6 +27,9 @@ class GroupService:
         self.groups_table = self.dynamodb.Table(self.table_name)
         self.users_groups_table = self.dynamodb.Table(self.users_groups_table_name)
         self.group_posts_table = self.dynamodb.Table(self.group_posts_table_name)
+
+    def _get_dynamodb_resource(self):
+        return boto3.resource('dynamodb')
 
     def initialize_table(self, table_name, hash_key, sort_key=None, gsi=None):
         try:
