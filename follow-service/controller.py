@@ -24,24 +24,6 @@ class FollowController:
     def index(self):
         return {"message": "Welcome to the Follow Service"}
 
-    @cherrypy.expose
-    @cherrypy.tools.json_out()
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.cors()
-    def signup(self):
-        if cherrypy.request.method == 'POST':
-            try:
-                input_json = cherrypy.request.json
-                username = input_json.get('username')
-                password = input_json.get('password')
-                email = input_json.get('email')
-
-                self.cognito_service.signup_user(username, password, email)
-                return {'status': 'success', 'message': 'User registration successful.'}
-            except Exception as e:
-                return {'status': 'error', 'message': str(e)}
-        return ''
-
     
 if __name__ == '__main__':
     config = {
@@ -52,4 +34,4 @@ if __name__ == '__main__':
     }
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8083})
-    cherrypy.quickstart(AuthController(), '/', config)
+    cherrypy.quickstart(FollowController(), '/', config)
