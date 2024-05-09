@@ -48,6 +48,7 @@ class PostService:
         file_content = content.file
         unique_file_name = f"{post_id}_{file_name}"
         self.s3.put_object(Bucket=self.bucket_name, Key=unique_file_name, Body=file_content)
+
         url = self.url_base.format(bucket_name=self.bucket_name, key=unique_file_name)
 
         try:

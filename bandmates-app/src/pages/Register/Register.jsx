@@ -8,11 +8,18 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+
+      setPopupMessage('Passwords do not match! Please try again.');
+      setShowPopup(true);
+
       return;
     }
 
@@ -50,15 +57,24 @@ const Register = () => {
           localStorage.setItem('refresh_token', signin_data.tokens.refresh_token);
           navigate('/');
         } else {
-          alert('Signin failed.');
+
+          setPopupMessage('Signin failed.');
+          setShowPopup(true);
           navigate('/login');
         }
       } else {
-        alert('Signup failed.');
+        setPopupMessage('Signup failed.');
+        setShowPopup(true);
       }
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      setPopupMessage(`Error: ${error.message}`);
+      setShowPopup(true);
     }
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+    setPopupMessage('');
   };
 
   return (
@@ -103,6 +119,14 @@ const Register = () => {
           </div>
         </div>
       </div>
+      {showPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <span className="close" onClick={closePopup}>&times;</span>
+            <p>{popupMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

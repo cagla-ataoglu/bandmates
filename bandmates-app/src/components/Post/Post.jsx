@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MdOutlineMoreVert } from 'react-icons/md';
+import likeIcon from '../../assets/like.png';
 
 const Post = ({ post }) => {
   // Extract the updated fields from the post object
   const { username, Timestamp, description, url } = post;
+  const [optionsVisible, setOptionsVisible] = useState(false);
 
   return (
     <div className="w-full rounded-md shadow-lg mt-[30px] mb-[30px] p-[20px]">
@@ -14,8 +16,14 @@ const Post = ({ post }) => {
             <span className="font-bold ml-[10px] mr-[10px]">{username}</span>
             <span className="text-sm">{new Date(Timestamp).toLocaleString()}</span> 
           </div>
-          <div>
-            <MdOutlineMoreVert className="text-xl cursor-pointer" />
+          <div className="relative">
+            <MdOutlineMoreVert className="text-xl cursor-pointer" onClick={() => setOptionsVisible(!optionsVisible)} />
+            {optionsVisible && (
+              <div className="absolute right-0 top-[10px] bg-white border rounded-md shadow-lg mt-2">
+                <button className="block w-full text-left px-4 py-2 hover:bg-gray-100" onClick={() => console.log("Edit clicked")}>Edit</button>
+                <button className="block w-full text-left px-4 py-2 hover:bg-gray-100" onClick={() => console.log("Delete clicked")}>Delete</button>
+              </div>
+            )}
           </div>
         </div>
       </div>

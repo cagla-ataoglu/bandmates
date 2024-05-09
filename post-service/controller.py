@@ -109,6 +109,7 @@ class PostController:
     def display_posts(self):
         if cherrypy.request.method == 'POST':
             try:
+                # Fetch posts from the database
                 posts = self.post_service.get_all_posts()
                 return {'status': 'success', 'posts': posts}
             except Exception as e:
