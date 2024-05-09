@@ -142,6 +142,21 @@ class PostController:
                 return {'status': 'success', 'message': 'Post deleted successfully.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
+            
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def edit_post_description(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                new_description = data.get('description')
+                self.post_service.edit_post_description(post_id, new_description)
+                return {'status': 'success', 'message': 'Description edited successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
 
 
 if __name__ == '__main__':

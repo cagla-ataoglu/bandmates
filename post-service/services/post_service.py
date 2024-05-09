@@ -113,7 +113,8 @@ class PostService:
             Key={'PostId': post_id},
             UpdateExpression='SET #description = :new_description',
             ExpressionAttributeNames={'#description': 'description'},
-            ExpressionAttributeValues={':new_descriptipn': new_description}
+            ExpressionAttributeValues={':new_description': new_description}
         )
+            print(f'Description of post with id {post_id} updated successfully.')
         except Exception as e:
-            raise RuntimeError(f'Error e')
+            raise RuntimeError(f'Error editing description of post with post_id {post_id}: {e}')
