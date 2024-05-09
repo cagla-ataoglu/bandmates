@@ -89,6 +89,20 @@ services:
       - USER_POOL_NAME=${USER_POOL_NAME}
       - CLIENT_NAME=${CLIENT_NAME}
 
+  connection-service:
+    build: ./follow-service
+    depends_on:
+      - localstack
+    networks:
+      - bandmates-backend
+    ports:
+      - "8083:8083"
+    environment:
+      - LOCALSTACK_HOSTNAME=localstack
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+
 networks:
   bandmates-backend:
     driver: bridge
