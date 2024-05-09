@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 class FollowService:
     def __init__(self):
@@ -12,16 +13,16 @@ class FollowService:
         self.follow = 'Follow'
         self.follow_requests = 'Follow_requests'
 
-        self.follow_table = ensure_follow_table(self.follow)
-        self.follow_requests_table = ensure_follow_table(self.follow_requests)
+        self.follow_table = self.ensure_follow_table(self.follow)
+        self.follow_requests_table = self.ensure_follow_table(self.follow_requests)
 
     def ensure_follow_table(self, table_name):
         try:
             self.dynamodb.Table(table_name).load()
-            print(f'Table {self.table_name} already exists. Loading it.')
+            print(f'Table {table_name} already exists. Loading it.')
         except self.dynamodb.meta.client.exceptions.ResourceNotFoundException:
             table = self.dynamodb.create_table(
-                TableName=self.table_name,
+                TableName=table_name,
                 KeySchema=[
                     {
                         'AttributeName': 'follower',
@@ -47,9 +48,9 @@ class FollowService:
                     'WriteCapacityUnits': 5
                 }
             )
-            table.meta.client.get_waiter('table_exists').wait(TableName=self.table_name)
+            table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
             print('Connections table created.')
-        return self.dynamodb.Table(self.table_name)
+        return self.dynamodb.Table(table_name)
         
     def send_follow_request(self, follower, following):
         self.follow_requests_table.put_item(
