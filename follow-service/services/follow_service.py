@@ -53,17 +53,17 @@ class FollowService:
         return self.dynamodb.Table(table_name)
         
     def send_follow_request(self, follower, following):
-    try:
-        self.follow_requests_table.put_item(
-            Item={
-                'follower': follower,
-                'following': following
-            },
-            ConditionExpression="attribute_not_exists(follower) AND attribute_not_exists(following)"
-        )
-        print("Follow request sent successfully.")
-    except self.dynamodb.meta.client.exceptions.ConditionalCheckFailedException:
-        print("Follow request already exists.")
+        try:
+            self.follow_requests_table.put_item(
+                Item={
+                    'follower': follower,
+                    'following': following
+                },
+                ConditionExpression="attribute_not_exists(follower) AND attribute_not_exists(following)"
+            )
+            print("Follow request sent successfully.")
+        except self.dynamodb.meta.client.exceptions.ConditionalCheckFailedException:
+            print("Follow request already exists.")
 
     def get_follow_requests(self, username):
         requests = []
