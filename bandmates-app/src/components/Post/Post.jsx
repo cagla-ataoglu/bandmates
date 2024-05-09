@@ -3,8 +3,8 @@ import { MdOutlineMoreVert } from 'react-icons/md';
 import likeIcon from '../../assets/like.png';
 
 const Post = ({ post }) => {
-  const { username, Timestamp, description, url, likes, comments } = post;
-
+  // Extract the updated fields from the post object
+  const { username, Timestamp, description, url } = post;
   const [optionsVisible, setOptionsVisible] = useState(false);
 
   return (
@@ -31,12 +31,16 @@ const Post = ({ post }) => {
         <p>{description}</p>
         {url && <img src={url} alt="Post media" className="mt-[20px] w-full object-contain" style={{ maxHeight: "500px" }} />}
       </div>
-      <div className="flex items-center justify-between">
-        {/* <div className="flex items-center gap-[5px]">
+      {/* Assuming no interactive like and comment features are currently supported */}
+      {/* <div className="flex items-center justify-between">
+        <div className="flex items-center gap-[5px]">
           <img src={likeIcon} alt="Like Icon" className="w-[24px] h-[24px]" />
-          <span className="text-sm">{likes} Likes</span>
-        </div> */}
-      </div>
+          <span className="text-sm">{likes} likes</span>
+        </div>
+        <div>
+          <span className="cursor-pointer border-b-[1px] border-slate-300 text-sm">{comments} comments</span>
+        </div>
+      </div> */}
     </div>
   );
 };

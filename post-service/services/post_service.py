@@ -6,8 +6,18 @@ import uuid
 
 class PostService:
     def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
+        self.environment = os.getenv('ENV', 'development')
+        if self.environment == 'production':
+            self.dynamodb = boto3.resource('dynamodb')
+            self.s3 = boto3.client('s3')
+            self.url_base = "https://{bucket_name}.s3.amazonaws.com/{key}"
+        else:
+            self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
+            self.s3 = boto3.client('s3', endpoint_url='http://localstack:4566')
+            self.url_base = "http://localhost:4566/{bucket_name}/{key}"
+
         self.table_name = 'Posts'
+        self.bucket_name = 'bandmates-media-storage'
 
         try:
             self.dynamodb.Table(self.table_name).load()
@@ -25,8 +35,7 @@ class PostService:
             raise RuntimeError(f"Error initializing DynamoDB table: {e}")
 
         self.posts_table = self.dynamodb.Table(self.table_name)
-        self.s3 = boto3.client('s3', endpoint_url='http://localstack:4566')
-        self.bucket_name = 'bandmates-media-storage'
+
         try:
             self.s3.head_bucket(Bucket=self.bucket_name)
             print(f"Bucket {self.bucket_name} exists.")
@@ -39,7 +48,8 @@ class PostService:
         file_content = content.file
         unique_file_name = f"{post_id}_{file_name}"
         self.s3.put_object(Bucket=self.bucket_name, Key=unique_file_name, Body=file_content)
-        url = f"http://localhost:4566/{self.bucket_name}/{unique_file_name}"
+
+        url = self.url_base.format(bucket_name=self.bucket_name, key=unique_file_name)
 
         try:
             self.posts_table.put_item(
@@ -52,16 +62,13 @@ class PostService:
                 }
             )
             print('Post created successfully.')
-            created_post = {
+            return {
                 'PostId': post_id,
                 'description': description,
                 'url': url,
                 'username': username,
                 'Timestamp': timestamp
             }
-
-            return created_post
-
         except Exception as e:
             raise RuntimeError(f"Error creating post: {e}")
 

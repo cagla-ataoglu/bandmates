@@ -8,14 +8,18 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
+
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
+
       setPopupMessage('Passwords do not match! Please try again.');
       setShowPopup(true);
+
       return;
     }
 
@@ -53,6 +57,7 @@ const Register = () => {
           localStorage.setItem('refresh_token', signin_data.tokens.refresh_token);
           navigate('/');
         } else {
+
           setPopupMessage('Signin failed.');
           setShowPopup(true);
           navigate('/login');

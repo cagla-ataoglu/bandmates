@@ -19,6 +19,8 @@ cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
 
 class PostController:
     def __init__(self):
+        self.environment = os.getenv('ENV', 'development')
+        self.auth_endpoint_url = 'http://auth-service-env.eba-sawkmqsi.us-east-1.elasticbeanstalk.com' if self.environment == 'production' else 'http://auth-service:8080'
         self.post_service = PostService()
 
     @cherrypy.expose
@@ -42,7 +44,7 @@ class PostController:
             token = auth_header.split(" ")[1]
 
             payload = {'token': token}
-            response = requests.post('http://auth-service:8080/validate', json=payload)
+            response = requests.post(self.auth_endpoint_url + '/validate', json=payload)
             response = response.json()
             if response['status'] != 'success':
                 return {'status': 'error', 'message': 'Token validation failed'}

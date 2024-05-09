@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 import Logo from '../../components/Logo/Logo';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
     const [showPopup, setShowPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState('');
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ const LoginPage = () => {
             if (response.ok) {
                 localStorage.setItem('access_token', data.tokens.access_token);
                 localStorage.setItem('refresh_token', data.tokens.refresh_token);
+              
                 setShowPopup(true);
                 setPopupMessage('Login successful');
                 navigate('/');
