@@ -38,6 +38,20 @@ class FollowController:
             return {'status': 'success'}
         return ''
 
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def follow(self):
+        if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            follower = input_json.get('follower')
+            following = input_json.get('following')
+            self.follow_service.create_follow(follower, following)
+
+            return {'status': 'success'}
+        return ''
+
     
 if __name__ == '__main__':
     config = {
