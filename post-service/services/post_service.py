@@ -25,9 +25,32 @@ class PostService:
         except self.dynamodb.meta.client.exceptions.ResourceNotFoundException:
             table = self.dynamodb.create_table(
                 TableName=self.table_name,
-                KeySchema=[{'AttributeName': 'PostId', 'KeyType': 'HASH'}],
-                AttributeDefinitions=[{'AttributeName': 'PostId', 'AttributeType': 'S'}],
-                ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+                KeySchema=[
+                    {'AttributeName': 'PostId', 'KeyType': 'HASH'}
+                ],
+                AttributeDefinitions=[
+                    {'AttributeName': 'PostId', 'AttributeType': 'S'},
+                    {'AttributeName': 'username', 'AttributeType': 'S'}
+                ],
+                ProvisionedThroughput={
+                    'ReadCapacityUnits': 5, 
+                    'WriteCapacityUnits': 5
+                },
+                GlobalSecondaryIndexes=[
+                    {
+                        'IndexName': 'UsernameIndex',
+                        'KeySchema': [
+                            {'AttributeName': 'username', 'KeyType': 'HASH'}
+                        ],
+                        'Projection': {
+                            'ProjectionType': 'ALL'
+                        },
+                        'ProvisionedThroughput': {
+                            'ReadCapacityUnits': 5, 
+                            'WriteCapacityUnits': 5
+                        }
+                    }
+                ]
             )
             table.meta.client.get_waiter('table_exists').wait(TableName=self.table_name)
             print("Posts table created.")
@@ -92,6 +115,22 @@ class PostService:
         except Exception as e:
             raise RuntimeError(f"Error clearing posts: {e}")
 
+    def get_posts_by_usernames(self, usernames):
+        all_posts = []
+        for username in usernames:
+            try:
+                response = self.posts_table.query(
+                    IndexName='UsernameIndex',
+                    KeyConditionExpression=boto3.dynamodb.conditions.Key('username').eq(username)
+                )
+                posts = response.get('Items', [])
+                all_posts.extend(posts)
+            except Exception as e:
+                raise RuntimeError(f"Error retrieving posts for username {username}: {e}")
+        
+        all_posts_sorted = sorted(all_posts, key=lambda post: post['Timestamp'])
+        return all_posts_sorted
+
     def get_all_posts(self):
         try:
             response = self.posts_table.scan()
@@ -99,3 +138,22 @@ class PostService:
             return items
         except Exception as e:
             raise RuntimeError(f"Error retrieving posts: {e}")
+        
+    def delete_post(self, post_id):
+        try:
+            self.posts_table.delete_item(Key={'PostId': post_id})
+            print(f'Post with id {post_id} deleted successfully.')
+        except Exception as e:
+            raise RuntimeError(f'Error deleting post with post_id {post_id}: {e}')
+        
+    def edit_post_description(self, post_id, new_description):
+        try:
+            self.posts_table.update_item(
+            Key={'PostId': post_id},
+            UpdateExpression='SET #description = :new_description',
+            ExpressionAttributeNames={'#description': 'description'},
+            ExpressionAttributeValues={':new_description': new_description}
+        )
+            print(f'Description of post with id {post_id} updated successfully.')
+        except Exception as e:
+            raise RuntimeError(f'Error editing description of post with post_id {post_id}: {e}')

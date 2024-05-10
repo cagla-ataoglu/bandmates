@@ -106,6 +106,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def display_posts(self):
         if cherrypy.request.method == 'POST':
             try:
@@ -118,6 +119,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def clear_all_posts(self):
         if cherrypy.request.method == 'POST':
             try:
@@ -126,6 +128,51 @@ class PostController:
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
         return ''
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def delete_post(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                self.post_service.delete_post(post_id)
+                return {'status': 'success', 'message': 'Post deleted successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+            
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def edit_post_description(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                new_description = data.get('description')
+                self.post_service.edit_post_description(post_id, new_description)
+                return {'status': 'success', 'message': 'Description edited successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def get_posts_by_usernames(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                usernames = data.get('usernames')
+                posts = self.post_service.get_posts_by_usernames(usernames)
+                return {'status': 'success', 'posts': posts}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+
 
 if __name__ == '__main__':
     config = {

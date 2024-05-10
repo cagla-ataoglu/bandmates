@@ -66,17 +66,13 @@ class FollowService:
             print("Follow request already exists.")
 
     def get_follow_requests(self, username):
-        requests = []
-        last_evaluated_key = None
-        while True:
-            response = self.follow_requests_table.query(
-                KeyConditionExpression=boto3.dynamodb.conditions.Key('follower').eq(username),
-                ExclusiveStartKey=last_evaluated_key
-            )
-            requests.extend([item['following'] for item in response.get('Items', [])])
-            last_evaluated_key = response.get('LastEvaluatedKey')
-            if not last_evaluated_key:
-                break
+        response = self.follow_requests_table.query(
+            KeyConditionExpression="following = :username",
+            ExpressionAttributeValues={
+                ":username": username
+            }
+        )
+        requests = [item['follower'] for item in response['Items']]
         return requests
 
     def create_follow(self, follower, following):
@@ -88,16 +84,11 @@ class FollowService:
         )
 
     def get_followings(self, username):
-        followings = []
-        last_evaluated_key = None
-        while True:
-            response = self.follow_table.query(
-                KeyConditionExpression=boto3.dynamodb.conditions.Key('follower').eq(username),
-                ExclusiveStartKey=last_evaluated_key
-            )
-            followings.extend([item['following'] for item in response.get('Items', [])])
-            last_evaluated_key = response.get('LastEvaluatedKey')
-            if not last_evaluated_key:
-                break
+        response = self.follow_table.query(
+            KeyConditionExpression="follower = :username",
+            ExpressionAttributeValues={
+                ":username": username
+            }
+        )
+        followings = [item['following'] for item in response['Items']]
         return followings
-        

@@ -103,4 +103,35 @@
     border-radius: 50%;
     margin-left: 10px;
   }
+
+  .logout-button {
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: grey;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .searchResults {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  
+  .searchResultItem {
+    padding: 8px 16px;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .searchResultItem:hover {
+    background-color: #f0f0f0;
+  }
+  
   

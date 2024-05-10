@@ -28,6 +28,7 @@ const LoginPage = () => {
             if (response.ok) {
                 localStorage.setItem('access_token', data.tokens.access_token);
                 localStorage.setItem('refresh_token', data.tokens.refresh_token);
+                localStorage.setItem('username', username);
               
                 setShowPopup(true);
                 setPopupMessage('Login successful');
