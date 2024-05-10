@@ -166,11 +166,66 @@
 .save-button {
     background-color: #007bff;
     color: #fff;
+    padding: 5px 20px; 
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out; 
+  }
+  
+  .save-button:hover {
+    background-color: #0067cc; 
+  }
+
+.add-button {
+    background-color: #F06112;;
+    color: #fff;
     padding: 5px 10px;
     border: none;
     border-radius: 3px;
     cursor: pointer;
+    margin-left: 10px;
+    margin-bottom: 15px;
 }
 
+.add-button:hover {
+    background-color: #D94E0C; 
+}
 
+.genre-container {
+    display: flex; 
+    flex-direction: column; 
+  }
 
+.genre-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: #ebebeb;
+    border-radius: 5px;
+}
+
+.genre-input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; 
+}
+
+.genre-input-container .text-input {
+    margin-right: 10px;
+}
+
+.genre-item-container {
+    display: flex;
+    align-items: center;
+}
+
+.remove-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+}
