@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import profilePic from '../../assets/janedoe_pfp.jpg';
 import './ProfileCard.css';
 import { MdEditNote } from "react-icons/md";
-import { IoIosCloseCircleOutline } from "react-icons/io";
+import { IoIosCloseCircleOutline, IoMdClose } from "react-icons/io";
 
 const ProfileCard = ({ username }) => {
     const [profileData, setProfileData] = useState(null);
@@ -10,6 +10,10 @@ const ProfileCard = ({ username }) => {
     const [editedName, setEditedName] = useState('');
     const [editedLocation, setEditedLocation] = useState('');
     const [editProfilePopUp, setEditProfilePopUp] = useState(false);
+    const [newGenre, setNewGenre] = useState('');
+
+    const dummyGenre = ['Rock']; 
+    const [genres, setGenres] = useState(dummyGenre);
 
     const fetchProfileData = async () => {
         try {
@@ -131,6 +135,17 @@ const ProfileCard = ({ username }) => {
         setEditProfilePopUp(false);
     };
 
+    const handleAddGenre = () => {
+        if (newGenre.trim()) { 
+            setGenres([...genres, newGenre]); 
+            setNewGenre(''); 
+          }
+    };
+
+    const removeGenre = () => {
+
+    };
+
     return (
         <div className="custom-container">
             <div className='pc'>
@@ -174,7 +189,6 @@ const ProfileCard = ({ username }) => {
                             </button>
                         </div>
                         <hr className="divider" />
-                        
                         <div className="input-container">
                             <label htmlFor="name">Name:</label>
                             <input
@@ -194,6 +208,28 @@ const ProfileCard = ({ username }) => {
                                 onChange={handleChangeLocation}
                                 className="text-input"
                             />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="genre">Genre:</label>
+                            <div className="genre-container">
+                                <div className="genre-input-container">
+                                    <input
+                                        type="text"
+                                        id="genre"
+                                        value={newGenre}
+                                        onChange={(e) => setNewGenre(e.target.value)}
+                                        className="text-input"
+                                        placeholder="Enter a genre..."
+                                    />
+                                    <button onClick={handleAddGenre} className="add-button">Add</button>
+                                </div>
+                                <div className="genre-item-container">
+                                    <div key={0} className="genre-item">
+                                        <span>{dummyGenre}</span>
+                                        <button onClick={removeGenre} className="remove-button"><IoMdClose /></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="button-container">
                             <button onClick={handleSave} className="save-button">Save</button>
