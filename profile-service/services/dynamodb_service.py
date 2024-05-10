@@ -43,11 +43,9 @@ class DynamoDBService:
 
         self.bucket_name = 'bandmates-profile-pictures-bucket'
         try:
-            print('BEN BURADAYIM ilk')
             self.s3.head_bucket(Bucket=self.bucket_name)
             print(f'Bucket {self.bucket_name} exists.')
         except Exception as e:
-            print('BEN BURADAYIM exception')
             self.s3.create_bucket(Bucket=self.bucket_name)
             print(f'Bucket {self.bucket_name} created.')
         
