@@ -25,17 +25,22 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def create_musician_profile(self):
-        data = cherrypy.request.json
-        username = data.get('username')
-        if not username:
-            raise cherrypy.HTTPError(400, 'Username is required.')
-        
-        display_name = data.get('display_name')
-        location = data.get('location')
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                if not username:
+                    raise cherrypy.HTTPError(400, 'Username is required.')
+                
+                display_name = data.get('display_name')
+                location = data.get('location')
 
-        self.dynamodb_service.createMusicianProfile(username, display_name, location)
-        return {'message': f'Musician profile created for {username}.'}
+                self.dynamodb_service.createMusicianProfile(username, display_name, location)
+                return {'message': f'Musician profile created for {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
 
     @cherrypy.expose
     @cherrypy.tools.json_in()

@@ -27,9 +27,9 @@ const Navbar = () => {
       </div>
       <div className="right">
         <div className="tabIcons">
-          <div className="tabIcon">
+          <div className="tabIcon" onClick={() => navigate('/')}>
             <FaHome size={25} />
-            <div className="tabText">Home</div>
+            <div className="tabText" >Home</div>
           </div>
           <div className="tabIcon">
             <IoPersonSharp size={25} />
