@@ -76,7 +76,7 @@ const Navbar = () => {
     <div className="navbar">
       <div className="left">
         <Logo size={30}/>
-        <div className="searchBar">
+        <div className="searchBar" ref={searchRef}>
           <IoSearch className="searchIcon" />
           <input
             type="text"
