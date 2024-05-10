@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="right">
         <div className="tabIcons">
           <div className="tabIcon">
-            <FaHome size={25} />
+            <FaHome size={25} onClick={() => navigate('/')}/>
             <div className="tabText">Home</div>
           </div>
           <div className="tabIcon">
@@ -28,7 +28,7 @@ const Navbar = () => {
             <span className="badge">1</span>
             <div className="tabText">Contacts</div>
           </div>
-          <div className="tabIcon">
+          <div className="tabIcon" onClick={() => navigate('/gigs')}>
             <FaGuitar size={25} />
             <span className="badge">1</span>
             <div className="tabText">Gigs</div>

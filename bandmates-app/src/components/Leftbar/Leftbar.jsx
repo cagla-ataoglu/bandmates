@@ -2,7 +2,7 @@ import React from 'react';
 import { FaPhotoVideo, FaBookmark, FaCalendarAlt } from 'react-icons/fa';
 import { MdGroups } from 'react-icons/md';
 import profilePic from '../../assets/janedoe_pfp.jpg';
-import './Leftbar.css'; // Import the CSS file
+import './Leftbar.css';
 
 const Sidebar = () => {
     return (

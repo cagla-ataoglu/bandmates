@@ -1,27 +1,26 @@
-.custom-container{
+.mpc-container{
     width: 100%;
-    border-radius: 0.375rem;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    padding: 20px;
-
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.pc{
-    width: 90%;
-    margin: 20px;
-    border-radius: 4px;
+.mpc-pc{
+    width: 100%;
+    border-radius: 10px;
     padding-bottom: 20px;
     background: #ffffff;
+    transition: 0.3s;
+    flex-shrink: 0;
 }
 
 .gradiant{
     background-image: linear-gradient(#F06112, #F6C624);
     height: 125px;
-    border-radius: 4px 4px 0px 0px;
+    border-radius: 10px 10px 0px 0px;
 }
 
 .profile-down {
