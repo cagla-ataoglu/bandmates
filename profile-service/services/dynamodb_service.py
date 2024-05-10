@@ -19,27 +19,26 @@ class DynamoDBService:
         try:
             self.dynamodb.Table(self.table_name).load()
             print(f'Table {self.table_name} already exists. Loading it.')
+        except self.dynamodb.meta.client.exceptions.ResourceNotFoundException:
+            table = self.dynamodb.create_table(
+                TableName = self.table_name,
+                KeySchema = [{
+                    'AttributeName': 'username',
+                    'KeyType': 'HASH'
+                }],
+                AttributeDefinitions = [{
+                    'AttributeName': 'username',
+                    'AttributeType': 'S'
+                }],
+                ProvisionedThroughput = {
+                    'ReadCapacityUnits': 5,
+                    'WriteCapacityUnits': 5
+                }
+            )
+            table.meta.client.get_waiter('table_exists').wait(TableName=self.table_name)
+            print('Profiles table created.')
         except Exception as e:
-            if e.response['Error']['Code'] == 'ResourceNotFoundException':
-                table = self.dynamodb.create_table(
-                    TableName = self.table_name,
-                    KeySchema = [{
-                        'AttributeName': 'username',
-                        'KeyType': 'HASH'
-                    }],
-                    AttributeDefinitions = [{
-                        'AttributeName': 'username',
-                        'AttributeType': 'S'
-                    }],
-                    ProvisionedThroughput = {
-                        'ReadCapacityUnits': 5,
-                        'WriteCapacityUnits': 5
-                    }
-                )
-                table.meta.client.get_waiter('table_exists').wait(TableName=self.table_name)
-                print('Profiles table created.')
-            else:
-                raise
+            raise RuntimeError(f"Error initializing DynamoDB table: {e}")
         self.profiles_table = self.dynamodb.Table(self.table_name)
 
         self.bucket_name = 'profile-pictures'
