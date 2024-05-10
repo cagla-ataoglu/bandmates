@@ -53,7 +53,7 @@ class GroupService:
                     'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
                 }]
                 if 'sort_key' in gsi:
-                    gsi['KeySchema'].append({'AttributeName': gsi['sort_key'], 'KeyType': 'RANGE'})
+                    gsi_definitions[0]['KeySchema'].append({'AttributeName': gsi['sort_key'], 'KeyType': 'RANGE'})
                 attribute_definitions.append({'AttributeName': gsi['hash_key'], 'AttributeType': 'S'})  # Adjust type as necessary
                 if 'sort_key' in gsi:
                     attribute_definitions.append({'AttributeName': gsi['sort_key'], 'AttributeType': 'S'})  # Adjust type as necessary
@@ -69,6 +69,7 @@ class GroupService:
             print(f"Table '{table_name}' created.")
         except Exception as e:
             raise RuntimeError(f"Error initializing DynamoDB table '{table_name}': {e}")
+
 
 
 

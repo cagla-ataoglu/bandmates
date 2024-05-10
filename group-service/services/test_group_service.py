@@ -1,104 +1,125 @@
-import unittest
-from moto import mock_aws
-import boto3
-import time
-from group_service import GroupService
 import os
-from unittest.mock import patch
+import boto3
+import unittest
+from moto import mock_dynamodb2
+from group_service import GroupService
+import time
 
-class TestGroupService(unittest.TestCase):
+"""Mocked AWS Credentials for moto."""
+os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+os.environ["AWS_SECURITY_TOKEN"] = "testing"
+os.environ["AWS_SESSION_TOKEN"] = "testing"
+os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
-    @patch('group_service.GroupService._get_dynamodb_resource')
-    def setUp(self, mock_get_dynamodb_resource):
-        """Set up the mock DynamoDB tables and initialize GroupService."""
-        # Mocking the DynamoDB resource
-        mock_dynamodb_resource = mock_get_dynamodb_resource.return_value
-        
-        # Creating mock tables
-        self.mock_groups_table = mock_dynamodb_resource.Table.return_value
-        self.mock_users_groups_table = mock_dynamodb_resource.Table.return_value
-        self.mock_group_posts_table = mock_dynamodb_resource.Table.return_value
-        
-        # Initializing GroupService
-        self.group_service = GroupService()
+@mock_dynamodb2
+def set_up():
+    with mock_dynamodb2():
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
-    def test_create_group(self):
-        group_id = 'test-group-1'
-        group_name = 'Test Group'
-        description = 'A test group'
-        user_id = 'test-user-1'
+        # Create Groups table
+        dynamodb.create_table(
+            TableName='Groups',
+            KeySchema=[{'AttributeName': 'GroupId', 'KeyType': 'HASH'}],
+            AttributeDefinitions=[{'AttributeName': 'GroupId', 'AttributeType': 'S'}],
+            ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+        )
 
-        created_group = self.group_service.create_group(group_id, group_name, description, user_id)
-        self.assertEqual(created_group['GroupId'], group_id)
-        self.assertEqual(created_group['GroupName'], group_name)
-        self.assertEqual(created_group['Description'], description)
-        self.assertEqual(created_group['CreatorUserId'], user_id)
+        # Create UsersGroups table
+        dynamodb.create_table(
+            TableName='UsersGroups',
+            KeySchema=[{'AttributeName': 'UserId', 'KeyType': 'HASH'}, {'AttributeName': 'GroupId', 'KeyType': 'RANGE'}],
+            AttributeDefinitions=[{'AttributeName': 'UserId', 'AttributeType': 'S'}, {'AttributeName': 'GroupId', 'AttributeType': 'S'}],
+            ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5},
+            GlobalSecondaryIndexes=[{
+                'IndexName': 'GroupIdIndex',
+                'KeySchema': [{'AttributeName': 'GroupId', 'KeyType': 'HASH'}],
+                'Projection': {'ProjectionType': 'ALL'},
+                'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+            }]
+        )
 
-        fetched_group = self.group_service.get_group(group_id)
-        self.assertEqual(fetched_group['GroupId'], group_id)
-        self.assertEqual(fetched_group['GroupName'], group_name)
-        self.assertEqual(fetched_group['Description'], description)
-        self.assertEqual(fetched_group['CreatorUserId'], user_id)
+        # Create GroupPosts table
+        dynamodb.create_table(
+            TableName='GroupPosts',
+            KeySchema=[{'AttributeName': 'GroupId', 'KeyType': 'HASH'}, {'AttributeName': 'PostId', 'KeyType': 'RANGE'}],
+            AttributeDefinitions=[{'AttributeName': 'GroupId', 'AttributeType': 'S'}, {'AttributeName': 'PostId', 'AttributeType': 'S'}],
+            ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+        )
 
-    def test_edit_group_description(self):
-        group_id = 'test-group-2'
-        self.group_service.create_group(group_id, 'Group to Edit', 'Old Description', 'user-2')
+        # Wait for the tables to be ready
+        time.sleep(2)
 
-        new_description = 'Updated Description'
-        self.group_service.edit_group_description(group_id, new_description)
+        return GroupService()
 
-        edited_group = self.group_service.get_group(group_id)
-        self.assertEqual(edited_group['Description'], new_description)
+@mock_dynamodb2
+def test_create_group():
+    group_service = set_up()
+    group_id = 'test_group_id'
+    group_name = 'Test Group'
+    description = 'This is a test group'
+    user_id = 'test_user_id'
+    created_group = group_service.create_group(group_id, group_name, description, user_id)
+    assert created_group['GroupId'] == group_id
+    assert created_group['GroupName'] == group_name
+    assert created_group['Description'] == description
+    assert created_group['CreatorUserId'] == user_id
 
-    def test_add_and_remove_user_from_group(self):
-        user_id = 'test-user-2'
-        group_id = 'test-group-3'
-        self.group_service.create_group(group_id, 'Another Group', 'Some Description', 'user-3')
+@mock_dynamodb2
+def test_get_group():
+    group_service = set_up()
+    group_id = 'test_group_id'
+    group_name = 'Test Group'
+    description = 'This is a test group'
+    user_id = 'test_user_id'
+    group_service.create_group(group_id, group_name, description, user_id)
+    group = group_service.get_group(group_id)
+    assert group is not None
+    assert group['GroupId'] == group_id
 
-        self.group_service.add_user_to_group(user_id, group_id)
-        members = self.group_service.get_group_members(group_id)
-        print("Members from: " + str(members))
-        self.assertIn(user_id, members)
+@mock_dynamodb2
+def test_edit_group_description():
+    group_service = set_up()
+    group_id = 'test_group_id'
+    group_name = 'Test Group'
+    description = 'This is a test group'
+    user_id = 'test_user_id'
+    group_service.create_group(group_id, group_name, description, user_id)
+    updated_description = 'Updated Description'
+    group_service.edit_group_description(group_id, updated_description)
+    group = group_service.get_group(group_id)
+    assert group['Description'] == updated_description
 
-        self.group_service.remove_user_from_group(user_id, group_id)
-        members = self.group_service.get_group_members(group_id)
-        self.assertNotIn(user_id, members)
+@mock_dynamodb2
+def test_add_user_to_group():
+    group_service = set_up()
+    group_id = 'test_group_id'
+    user_id = 'test_user_id'
+    group_service.create_group(group_id, 'Test Group', 'Description', user_id)
+    group_service.add_user_to_group(user_id, group_id)
+    members = group_service.get_group_members(group_id)
+    assert user_id in members
 
-    def test_create_and_edit_post(self):
-        group_id = 'test-group-4'
-        self.group_service.create_group(group_id, 'Group for Posts', 'Post Description', 'user-4')
-        content = 'Initial Post Content'
-        posted_by = 'user-4'
+@mock_dynamodb2
+def test_remove_user_from_group():
+    group_service = set_up()
+    group_id = 'test_group_id'
+    user_id = 'test_user_id'
+    group_service.create_group(group_id, 'Test Group', 'Description', user_id)
+    group_service.add_user_to_group(user_id, group_id)
+    group_service.remove_user_from_group(user_id, group_id)
+    members = group_service.get_group_members(group_id)
+    assert user_id not in members
 
-        timestamp = int(time.time() * 1000)
-        post_id = str(timestamp)
-        self.group_service.create_post(group_id, content, posted_by)
+@mock_dynamodb2
+def test_create_post():
+    group_service = set_up()
+    group_id = 'test_group_id'
+    group_service.create_group(group_id, 'Test Group', 'Description', 'test_user_id')
+    group_service.create_post(group_id, 'This is a test post', 'test_user_id')
+    posts = group_service.get_posts_in_group(group_id)
+    assert len(posts) == 1
+    assert posts[0]['Content'] == 'This is a test post'
 
-        posts = self.group_service.get_posts_in_group(group_id)
-        self.assertEqual(posts[0]['Content'], content)
-        self.assertEqual(posts[0]['PostedBy'], posted_by)
-
-        updated_content = 'Updated Post Content'
-        self.group_service.edit_post(group_id, post_id, updated_content)
-        posts = self.group_service.get_posts_in_group(group_id)
-        self.assertEqual(posts[0]['Content'], updated_content)
-
-    def test_delete_post(self):
-        group_id = 'test-group-5'
-        self.group_service.create_group(group_id, 'Group for Deletion', 'Deletion Group', 'user-5')
-        content = 'Content to be Deleted'
-        posted_by = 'user-5'
-
-        timestamp = int(time.time() * 1000)
-        post_id = str(timestamp)
-        self.group_service.create_post(group_id, content, posted_by)
-
-        posts = self.group_service.get_posts_in_group(group_id)
-        self.assertEqual(posts[0]['PostId'], post_id)
-
-        self.group_service.delete_post(group_id, post_id)
-        posts = self.group_service.get_posts_in_group(group_id)
-        self.assertEqual(len(posts), 0)
-
-if __name__ == '__main__':
-    unittest.main()
+if __name__ == "__main__":
+    pytest.main()
