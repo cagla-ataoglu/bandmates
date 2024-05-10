@@ -33,6 +33,77 @@ const ProfileCard = ({ username }) => {
         }
     };
 
+    const editDisplayName = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/update_display_name', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    display_name: editedName
+                })
+            });
+            const data = await response.json()
+            if (response.ok) {
+                console.log('Display name updated.');
+                window.location.reload();
+            } else {
+                console.log('Failed to update display name:', data.message);
+            }
+        } catch (error) {
+            console.log('Error updating display name:', error)
+        }
+    }
+
+    const editLocation = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/update_location', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    location: editedLocation
+                })
+            });
+            const data = await response.json()
+            if (response.ok) {
+                console.log('Location updated.');
+                window.location.reload();
+            } else {
+                console.log('Failed to update location:', data.message);
+            }
+        } catch (error) {
+            console.log('Error updating location:', error)
+        }
+    }
+
+    const addGenre = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/add_genre', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username
+                })
+            });
+            const data = await response.json()
+            if (response.ok) {
+                console.log(`Genre added.`);
+                window.location.reload();
+            } else {
+                console.log('Failed to add genre:', data.message);
+            }
+        } catch (error) {
+            console.log('Error adding genre:', error)
+        }
+    }
+
     useEffect(() => {
         fetchProfileData();
     }, [username]);
@@ -55,6 +126,8 @@ const ProfileCard = ({ username }) => {
 
     const handleSave = () => {
         // D:
+        editDisplayName();
+        editLocation();       
         setEditProfilePopUp(false);
     };
 
