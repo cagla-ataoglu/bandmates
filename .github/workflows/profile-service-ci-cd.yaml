@@ -1,11 +1,11 @@
-name: CI/CD Pipeline for Follow Service
+name: CI/CD Pipeline for Profile Service
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'follow-service/**'
+      - 'profile-service/**'
 
 jobs:
   build-and-deploy:
@@ -28,13 +28,13 @@ jobs:
 
     - name: Build, tag, and push Docker image to Amazon ECR
       run: |
-        docker build ./follow-service -t ${{ steps.login-ecr.outputs.registry }}/follow-service:${{ github.sha }} -t ${{ steps.login-ecr.outputs.registry }}/follow-service:latest
-        docker push -a ${{ steps.login-ecr.outputs.registry }}/follow-service
+        docker build ./profile-service -t ${{ steps.login-ecr.outputs.registry }}/profile-service:${{ github.sha }} -t ${{ steps.login-ecr.outputs.registry }}/profile-service:latest
+        docker push -a ${{ steps.login-ecr.outputs.registry }}/profile-service
 
     - name: Generate deployment package
       run: |
-        cd follow-service
-        zip ../deploy-follow.zip Dockerrun.aws.json
+        cd profile-service
+        zip ../deploy-profile.zip Dockerrun.aws.json
 
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
@@ -42,8 +42,8 @@ jobs:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         region: us-east-1
-        application_name: follow-service
-        environment_name: Follow-service-env
+        application_name: profile-service
+        environment_name: Profile-service-env
         version_label: ${{ github.sha }}
-        deployment_package: deploy-follow.zip
+        deployment_package: deploy-profile.zip
         use_existing_version_if_available: true
