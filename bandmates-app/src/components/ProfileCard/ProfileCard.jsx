@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import profilePic from '../../assets/janedoe_pfp.jpg';
 import './ProfileCard.css';
+import { MdEditNote } from "react-icons/md";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const ProfileCard = ({ username }) => {
     const [profileData, setProfileData] = useState(null);
     const profile_img = profilePic;
+    const [editedName, setEditedName] = useState('');
+    const [editedLocation, setEditedLocation] = useState('');
+    const [editProfilePopUp, setEditProfilePopUp] = useState(false);
 
     const fetchProfileData = async () => {
         try {
@@ -12,10 +17,10 @@ const ProfileCard = ({ username }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
+                },
+                body: JSON.stringify({
                     username: username
-                  })
+                })
             });
             if (response.ok) {
                 const data = await response.json();
@@ -32,10 +37,36 @@ const ProfileCard = ({ username }) => {
         fetchProfileData();
     }, [username]);
 
+    const editProfile = () => {
+        setEditProfilePopUp(!editProfilePopUp);
+        if (profileData) {
+            setEditedName(profileData.display_name);
+            setEditedLocation(profileData.location);
+        }
+    };
+
+    const handleChangeName = (e) => {
+        setEditedName(e.target.value);
+    };
+
+    const handleChangeLocation = (e) => {
+        setEditedLocation(e.target.value);
+    };
+
+    const handleSave = () => {
+        // D:
+        setEditProfilePopUp(false);
+    };
+
     return (
         <div className="custom-container">
             <div className='pc'>
                 <div className="gradiant"></div>
+                <div className="edit-button">
+                    <button onClick={editProfile}><MdEditNote className="icon" />
+                        <span className="text">Edit Profile</span>
+                    </button>
+                </div>
                 <div className="profile-down">
                     {profileData && (
                         <>
@@ -52,7 +83,7 @@ const ProfileCard = ({ username }) => {
                                 <div className="profile-information">Instruments: {profileData.instruments.join(', ')}</div>
                             )}
                             {profileData.genres && (
-                            <div className="profile-information">{profileData.genres.join(', ')}</div>
+                                <div className="profile-information">{profileData.genres.join(', ')}</div>
                             )}
                             {/* <div className="profile-description">{profileData.profile_description}</div> */}
                             {/* <div className="profile-button"><a href={`mailto:${profileData.email}`}>Contact Me</a></div> */}
@@ -60,6 +91,43 @@ const ProfileCard = ({ username }) => {
                     )}
                 </div>
             </div>
+            {editProfilePopUp && (
+                <div className="edit-popup">
+                    <div className="edit-popup-inner">
+                        <div className="edit-popup-header">
+                            <h2>Edit Profile</h2>
+                            <button onClick={editProfile} className="close-button">
+                                <IoIosCloseCircleOutline />
+                            </button>
+                        </div>
+                        <hr className="divider" />
+                        
+                        <div className="input-container">
+                            <label htmlFor="name">Name:</label>
+                            <input
+                                type="text"
+                                id="name"
+                                value={editedName}
+                                onChange={handleChangeName}
+                                className="text-input"
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="location">Location:</label>
+                            <input
+                                type="text"
+                                id="location"
+                                value={editedLocation}
+                                onChange={handleChangeLocation}
+                                className="text-input"
+                            />
+                        </div>
+                        <div className="button-container">
+                            <button onClick={handleSave} className="save-button">Save</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
