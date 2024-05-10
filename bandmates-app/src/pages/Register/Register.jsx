@@ -53,6 +53,7 @@ const Register = () => {
         if (signin_response.ok) {
           localStorage.setItem('access_token', signin_data.tokens.access_token);
           localStorage.setItem('refresh_token', signin_data.tokens.refresh_token);
+          localStorage.setItem('username', username);
           navigate('/');
         } else {
 

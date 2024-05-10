@@ -158,6 +158,21 @@ class PostController:
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
 
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def get_posts_by_usernames(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                usernames = data.get('usernames')
+                posts = self.post_service.get_posts_by_usernames(usernames)
+                return {'status': 'success', 'posts': posts}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+
 
 if __name__ == '__main__':
     config = {

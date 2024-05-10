@@ -6,33 +6,63 @@ const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    const fetchFollowings = async () => {
+      try {
+        const response = await fetch('http://localhost:8083/get_followings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: localStorage.getItem('username')
+          })
+        });
 
-  const fetchPosts = async () => {
-    try {
-      const response = await fetch('http://localhost:8090/display_posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+        const data = await response.json();
+        if (data.status === 'success') {
+          return data.followings;
+        } else {
+          throw new Error('Failed to fetch followings: ' + data.message);
         }
-      });
-
-      const data = await response.json();
-      if (data.status === 'success') {
-        const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
-        setPosts(sortedPosts);
-      } else {
-        console.error('Failed to fetch posts:', data.message);
+      } catch (error) {
+        console.error('Error fetching followings:', error);
       }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  };
+    };
+
+    const fetchPosts = async (followings) => {
+      try {
+        const response = await fetch('http://localhost:8090/get_posts_by_usernames', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            usernames: followings
+          })
+        });
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+          setPosts(sortedPosts);
+        } else {
+          throw new Error('Failed to fetch posts: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchFollowings().then(followings => {
+      if (followings && followings.length > 0) {
+        fetchPosts(followings);
+      }
+    });
+  }, []);
 
   return (
     <div className="newsfeed-card">
-      <ul className="newsfeed-list"> 
+      <ul className="newsfeed-list">
         {posts.map((post, index) => (
           <li key={post.PostId}>
             <Post post={post} />
