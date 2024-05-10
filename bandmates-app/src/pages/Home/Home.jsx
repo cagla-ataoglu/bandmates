@@ -1,20 +1,39 @@
-import React from 'react'
-import Navbar from '../../components/Navbar/Navbar'
-import NewsFeed from '../../components/NewsFeed/NewsFeed'
-import Sidebar from '../../components/Sidebar/Sidebar'
-import Rightbar from '../../components/Rightbar/Rightbar'
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Navbar/Navbar';
+import UploadPost from '../../components/UploadPost/UploadPost';
+import NewsFeed from '../../components/NewsFeed/NewsFeed';
+import Leftbar from '../../components/Leftbar/Leftbar';
+import Rightbar from '../../components/Rightbar/Rightbar';
+import './Home.css';
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   return (
     <>
       <Navbar />
-      <div className="flex">
-        <Sidebar />
-        <NewsFeed />
-        <Rightbar />
+      <div className="home-container">
+        <Leftbar />
+        <div className="home-content-container">
+          <div className="home-vertical-content">
+            <UploadPost/>
+            <NewsFeed />
+          </div>
+        </div>
+        <div className="home-content-container">
+          <Rightbar />
+        </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Home
+export default Home;

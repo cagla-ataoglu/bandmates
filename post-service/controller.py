@@ -6,8 +6,21 @@ from services.post_service import PostService
 import uuid
 import time
 
+def cors_tool():
+    if cherrypy.request.method == 'OPTIONS':
+        cherrypy.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
+        return True
+    else:
+        cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
+
+cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
+
 class PostController:
     def __init__(self):
+        self.environment = os.getenv('ENV', 'development')
+        self.auth_endpoint_url = 'http://auth-service-env.eba-sawkmqsi.us-east-1.elasticbeanstalk.com' if self.environment == 'production' else 'http://auth-service:8080'
         self.post_service = PostService()
 
     @cherrypy.expose
@@ -16,7 +29,8 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def create_post(self, content=None):
+    @cherrypy.tools.cors()
+    def create_post(self, content=None, description=''):
         if cherrypy.request.method == 'OPTIONS':
             cherrypy.response.headers['Access-Control-Allow-Methods'] = 'POST'
             cherrypy.response.headers['Access-Control-Allow-Headers'] = 'content-type'
@@ -30,7 +44,7 @@ class PostController:
             token = auth_header.split(" ")[1]
 
             payload = {'token': token}
-            response = requests.post('http://auth-service:8080/validate', json=payload)
+            response = requests.post(self.auth_endpoint_url + '/validate', json=payload)
             response = response.json()
             if response['status'] != 'success':
                 return {'status': 'error', 'message': 'Token validation failed'}
@@ -45,65 +59,128 @@ class PostController:
                 post_id = str(uuid.uuid4())
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
 
-                created_post = self.post_service.create_post(post_id, content, username, timestamp)
+                created_post = self.post_service.create_post(post_id, description, content, username, timestamp)
 
                 return {'status': 'success', 'message': 'Post creation successful.', 'post': created_post}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
-        else:
-            raise cherrypy.HTTPError(405, "Method Not Allowed")
+        return ''
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def get_post_by_id(self, post_id=None):
-        if post_id is None:
-            return {'status': 'error', 'message': 'No post_id provided'}
+        if cherrypy.request.method == 'POST':
+            if post_id is None:
+                return {'status': 'error', 'message': 'No post_id provided'}
 
-        try:
-            post = self.post_service.get_post_by_id(post_id)
-            if post:
-                return {'status': 'success', 'post': post}
-            else:
-                return {'status': 'error', 'message': 'Post not found'}
-        except Exception as e:
-            return {'status': 'error', 'message': str(e)}
+            try:
+                post = self.post_service.get_post_by_id(post_id)
+                if post:
+                    return {'status': 'success', 'post': post}
+                else:
+                    return {'status': 'error', 'message': 'Post not found'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
 
     @cherrypy.expose
+    @cherrypy.tools.cors()
     def download_post_content(self, post_id=None):
-        if post_id is None:
-            return "No post_id provided"
+        if cherrypy.request.method == 'POST':
+            if post_id is None:
+                return "No post_id provided"
 
-        try:
-            post = self.post_service.get_post_by_id(post_id)
-            content_url = post['url']
-            content_response = requests.get(content_url)
+            try:
+                post = self.post_service.get_post_by_id(post_id)
+                content_url = post['url']
+                content_response = requests.get(content_url)
 
-            cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
-            cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{post_id}.png"'
+                cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
+                cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{post_id}.png"'
 
-            return content_response.content
-        except Exception as e:
-            return str(e)
+                return content_response.content
+            except Exception as e:
+                return str(e)
+        return ''
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def display_posts(self):
-        try:
-            # Fetch posts from the database
-            posts = self.post_service.get_all_posts()
-            return {'status': 'success', 'posts': posts}
-        except Exception as e:
-            return {'status': 'error', 'message': str(e)}
+        if cherrypy.request.method == 'POST':
+            try:
+                # Fetch posts from the database
+                posts = self.post_service.get_all_posts()
+                return {'status': 'success', 'posts': posts}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def clear_all_posts(self):
-        try:
-            self.post_service.clear_all_posts()
-            return {'status': 'success', 'message': 'All posts cleared successfully.'}
-        except Exception as e:
-            return {'status': 'error', 'message': str(e)}
+        if cherrypy.request.method == 'POST':
+            try:
+                self.post_service.clear_all_posts()
+                return {'status': 'success', 'message': 'All posts cleared successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def delete_post(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                self.post_service.delete_post(post_id)
+                return {'status': 'success', 'message': 'Post deleted successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+            
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def edit_post_description(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                new_description = data.get('description')
+                self.post_service.edit_post_description(post_id, new_description)
+                return {'status': 'success', 'message': 'Description edited successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def get_posts_by_usernames(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                usernames = data.get('usernames')
+                posts = self.post_service.get_posts_by_usernames(usernames)
+                return {'status': 'success', 'posts': posts}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+
 
 if __name__ == '__main__':
-    cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': 8090})
-    cherrypy.quickstart(PostController())
+    config = {
+        '/': {
+            'tools.sessions.on': True,
+            'tools.cors.on': True
+        }
+    }
+    cherrypy.config.update({'server.socket_host': '0.0.0.0'})
+    cherrypy.config.update({'server.socket_port': 8090})
+    cherrypy.quickstart(PostController(), '/', config)
