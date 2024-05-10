@@ -17,7 +17,7 @@ const Profile = () => {
     <>
       <Navbar />
       <div className="flex">
-        <ProfileCard username={"thebeatles"} />
+        <ProfileCard username={localStorage.getItem('username')} />
       </div>
     </>
   )

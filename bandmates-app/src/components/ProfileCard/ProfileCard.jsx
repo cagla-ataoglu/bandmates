@@ -8,10 +8,14 @@ const ProfileCard = ({ username }) => {
 
     const fetchProfileData = async () => {
         try {
-            const formData = new FormData();
-            formData.append('username', username)
-            const response = await fetch(`http://localhost:8081/get_profile/${username}`, {
-                method: 'GET',
+            const response = await fetch(`http://localhost:8081/get_profile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    username: username
+                  })
             });
             if (response.ok) {
                 const data = await response.json();
@@ -36,15 +40,16 @@ const ProfileCard = ({ username }) => {
                     {profileData && (
                         <>
                             <img src={profileData.profile_picture} alt="" />
-                            <div className="profile-title">{profileData.display_name}</div>
-                            <div className="profile-information">{profileData.profile_type}</div>
-                            <div className="profile-information">{profileData.location}</div>
-                            <div className="profile-information">{profileData.genres}</div>
+                            <div className="profile-information">{username}</div>
+                            <div className="profile-title">Name: {profileData.display_name}</div>
+                            <div className="profile-information">Profile type: {profileData.profile_type}</div>
+                            <div className="profile-information">Location: {profileData.location}</div>
+                            <div className="profile-information">Genres: {profileData.genres}</div>
                             {profileData.profile_type === "band" && profileData.members && (
                                 <div className="profile-information">Members: {profileData.members.join(', ')}</div>
                             )}
                             {profileData.profile_type === "musician" && profileData.instrument && (
-                                <div className="profile-information">{profileData.instruments.join(', ')}</div>
+                                <div className="profile-information">Instruments: {profileData.instruments.join(', ')}</div>
                             )}
                             {profileData.genres && (
                             <div className="profile-information">{profileData.genres.join(', ')}</div>
