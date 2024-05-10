@@ -203,6 +203,17 @@ class DynamoDBService:
         )
         print(f'service: Profile picture updated for {username}.')
 
+    def searchProfilesByUsernamePrefix(self, username_prefix, limit=7):
+        response = self.profiles_table.scan(
+            FilterExpression='begins_with(username, :prefix)',
+            ExpressionAttributeValues={':prefix': username_prefix},
+            Limit=limit
+        )
+        if 'Items' in response:
+            return [sets_to_lists(item) for item in response['Items']]
+        else:
+            return []
+
 
 def sets_to_lists(data):
     if isinstance(data, set):

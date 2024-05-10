@@ -41,6 +41,7 @@ class ProfileService:
                 return {'message': f'Musician profile created for {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
+        return ''
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -237,6 +238,21 @@ class ProfileService:
         except Exception as e:
             raise cherrypy.HTTPError(500, f'Error updating profile picture for {username}: {e}')
 
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def search_profiles_by_prefix(self):
+        if cherrypy.request.method == 'POST':
+            data = cherrypy.request.json
+            prefix = data.get('prefix')
+                            
+            try:
+                profiles = self.dynamodb_service.searchProfilesByUsernamePrefix(prefix)
+                return {'status': 'success', 'profiles': profiles}
+            except Exception as e:
+                raise cherrypy.HTTPError(500, f'Error: {e}')
+        return ''
 
     
 if __name__ == '__main__':
