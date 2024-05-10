@@ -1,21 +1,21 @@
-.custom-container{
+.custom-container {
     width: 100%;
     border-radius: 0.375rem;
     margin-top: 30px;
     margin-bottom: 30px;
     padding: 20px;
-
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.pc{
+.pc {
     width: 90%;
+    border: 1px solid #ccc;
     margin: 20px;
-    border-radius: 4px;
+    border-radius: 8px;
     padding-bottom: 20px;
-    background: #ffffff;
+    background-color: #f9f9f9;
 }
 
 .gradiant{
@@ -31,7 +31,7 @@
     justify-content: center;
 }
 
-.profile-down img{
+.profile-down img {
     height: 150px;
     width: 150px;
     border-radius: 100px;
@@ -40,22 +40,22 @@
     background-color: #ffffff;
 }
 
-.profile-title{
+.profile-title {
     font-size: 36px;
     font-weight: 600;
 }
 
-.profile-information{
+.profile-information {
     padding: 2px 2px;
     font-size: 16px;
 }
 
-.profile-description{
+.profile-description {
     padding: 15px 15px;
     font-size: 16px;
 }
 
-.profile-button{
+.profile-button {
     font-size: 16px;
     background: #006ad9;
     color: white;
@@ -67,4 +67,166 @@
 
 .profile-button:hover {
     background-color: #0053ad;
+}
+
+.edit-button {
+    text-align: right;
+    width: auto;
+    font-size: 16px;
+    background: #F06112;
+    color: white;
+    padding: 3px 6px;
+    border-radius: 5px;
+    margin: 5px;
+    margin-left: 90%;
+    display: flex;
+    flex-direction: row;
+}
+
+.edit-button .icon {
+    display: inline-flex;
+    margin-right: 5px;
+}
+
+.edit-button .text {
+    white-space: nowrap;
+}
+
+.edit-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-popup-inner {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.edit-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.edit-popup-header h2 {
+    font-weight: bold; 
+    font-size: 1.3em;
+}
+
+.close-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.close-button svg {
+    font-size: 24px;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: #ccc;
+  margin: 10px 0; 
+}
+
+.text-input {
+    margin-bottom: 15px; 
+    padding: 8px; 
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input-container {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.input-container label {
+    display: inline-block;
+    font-weight: bold;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.save-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 20px; 
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out; 
+  }
+  
+  .save-button:hover {
+    background-color: #0067cc; 
+  }
+
+.add-button {
+    background-color: #F06112;;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+
+.add-button:hover {
+    background-color: #D94E0C; 
+}
+
+.genre-container {
+    display: flex; 
+    flex-direction: column; 
+  }
+
+.genre-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: #ebebeb;
+    border-radius: 5px;
+}
+
+.genre-input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; 
+}
+
+.genre-input-container .text-input {
+    margin-right: 10px;
+}
+
+.genre-item-container {
+    display: flex;
+    align-items: center;
+}
+
+.remove-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
 }

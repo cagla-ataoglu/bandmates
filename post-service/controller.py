@@ -19,6 +19,8 @@ cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
 
 class PostController:
     def __init__(self):
+        self.environment = os.getenv('ENV', 'development')
+        self.auth_endpoint_url = 'http://auth-service-env.eba-sawkmqsi.us-east-1.elasticbeanstalk.com' if self.environment == 'production' else 'http://auth-service:8080'
         self.post_service = PostService()
 
     @cherrypy.expose
@@ -42,7 +44,7 @@ class PostController:
             token = auth_header.split(" ")[1]
 
             payload = {'token': token}
-            response = requests.post('http://auth-service:8080/validate', json=payload)
+            response = requests.post(self.auth_endpoint_url + '/validate', json=payload)
             response = response.json()
             if response['status'] != 'success':
                 return {'status': 'error', 'message': 'Token validation failed'}
@@ -104,6 +106,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def display_posts(self):
         if cherrypy.request.method == 'POST':
             try:
@@ -116,6 +119,7 @@ class PostController:
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def clear_all_posts(self):
         if cherrypy.request.method == 'POST':
             try:
@@ -124,6 +128,51 @@ class PostController:
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
         return ''
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def delete_post(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                self.post_service.delete_post(post_id)
+                return {'status': 'success', 'message': 'Post deleted successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+            
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def edit_post_description(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                post_id = data.get('post_id')
+                new_description = data.get('description')
+                self.post_service.edit_post_description(post_id, new_description)
+                return {'status': 'success', 'message': 'Description edited successfully.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def get_posts_by_usernames(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                usernames = data.get('usernames')
+                posts = self.post_service.get_posts_by_usernames(usernames)
+                return {'status': 'success', 'posts': posts}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+
 
 if __name__ == '__main__':
     config = {

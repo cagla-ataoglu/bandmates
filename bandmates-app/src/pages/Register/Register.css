@@ -1,80 +1,112 @@
-.register-container {
-    width: 100%;
-    height: 100vh;
-    background-color: #f0f4f7; /* blue-100 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .content {
-    width: 75%;
-    height: 70%;
-    display: flex;
-  }
-  
-  .left-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start; /* align items to the left*/
-  }
-  
-  .right-content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .form-container {
-    background-color: white;
-    height: 400px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .input-field {
-    height: 50px;
-    width: 100%;
-    border-radius: 5px;
-    border: 1px solid #e2e8f0; /* gray-200 */
-    font-size: 16px;
-    padding: 10px;
-    margin-bottom: 10px;
-    outline: none;
-  }
-  
-  .button {
-    height: 50px;
-    width: 100%;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    background: #006ad9;
-    color: white;
-    cursor: pointer;
-    margin-top: 10px;
-  }
+.register-container .right-content .form-container {
+  box-sizing: border-box;  
+  padding: 10px;           
+  width: 100%;         
+  height: auto;    
+}
 
-  .button:hover {
-    background-color: #0053ad;
-  }
-  
-  .button.secondary {
-    background-color: #48bb78; /* green-600 */
-  }
-  
-  .button.secondary:hover {
-    background-color: #38a169; /* green-700 */
-  }
-  
-  .register-text {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: left;
-    margin-bottom: 20px;
-    margin-top: 20px;
-  }
+.register-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #f0f4f7; /* blue-100 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  width: 75%;
+  height: 70%;
+  display: flex;
+}
+
+.left-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* align items to the left*/
+}
+
+.right-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container {
+  background-color: white;
+  height: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-field {
+  height: 50px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0; /* gray-200 */
+  font-size: 16px;
+  padding: 10px;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+.button {
+  height: 50px;
+  width: 100%;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #006ad9;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button:hover {
+  background-color: #0053ad;
+}
+
+.button.secondary {
+  background-color: #48bb78; /* green-600 */
+}
+
+.button.secondary:hover {
+  background-color: #38a169; /* green-700 */
+}
+
+.register-text {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+  width: 300px;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.register-container .form-container label {
+margin: 5px;
+}
+
+.register-container .form-container input {
+margin: 5px;
+}
