@@ -35,6 +35,31 @@ const Post = ({ post }) => {
     }
   };
 
+  const editPostDescription = async () => {
+    try {
+      const response = await fetch('http://localhost:8090/edit_post_description', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          post_id: post.PostId,
+          description: editPostDraft
+        })
+      });
+
+      const data = await response.json()
+      if (response.ok) {
+        console.log('Post description edited.');
+        window.location.reload();
+      } else {
+        console.log('Failed to edit post description. ' + data.message);
+      }
+    } catch (error) {
+      console.log(`Error editing post with id ${post.PostId}`);
+    }
+  };
+
   const openEditPopup = () => {
     setOptionsVisible(false);
     setEditVisible(true);
@@ -49,6 +74,7 @@ const Post = ({ post }) => {
   };
 
   const handleSaveEdit = () => {
+    editPostDescription();
     console.log('Updated post description:', editPostDraft);
     closeEditPopup();
   };
