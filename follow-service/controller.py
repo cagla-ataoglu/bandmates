@@ -56,6 +56,20 @@ class FollowController:
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     @cherrypy.tools.cors()
+    def unfollow(self):
+        if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            follower = input_json.get('follower')
+            following = input_json.get('following')
+            self.follow_service.delete_follow(follower, following)
+
+            return {'status': 'success'}
+        return ''
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def get_followings(self):
         if cherrypy.request.method == 'POST':
             input_json = cherrypy.request.json
@@ -63,6 +77,19 @@ class FollowController:
             followings = self.follow_service.get_followings(username)
 
             return {'status': 'success', 'followings': followings}
+        return ''
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def get_followers(self):
+        if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            username = input_json.get('username')
+            followers = self.follow_service.get_followers(username)
+
+            return {'status': 'success', 'followers': followers}
         return ''
 
     
