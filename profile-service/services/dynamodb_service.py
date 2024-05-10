@@ -43,6 +43,7 @@ class DynamoDBService:
 
         self.bucket_name = 'profile-pictures'
         try:
+            print('BEN BURADAYIM')
             self.s3.head_bucket(Bucket=self.bucket_name)
             print(f'Bucket {self.bucket_name} exists.')
         except Exception as e:
