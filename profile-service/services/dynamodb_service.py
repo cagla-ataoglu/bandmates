@@ -41,7 +41,7 @@ class DynamoDBService:
             raise RuntimeError(f"Error initializing DynamoDB table: {e}")
         self.profiles_table = self.dynamodb.Table(self.table_name)
 
-        self.bucket_name = 'profile-pictures-bucket'
+        self.bucket_name = 'bandmates-profile-pictures-bucket'
         try:
             print('BEN BURADAYIM ilk')
             self.s3.head_bucket(Bucket=self.bucket_name)
