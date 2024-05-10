@@ -7,7 +7,15 @@ import profilePic from "../../assets/musician_pfp.jpg";
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username');
+    navigate('/login');
+  };
+
   return (
     <div className="navbar">
       <div className="left">
@@ -51,6 +59,9 @@ const Navbar = () => {
         <div className="profilePicDiv" onClick={() => navigate('/profile')}>
           <img src={profilePic} alt="" className="profilePic" />
         </div>
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </div>
   );
