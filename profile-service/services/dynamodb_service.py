@@ -41,12 +41,13 @@ class DynamoDBService:
             raise RuntimeError(f"Error initializing DynamoDB table: {e}")
         self.profiles_table = self.dynamodb.Table(self.table_name)
 
-        self.bucket_name = 'profile-pictures'
+        self.bucket_name = 'profile-pictures-bucket'
         try:
-            print('BEN BURADAYIM')
+            print('BEN BURADAYIM ilk')
             self.s3.head_bucket(Bucket=self.bucket_name)
             print(f'Bucket {self.bucket_name} exists.')
         except Exception as e:
+            print('BEN BURADAYIM exception')
             self.s3.create_bucket(Bucket=self.bucket_name)
             print(f'Bucket {self.bucket_name} created.')
         
