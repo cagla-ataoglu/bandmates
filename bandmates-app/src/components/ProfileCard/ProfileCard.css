@@ -11,10 +11,11 @@
 
 .pc {
     width: 90%;
+    border: 1px solid #ccc;
     margin: 20px;
-    border-radius: 4px;
+    border-radius: 8px;
     padding-bottom: 20px;
-    background: #ffffff;
+    background-color: #f9f9f9;
 }
 
 .gradiant {

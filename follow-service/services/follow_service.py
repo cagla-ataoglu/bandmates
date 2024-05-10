@@ -43,6 +43,24 @@ class FollowService:
                         'AttributeType': 'S'
                     }
                 ],
+                GlobalSecondaryIndexes=[
+                    {
+                        'IndexName': 'FollowingIndex',
+                        'KeySchema': [
+                            {
+                                'AttributeName': 'following',
+                                'KeyType': 'HASH'
+                            },
+                        ],
+                        'Projection': {
+                            'ProjectionType': 'ALL'
+                        },
+                        'ProvisionedThroughput': {
+                            'ReadCapacityUnits': 5,
+                            'WriteCapacityUnits': 5
+                        }
+                    }
+                ],
                 ProvisionedThroughput={
                     'ReadCapacityUnits': 5,
                     'WriteCapacityUnits': 5
@@ -82,6 +100,15 @@ class FollowService:
                 'following': following
             }
         )
+    
+    def delete_follow(self, follower, following):
+        self.follow_table.delete_item(
+            Key={
+                'follower': follower,
+                'following': following
+            }
+        )
+
 
     def get_followings(self, username):
         response = self.follow_table.query(
@@ -92,3 +119,15 @@ class FollowService:
         )
         followings = [item['following'] for item in response['Items']]
         return followings
+
+    def get_followers(self, username):
+        response = self.follow_table.query(
+            IndexName='FollowingIndex',  # Specify the correct GSI name
+            KeyConditionExpression="following = :username",
+            ExpressionAttributeValues={
+                ":username": username
+            }
+        )
+        followers = [item['follower'] for item in response['Items']]
+        return followers
+

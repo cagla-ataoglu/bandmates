@@ -89,7 +89,7 @@ const Navbar = () => {
             <div className="searchResults">
               {results.map((profile, idx) => (
                 <div key={idx} className="searchResultItem" onClick={() => {
-                  navigate(`/profile/${profile.username}`);
+                  navigate(`/users/${profile.username}`);
                   setIsDropdownVisible(false);
                 }}>
                   {profile.display_name || profile.username}
