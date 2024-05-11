@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MdOutlineMoreVert } from 'react-icons/md';
 import "./Post.css"
 import {
@@ -13,10 +13,10 @@ const Post = ({ post }) => {
   const [editVisible, setEditVisible] = useState(false);
   const [editPostDraft, setPostDraft] = useState(description);
   const [contentUrl, setContentUrl] = useState('');
+  const searchRef = useRef(null);
 
   useEffect(() =>{
     async function fetchSignedUrl() {
-      
       var s3Client = null;
       if (import.meta.env.VITE_ENV == 'production') {
         s3Client = new S3Client({
@@ -108,6 +108,19 @@ const Post = ({ post }) => {
     closeEditPopup();
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setOptionsVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [searchRef]);
+
   return (
     <div className="post-container">
       <div className="p-[10px]">
@@ -117,15 +130,15 @@ const Post = ({ post }) => {
             <span className="post-username">{username}</span>
             <span className="post-timestamp">{new Date(Timestamp).toLocaleString()}</span> 
           </div>
-          <div className="relative">
+          {username == localStorage.getItem('username') && <div className="relative">
             <MdOutlineMoreVert className="text-xl cursor-pointer" onClick={() => setOptionsVisible(!optionsVisible)} />
             {optionsVisible && (
-              <div className="options-menu">
+              <div className="options-menu" ref={searchRef}>
                 <button className="option-button" onClick={openEditPopup}>Edit</button>
                 <button className="option-button" onClick={() => deletePost()}>Delete</button>
               </div>
             )}
-          </div>
+          </div>}
         </div>
       </div>
       <div className="post-content">

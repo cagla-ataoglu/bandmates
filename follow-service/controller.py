@@ -91,8 +91,7 @@ class FollowController:
 
             return {'status': 'success', 'followers': followers}
         return ''
-
-    
+  
 if __name__ == '__main__':
     config = {
         '/': {
