@@ -21,3 +21,9 @@ Yaren Durgun
    `npm install vite`
 3. Run the following command: \
    `npm run dev`
+
+
+### Unit tests
+Prerequisite: Make sure to have moto v2.0.0 installed, newer versions are not guaranteed to work.
+1. Go to microservice with a test file in the command line.
+2. Type `pytest -p no:warnings test_<name of service>_service.py`

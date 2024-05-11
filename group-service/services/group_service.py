@@ -2,10 +2,12 @@ import boto3
 from boto3.dynamodb.conditions import Key
 import time
 import decimal
+import os
 
 class GroupService:
     def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
+        self.environment = os.getenv('ENV', 'development')
+        self.dynamodb = self._get_dynamodb_resource()
         self.table_name = 'Groups'
         self.users_groups_table_name = 'UsersGroups'
         self.group_posts_table_name = 'GroupPosts'
@@ -27,6 +29,12 @@ class GroupService:
         self.groups_table = self.dynamodb.Table(self.table_name)
         self.users_groups_table = self.dynamodb.Table(self.users_groups_table_name)
         self.group_posts_table = self.dynamodb.Table(self.group_posts_table_name)
+
+    def _get_dynamodb_resource(self):
+        if self.environment == 'test':
+            return boto3.resource('dynamodb')
+        else:
+            return boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
 
     def initialize_table(self, table_name, hash_key, sort_key=None, gsi=None):
         try:
@@ -50,7 +58,7 @@ class GroupService:
                     'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
                 }]
                 if 'sort_key' in gsi:
-                    gsi['KeySchema'].append({'AttributeName': gsi['sort_key'], 'KeyType': 'RANGE'})
+                    gsi_definitions[0]['KeySchema'].append({'AttributeName': gsi['sort_key'], 'KeyType': 'RANGE'})
                 attribute_definitions.append({'AttributeName': gsi['hash_key'], 'AttributeType': 'S'})  # Adjust type as necessary
                 if 'sort_key' in gsi:
                     attribute_definitions.append({'AttributeName': gsi['sort_key'], 'AttributeType': 'S'})  # Adjust type as necessary
@@ -66,6 +74,7 @@ class GroupService:
             print(f"Table '{table_name}' created.")
         except Exception as e:
             raise RuntimeError(f"Error initializing DynamoDB table '{table_name}': {e}")
+
 
 
 
