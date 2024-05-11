@@ -4,6 +4,7 @@ import UploadPost from '../../components/UploadPost/UploadPost';
 import NewsFeed from '../../components/NewsFeed/NewsFeed';
 import Leftbar from '../../components/Leftbar/Leftbar';
 import Rightbar from '../../components/Rightbar/Rightbar';
+import MessageBox from '../../components/MessageBox/MessageBox';
 import './Home.css';
 
 const Home = () => {
@@ -21,6 +22,7 @@ const Home = () => {
         <div className="home-content-container">
           <Rightbar />
         </div>
+        <MessageBox />
       </div>
     </>
   );
