@@ -173,7 +173,7 @@ class PostController:
                 return {'status': 'error', 'message': str(e)}
         return ''
 
-# Minor change  
+
 if __name__ == '__main__':
     config = {
         '/': {
