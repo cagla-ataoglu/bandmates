@@ -17,6 +17,9 @@ const ProfileCard = ({ username }) => {
     const [newInstrument, setNewInstrument] = useState('');
     const [instruments, setInstruments] = useState([]);
 
+    const [newMember, setNewMember] = useState('');
+    const [members, setMembers] = useState([]);
+
     const fetchProfileData = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/get_profile`, {
@@ -31,11 +34,14 @@ const ProfileCard = ({ username }) => {
             if (response.ok) {
                 const data = await response.json();
                 setProfileData(data);
-                if (genres) {
+                if (data.genres) {
                     setGenres(data.genres);
                 }
-                if (instruments) {
+                if (data.instruments) {
                     setInstruments(data.instruments);
+                }
+                if (data.members) {
+                    setMembers(data.members)
                 }
             } else {
                 console.error(`Failed to fetch profile data for ${username}`);
@@ -191,6 +197,55 @@ const ProfileCard = ({ username }) => {
         }
     }
 
+    const addMember = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/add_member`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    member: newMember
+                })
+            });
+            const data = await response.json()
+            if (response.ok) {
+                console.log(`Member added.`);
+                setMembers([...members, newMember]);
+                setNewMember('');
+            } else {
+                console.log('Failed to add member:', data.message);
+            }
+        } catch (error) {
+            console.log('Error adding member:', error);
+        }
+    }
+
+    const removeMember = async (member) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/remove_member`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    member: member
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Member removed.')
+                setMembers(members.filter(mem => mem !== member));
+            } else {
+                console.log('Failed to remove member:', data.message);
+            }
+        } catch (error) {
+            console.log('Error removing member:', error)
+        }
+    }
+
     useEffect(() => {
         fetchProfileData();
     }, [username]);
@@ -231,7 +286,6 @@ const ProfileCard = ({ username }) => {
     };
 
     const handleAddInstrument = () => {
-        console.log('cagla add inst')
         if (newInstrument.trim()) {
             addInstrument(); 
             setNewInstrument(''); 
@@ -240,6 +294,17 @@ const ProfileCard = ({ username }) => {
 
     const handleRemoveInstrument = (genre) => {
         removeInstrument(genre);
+    };
+
+    const handleAddMember = () => {
+        if (newMember.trim()) {
+            addMember(); 
+            setNewMember(''); 
+        }
+    };
+
+    const handleRemoveMember = (member) => {
+        removeMember(member);
     };
 
     return (
@@ -348,6 +413,31 @@ const ProfileCard = ({ username }) => {
                                         <div key={index} className="genre-item">
                                         <span>{instrument}</span>
                                         <button onClick={() => handleRemoveInstrument(instrument)} className="remove-button"><IoMdClose /></button>
+                                    </div>
+                                    ))}
+                                    
+                                </div>
+                            </div>
+                        </div>}
+                        {profileData.profile_type == 'band' && <div className="input-container">
+                            <label htmlFor="member">Member:</label>
+                            <div className="genre-container">
+                                <div className="genre-input-container">
+                                    <input
+                                        type="text"
+                                        id="instrument"
+                                        value={newMember}
+                                        onChange={(e) => setNewMember(e.target.value)}
+                                        className="text-input"
+                                        placeholder="Enter a member name..."
+                                    />
+                                    <button onClick={handleAddMember} className="add-button">Add</button>
+                                </div>
+                                <div className="genre-item-container">
+                                    {members && members.map((member, index) => (
+                                        <div key={index} className="genre-item">
+                                        <span>{member}</span>
+                                        <button onClick={() => handleRemoveMember(member)} className="remove-button"><IoMdClose /></button>
                                     </div>
                                     ))}
                                     
