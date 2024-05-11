@@ -25,38 +25,54 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def create_musician_profile(self):
-        data = cherrypy.request.json
-        username = data.get('username')
-        if not username:
-            raise cherrypy.HTTPError(400, 'Username is required.')
-        
-        display_name = data.get('display_name')
-        location = data.get('location')
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                if not username:
+                    raise cherrypy.HTTPError(400, 'Username is required.')
+                
+                display_name = data.get('display_name')
+                location = data.get('location')
 
-        self.dynamodb_service.createMusicianProfile(username, display_name, location)
-        return {'message': f'Musician profile created for {username}.'}
+                self.dynamodb_service.createMusicianProfile(username, display_name, location)
+                return {'message': f'Musician profile created for {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def create_band_profile(self):
-        data = cherrypy.request.json
-        username = data.get('username')
-        if not username:
-            raise cherrypy.HTTPError(400, 'Username is required.')
-        
-        display_name = data.get('display_name')
-        location = data.get('location')
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                if not username:
+                    raise cherrypy.HTTPError(400, 'Username is required.')
+                
+                display_name = data.get('display_name')
+                location = data.get('location')
 
-        self.dynamodb_service.createBandProfile(username, display_name, location)
-        return {'message': f'Band profile created for {username}.'}
+                self.dynamodb_service.createBandProfile(username, display_name, location)
+                return {'message': f'Band profile created for {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
 
     @cherrypy.expose
+    @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def get_profile(self, username):
-        if cherrypy.request.method == 'GET':
+    @cherrypy.tools.cors()
+    def get_profile(self):
+        if cherrypy.request.method == 'POST':
             try:
+                data = cherrypy.request.json
+                username = data.get('username')
                 profile = self.dynamodb_service.getProfile(username)
                 if profile:
                     return profile
@@ -69,171 +85,214 @@ class ProfileService:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def update_display_name(self, username):
-        data = cherrypy.request.json
-        new_display_name = data.get('display_name')
-        if not username or not new_display_name:
-            raise cherrypy.HTTPError(400, 'Username and display name required.')
-        
-        try:
-            self.dynamodb_service.updateDisplayName(username, new_display_name)
-            return {'message': f'Display name updated for {username} to {new_display_name}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error updating display name for {username}: {e}')
-        
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def update_location(self, username):
-        data = cherrypy.request.json
-        new_location = data.get('location')
-        if not username or not new_location:
-            raise cherrypy.HTTPError(400, 'Username and location required.')
-        
-        try:
-            self.dynamodb_service.updateLocation(username, new_location)
-            return {'message': f'Location updated for {username} to {new_location}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error updating location for {username}: {e}')
+    @cherrypy.tools.cors()
+    def update_display_name(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                new_display_name = data.get('display_name')
+                if not username or not new_display_name:
+                    raise cherrypy.HTTPError(400, 'Username and display name required.')
+                self.dynamodb_service.updateDisplayName(username, new_display_name)
+                return {'message': f'Display name updated for {username} to {new_display_name}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def add_genre(self, username):
-        data = cherrypy.request.json
-        genre = data.get('genre')
-        if not username or not genre:
-            raise cherrypy.HTTPError(400, 'Username and genre required.')
-        
-        try:
-            self.dynamodb_service.addGenre(username, genre)
-            return {'message': f'Genre {genre} added to {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error adding genre to {username}: {e}')
-        
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def remove_genre(self, username):
-        data = cherrypy.request.json
-        genre = data.get('genre')
-        if not username or not genre:
-            raise cherrypy.HTTPError(400, 'Username and genre required.')
-        
-        try:
-            self.dynamodb_service.removeGenre(username, genre)
-            return {'message': f'Genre {genre} removed from {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error removing genre from {username}: {e}')
+    def update_location(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                new_location = data.get('location')
+                if not username or not new_location:
+                    raise cherrypy.HTTPError(400, 'Username and location required.')
+                self.dynamodb_service.updateLocation(username, new_location)
+                return {'message': f'Location updated for {username} to {new_location}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def add_instrument(self, username):
-        data = cherrypy.request.json
-        instrument = data.get('instrument')
-        if not username or not instrument:
-            raise cherrypy.HTTPError(400, 'Username and instrument required.')
-        
-        try:
-            self.dynamodb_service.addInstrument(username, instrument)
-            return {'message': f'Instrument {instrument} added to musician {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error adding instrument to {username}: {e}')
-        
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def remove_instrument(self, username):
-        data = cherrypy.request.json
-        instrument = data.get('instrument')
-        if not username or not instrument:
-            raise cherrypy.HTTPError(400, 'Username and instrument required.')
-        
-        try:
-            self.dynamodb_service.removeInstrument(username, instrument)
-            return {'message': f'Instrument {instrument} removed from musician {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error removing instrument from {username}: {e}')
+    @cherrypy.tools.cors()
+    def add_genre(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                genre = data.get('genre')
+                if not username or not genre:
+                    raise cherrypy.HTTPError(400, 'Username and genre required.')
+                self.dynamodb_service.addGenre(username, genre)
+                return {'message': f'Genre {genre} added to {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def add_member(self, username):
-        data = cherrypy.request.json
-        member = data.get('member')
-        if not username or not member:
-            raise cherrypy.HTTPError(400, 'Username and member required.')
-        
-        try:
-            self.dynamodb_service.addMember(username, member)
-            return {'message': f'Member {member} added to band {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error adding member to {username}: {e}')
-        
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def remove_member(self, username):
-        data = cherrypy.request.json
-        member = data.get('member')
-        if not username or not member:
-            raise cherrypy.HTTPError(400, 'Username and member required.')
-        
-        try:
-            self.dynamodb_service.removeMember(username, member)
-            return {'message': f'Member {member} removed from band {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error removing member from {username}: {e}')
+    @cherrypy.tools.cors()
+    def remove_genre(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                genre = data.get('genre')
+                if not username or not genre:
+                    raise cherrypy.HTTPError(400, 'Username and genre required.')
+                self.dynamodb_service.removeGenre(username, genre)
+                return {'message': f'Genre {genre} removed from {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def update_looking_for_gigs(self, username):
-        data = cherrypy.request.json
-        state = data.get('looking_for_gigs')
-
-        if not username or not state:
-            raise cherrypy.HTTPError(400, 'Username and looking for gigs state required.')
+    @cherrypy.tools.cors()
+    def add_instrument(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                instrument = data.get('instrument')
+                if not username or not instrument:
+                    raise cherrypy.HTTPError(400, 'Username and instrument required.')
+                self.dynamodb_service.addInstrument(username, instrument)
+                return {'message': f'Instrument {instrument} added to musician {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
-        try:
-            self.dynamodb_service.updateLookingForGigs(username, state)
-            return {'message': f'Looking for gigs set to {state} for musician {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error setting looking for gigs state for {username}: {e}')
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def remove_instrument(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                instrument = data.get('instrument')
+                if not username or not instrument:
+                    raise cherrypy.HTTPError(400, 'Username and instrument required.')
+                self.dynamodb_service.removeInstrument(username, instrument)
+                return {'message': f'Instrument {instrument} removed from musician {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def add_member(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                member = data.get('member')
+                if not username or not member:
+                    raise cherrypy.HTTPError(400, 'Username and member required.')
+                self.dynamodb_service.addMember(username, member)
+                return {'message': f'Member {member} added to band {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def remove_member(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                member = data.get('member')
+                if not username or not member:
+                    raise cherrypy.HTTPError(400, 'Username and member required.')
+                self.dynamodb_service.removeMember(username, member)
+                return {'message': f'Member {member} removed from band {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def update_looking_for_gigs(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                state = data.get('looking_for_gigs')
+                if not username or not state:
+                    raise cherrypy.HTTPError(400, 'Username and looking for gigs state required.')
+                self.dynamodb_service.updateLookingForGigs(username, state)
+                return {'message': f'Looking for gigs set to {state} for musician {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
     
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def update_looking_for_members(self, username):
-        data = cherrypy.request.json
-        state = data.get('looking_for_members')
-
-        if not username or not state:
-            raise cherrypy.HTTPError(400, 'Username and looking for members state required.')
-        
-        try:
-            self.dynamodb_service.updateLookingForMembers(username, state)
-            return {'message': f'Looking for members set to {state} for band {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error setting looking for members state for {username}: {e}')
+    @cherrypy.tools.cors()
+    def update_looking_for_members(self):
+        if cherrypy.request.method == 'POST':
+            try:
+                data = cherrypy.request.json
+                username = data.get('username')
+                state = data.get('looking_for_members')
+                if not username or not state:
+                    raise cherrypy.HTTPError(400, 'Username and looking for members state required.')
+                self.dynamodb_service.updateLookingForMembers(username, state)
+                return {'message': f'Looking for members set to {state} for band {username}.'}
+            except Exception as e:
+                return {'status': 'error', 'message': str(e)}
+        return ''
         
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
     def update_profile_picture(self, picture=None):
-        username = "thebeatles"
-        if not username or not picture:
-            raise cherrypy.HTTPError(400, 'Username and profile picture required.')
-                        
-        try:
-            self.dynamodb_service.updateProfilePicture(username, picture)
-            return {'message:' f'Profile picture updated for {username}.'}
-        except Exception as e:
-            raise cherrypy.HTTPError(500, f'Error updating profile picture for {username}: {e}')
+        if cherrypy.request.method == 'POST':
+            try:
+                username = "thebeatles"
+                if not username or not picture:
+                    raise cherrypy.HTTPError(400, 'Username and profile picture required.')
+                self.dynamodb_service.updateProfilePicture(username, picture)
+                return {'message': f'Profile picture updated for {username}.'}
+            except Exception as e:
+                 return {'status': 'error', 'message': str(e)}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.cors()
+    def search_profiles_by_prefix(self):
+        if cherrypy.request.method == 'POST':
+            data = cherrypy.request.json
+            prefix = data.get('prefix')
+                            
+            try:
+                profiles = self.dynamodb_service.searchProfilesByUsernamePrefix(prefix)
+                return {'status': 'success', 'profiles': profiles}
+            except Exception as e:
+                raise cherrypy.HTTPError(500, f'Error: {e}')
+        return ''
 
 
-    
 if __name__ == '__main__':
     config = {
         '/': {

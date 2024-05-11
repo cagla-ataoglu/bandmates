@@ -6,6 +6,7 @@ import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
 import SearchGigs from './pages/SearchGigs/SearchGigs';
 import PostGig from './pages/PostGig/PostGig';
+import OtherUser from './pages/OtherUser/OtherUser';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
       <Route path="/profile" element={<Profile />}/>
       <Route path="/gigs" element={<SearchGigs />}/>
       <Route path="/post_gig" element={<PostGig />}/>
+      <Route path="/users/:username" element={<OtherUser />}/>
     </Routes>
   )
 }

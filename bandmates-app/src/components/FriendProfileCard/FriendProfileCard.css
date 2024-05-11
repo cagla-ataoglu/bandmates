@@ -89,5 +89,5 @@
 }
 
 .connect-button .text {
-    white-space: nowrap; /* Prevent text from wrapping */
+    white-space: nowrap;
 }
