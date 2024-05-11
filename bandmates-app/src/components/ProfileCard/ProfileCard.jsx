@@ -10,9 +10,12 @@ const ProfileCard = ({ username }) => {
     const [editedName, setEditedName] = useState('');
     const [editedLocation, setEditedLocation] = useState('');
     const [editProfilePopUp, setEditProfilePopUp] = useState(false);
-    const [newGenre, setNewGenre] = useState('');
 
+    const [newGenre, setNewGenre] = useState('');
     const [genres, setGenres] = useState([]);
+
+    const [newInstrument, setNewInstrument] = useState('');
+    const [instruments, setInstruments] = useState([]);
 
     const fetchProfileData = async () => {
         try {
@@ -31,7 +34,9 @@ const ProfileCard = ({ username }) => {
                 if (genres) {
                     setGenres(data.genres);
                 }
-                console.log('genres:', data.genres);
+                if (instruments) {
+                    setInstruments(data.instruments);
+                }
             } else {
                 console.error(`Failed to fetch profile data for ${username}`);
             }
@@ -105,7 +110,6 @@ const ProfileCard = ({ username }) => {
                 console.log(`Genre added.`);
                 setGenres([...genres, newGenre]);
                 setNewGenre('');
-                // window.location.reload();
             } else {
                 console.log('Failed to add genre:', data.message);
             }
@@ -135,6 +139,55 @@ const ProfileCard = ({ username }) => {
             }
         } catch (error) {
             console.log('Error removing genre:', error)
+        }
+    }
+
+    const addInstrument = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/add_instrument`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    instrument: newInstrument
+                })
+            });
+            const data = await response.json()
+            if (response.ok) {
+                console.log(`Instrument added.`);
+                setInstruments([...instruments, newInstrument]);
+                setNewInstrument('');
+            } else {
+                console.log('Failed to add instrument:', data.message);
+            }
+        } catch (error) {
+            console.log('Error adding instrument:', error);
+        }
+    }
+
+    const removeInstrument = async (instrument) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/remove_instrument`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    instrument: instrument
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Instrument removed.')
+                setInstruments(instruments.filter(ins => ins !== instrument));
+            } else {
+                console.log('Failed to remove instrument:', data.message);
+            }
+        } catch (error) {
+            console.log('Error removing instrument:', error)
         }
     }
 
@@ -177,6 +230,18 @@ const ProfileCard = ({ username }) => {
         removeGenre(genre);
     };
 
+    const handleAddInstrument = () => {
+        console.log('cagla add inst')
+        if (newInstrument.trim()) {
+            addInstrument(); 
+            setNewInstrument(''); 
+        }
+    };
+
+    const handleRemoveInstrument = (genre) => {
+        removeInstrument(genre);
+    };
+
     return (
         <div className="custom-container">
             <div className='pc'>
@@ -200,7 +265,7 @@ const ProfileCard = ({ username }) => {
                             {profileData.profile_type === "band" && profileData.members && (
                                 <div className="profile-information">Members: {profileData.members.join(', ')}</div>
                             )}
-                            {profileData.profile_type === "musician" && profileData.instrument && (
+                            {profileData.profile_type === "musician" && profileData.instruments && (
                                 <div className="profile-information">Instruments: {profileData.instruments.join(', ')}</div>
                             )}
                             {/* <div className="profile-description">{profileData.profile_description}</div> */}
@@ -264,6 +329,31 @@ const ProfileCard = ({ username }) => {
                                 </div>
                             </div>
                         </div>
+                        {profileData.profile_type == 'musician' && <div className="input-container">
+                            <label htmlFor="instrument">Instrument:</label>
+                            <div className="genre-container">
+                                <div className="genre-input-container">
+                                    <input
+                                        type="text"
+                                        id="instrument"
+                                        value={newInstrument}
+                                        onChange={(e) => setNewInstrument(e.target.value)}
+                                        className="text-input"
+                                        placeholder="Enter an instrument..."
+                                    />
+                                    <button onClick={handleAddInstrument} className="add-button">Add</button>
+                                </div>
+                                <div className="genre-item-container">
+                                    {instruments && instruments.map((instrument, index) => (
+                                        <div key={index} className="genre-item">
+                                        <span>{instrument}</span>
+                                        <button onClick={() => handleRemoveInstrument(instrument)} className="remove-button"><IoMdClose /></button>
+                                    </div>
+                                    ))}
+                                    
+                                </div>
+                            </div>
+                        </div>}
                         <div className="button-container">
                             <button onClick={handleSave} className="save-button">Save</button>
                         </div>

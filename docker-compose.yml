@@ -112,7 +112,6 @@ services:
       - gig-service
       - profile-service
       - post-service
-      - group-service
     ports:
       - "5173:5173"
 
