@@ -23,7 +23,7 @@ const Navbar = () => {
 
   const fetchSearchResults = async (prefix) => {
     try {
-      const response = await fetch('http://localhost:8081/search_profiles_by_prefix', {
+      const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/search_profiles_by_prefix`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

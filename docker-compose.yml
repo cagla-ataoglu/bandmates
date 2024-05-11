@@ -103,6 +103,19 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
 
+  frontend:
+    build: ./bandmates-app
+    depends_on:
+      - localstack
+      - follow-service
+      - auth-service
+      - gig-service
+      - profile-service
+      - post-service
+      - group-service
+    ports:
+      - "5173:5173"
+
 networks:
   bandmates-backend:
     driver: bridge

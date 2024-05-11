@@ -28,7 +28,7 @@ const UploadPost = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8090/create_post', {
+            const response = await fetch(`${import.meta.env.VITE_POST_API}/create_post`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

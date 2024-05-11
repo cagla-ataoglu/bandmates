@@ -17,7 +17,7 @@ const ProfileCard = ({ username }) => {
 
     const fetchProfileData = async () => {
         try {
-            const response = await fetch(`http://localhost:8081/get_profile`, {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/get_profile`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ const ProfileCard = ({ username }) => {
 
     const editDisplayName = async () => {
         try {
-            const response = await fetch('http://localhost:8081/update_display_name', {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/update_display_name`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ const ProfileCard = ({ username }) => {
 
     const editLocation = async () => {
         try {
-            const response = await fetch('http://localhost:8081/update_location', {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/update_location`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ const ProfileCard = ({ username }) => {
 
     const addGenre = async () => {
         try {
-            const response = await fetch('http://localhost:8081/add_genre', {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/add_genre`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

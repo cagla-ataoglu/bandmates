@@ -12,7 +12,7 @@ const OtherUserCard = ({ username }) => {
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
-                const response = await fetch(`http://localhost:8081/get_profile`, {
+                const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/get_profile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -35,7 +35,7 @@ const OtherUserCard = ({ username }) => {
     
         const fetchPosts = async (username) => {
           try {
-            const response = await fetch('http://localhost:8090/get_posts_by_usernames', {
+            const response = await fetch(`${import.meta.env.VITE_POST_API}/get_posts_by_usernames`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ const OtherUserCard = ({ username }) => {
 
         const fetchFollowers = async () => {
             try {
-                const response = await fetch(`http://localhost:8083/get_followers`, {
+                const response = await fetch(`${import.meta.env.VITE_FOLLOW_API}/get_followers`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ const OtherUserCard = ({ username }) => {
         
         const fetchFollowings = async () => {
             try {
-                const response = await fetch(`http://localhost:8083/get_followings`, {
+                const response = await fetch(`${import.meta.env.VITE_FOLLOW_API}/get_followings`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -110,7 +110,7 @@ const OtherUserCard = ({ username }) => {
     const handleFollow = async () => {
         const endpoint = isFollowing ? 'unfollow' : 'follow';
         try {
-            const response = await fetch(`http://localhost:8083/${endpoint}`, {
+            const response = await fetch(`${import.meta.env.VITE_FOLLOW_API}/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
