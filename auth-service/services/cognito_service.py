@@ -12,6 +12,8 @@ class CognitoService:
 
         if self.environment == 'production':
             self.cognito = boto3.client('cognito-idp')
+        elif self.environment == 'test':
+            self.cognito = boto3.client('cognito-idp')
         else:
             self.cognito = boto3.client('cognito-idp', endpoint_url='http://localstack:4566')
 
