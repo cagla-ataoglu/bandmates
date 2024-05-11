@@ -3,7 +3,7 @@ import json
 
 class DynamoDBService:
     def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
+        self.dynamodb = boto3.resource('dynamodb')
         self.table_name = 'Profiles'
 
         try:
