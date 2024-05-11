@@ -1,5 +1,5 @@
 import cherrypy
-from services.dynamodb_service import DynamoDBService
+from services.profile_service import DynamoDBService
 
 def cors_tool():
     if cherrypy.request.method == 'OPTIONS':
@@ -15,7 +15,7 @@ cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
 class ProfileService:
 
     def __init__(self):
-        self.dynamodb_service = DynamoDBService()
+        self.profile_service = DynamoDBService()
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -37,7 +37,7 @@ class ProfileService:
                 display_name = data.get('display_name')
                 location = data.get('location')
 
-                self.dynamodb_service.createMusicianProfile(username, display_name, location)
+                self.profile_service.createMusicianProfile(username, display_name, location)
                 return {'message': f'Musician profile created for {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -58,7 +58,7 @@ class ProfileService:
                 display_name = data.get('display_name')
                 location = data.get('location')
 
-                self.dynamodb_service.createBandProfile(username, display_name, location)
+                self.profile_service.createBandProfile(username, display_name, location)
                 return {'message': f'Band profile created for {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -73,7 +73,7 @@ class ProfileService:
             try:
                 data = cherrypy.request.json
                 username = data.get('username')
-                profile = self.dynamodb_service.getProfile(username)
+                profile = self.profile_service.getProfile(username)
                 if profile:
                     return profile
                 else:
@@ -94,7 +94,7 @@ class ProfileService:
                 new_display_name = data.get('display_name')
                 if not username or not new_display_name:
                     raise cherrypy.HTTPError(400, 'Username and display name required.')
-                self.dynamodb_service.updateDisplayName(username, new_display_name)
+                self.profile_service.updateDisplayName(username, new_display_name)
                 return {'message': f'Display name updated for {username} to {new_display_name}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -111,7 +111,7 @@ class ProfileService:
                 new_location = data.get('location')
                 if not username or not new_location:
                     raise cherrypy.HTTPError(400, 'Username and location required.')
-                self.dynamodb_service.updateLocation(username, new_location)
+                self.profile_service.updateLocation(username, new_location)
                 return {'message': f'Location updated for {username} to {new_location}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -129,7 +129,7 @@ class ProfileService:
                 genre = data.get('genre')
                 if not username or not genre:
                     raise cherrypy.HTTPError(400, 'Username and genre required.')
-                self.dynamodb_service.addGenre(username, genre)
+                self.profile_service.addGenre(username, genre)
                 return {'message': f'Genre {genre} added to {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -147,7 +147,7 @@ class ProfileService:
                 genre = data.get('genre')
                 if not username or not genre:
                     raise cherrypy.HTTPError(400, 'Username and genre required.')
-                self.dynamodb_service.removeGenre(username, genre)
+                self.profile_service.removeGenre(username, genre)
                 return {'message': f'Genre {genre} removed from {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -165,7 +165,7 @@ class ProfileService:
                 instrument = data.get('instrument')
                 if not username or not instrument:
                     raise cherrypy.HTTPError(400, 'Username and instrument required.')
-                self.dynamodb_service.addInstrument(username, instrument)
+                self.profile_service.addInstrument(username, instrument)
                 return {'message': f'Instrument {instrument} added to musician {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -183,7 +183,7 @@ class ProfileService:
                 instrument = data.get('instrument')
                 if not username or not instrument:
                     raise cherrypy.HTTPError(400, 'Username and instrument required.')
-                self.dynamodb_service.removeInstrument(username, instrument)
+                self.profile_service.removeInstrument(username, instrument)
                 return {'message': f'Instrument {instrument} removed from musician {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -201,7 +201,7 @@ class ProfileService:
                 member = data.get('member')
                 if not username or not member:
                     raise cherrypy.HTTPError(400, 'Username and member required.')
-                self.dynamodb_service.addMember(username, member)
+                self.profile_service.addMember(username, member)
                 return {'message': f'Member {member} added to band {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -219,7 +219,7 @@ class ProfileService:
                 member = data.get('member')
                 if not username or not member:
                     raise cherrypy.HTTPError(400, 'Username and member required.')
-                self.dynamodb_service.removeMember(username, member)
+                self.profile_service.removeMember(username, member)
                 return {'message': f'Member {member} removed from band {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -237,7 +237,7 @@ class ProfileService:
                 state = data.get('looking_for_gigs')
                 if not username or not state:
                     raise cherrypy.HTTPError(400, 'Username and looking for gigs state required.')
-                self.dynamodb_service.updateLookingForGigs(username, state)
+                self.profile_service.updateLookingForGigs(username, state)
                 return {'message': f'Looking for gigs set to {state} for musician {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -255,7 +255,7 @@ class ProfileService:
                 state = data.get('looking_for_members')
                 if not username or not state:
                     raise cherrypy.HTTPError(400, 'Username and looking for members state required.')
-                self.dynamodb_service.updateLookingForMembers(username, state)
+                self.profile_service.updateLookingForMembers(username, state)
                 return {'message': f'Looking for members set to {state} for band {username}.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -271,7 +271,7 @@ class ProfileService:
                 username = "thebeatles"
                 if not username or not picture:
                     raise cherrypy.HTTPError(400, 'Username and profile picture required.')
-                self.dynamodb_service.updateProfilePicture(username, picture)
+                self.profile_service.updateProfilePicture(username, picture)
                 return {'message': f'Profile picture updated for {username}.'}
             except Exception as e:
                  return {'status': 'error', 'message': str(e)}
@@ -286,7 +286,7 @@ class ProfileService:
             prefix = data.get('prefix')
                             
             try:
-                profiles = self.dynamodb_service.searchProfilesByUsernamePrefix(prefix)
+                profiles = self.profile_service.searchProfilesByUsernamePrefix(prefix)
                 return {'status': 'success', 'profiles': profiles}
             except Exception as e:
                 raise cherrypy.HTTPError(500, f'Error: {e}')

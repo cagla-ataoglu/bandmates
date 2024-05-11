@@ -2,7 +2,7 @@ import boto3
 import json
 import os
 
-class DynamoDBService:
+class ProfileService:
     def __init__(self):
         self.environment = os.getenv('ENV', 'development')
         if self.environment == 'production':

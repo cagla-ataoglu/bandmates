@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from moto import mock_dynamodb2, mock_s3
 import boto3
-from dynamodb_service import DynamoDBService, sets_to_lists
+from profile_service import ProfileService, sets_to_lists
 
 # Set up mocked AWS Credentials
 os.environ["AWS_ACCESS_KEY_ID"] = "fake_key"
@@ -37,7 +37,7 @@ class TestDynamoDBService(unittest.TestCase):
 
     def setUp(self):
         """Instantiate the service before each test."""
-        self.service = DynamoDBService()
+        self.service = ProfileService()
 
     def test_create_musician_profile(self):
         self.service.createMusicianProfile("johndoe", "John Doe", "New York")
