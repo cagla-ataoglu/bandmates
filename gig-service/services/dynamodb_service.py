@@ -1,5 +1,6 @@
 import boto3
 from boto3.dynamodb.conditions import Key
+import os
 
 class GigNotFoundException(Exception):
     """Exception raised when a gig is not found."""
@@ -11,7 +12,11 @@ class GigAlreadyExistsException(Exception):
 
 class DynamoDBService:
     def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb')
+        self.environment = os.getenv('ENV', 'development')
+        if self.environment == 'test':
+            self.dynamodb = boto3.resource('dynamodb')
+        else:
+            self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
         self.table_name = 'Gigs'
         # Ensure Gigs table exists
         try:

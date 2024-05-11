@@ -2,9 +2,11 @@ import boto3
 from boto3.dynamodb.conditions import Key
 import time
 import decimal
+import os
 
 class GroupService:
     def __init__(self):
+        self.environment = os.getenv('ENV', 'development')
         self.dynamodb = self._get_dynamodb_resource()
         self.table_name = 'Groups'
         self.users_groups_table_name = 'UsersGroups'
@@ -29,7 +31,10 @@ class GroupService:
         self.group_posts_table = self.dynamodb.Table(self.group_posts_table_name)
 
     def _get_dynamodb_resource(self):
-        return boto3.resource('dynamodb')
+        if self.environment == 'test':
+            return boto3.resource('dynamodb')
+        else:
+            return boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
 
     def initialize_table(self, table_name, hash_key, sort_key=None, gsi=None):
         try:

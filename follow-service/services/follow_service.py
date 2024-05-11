@@ -7,6 +7,8 @@ class FollowService:
         self.environment = os.getenv('ENV', 'development')
         if self.environment == 'production':
             self.dynamodb = boto3.resource('dynamodb')
+        elif self.environment == 'test':
+            self.dynamodb = boto3.resource('dynamodb')
         else:
             self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
 
