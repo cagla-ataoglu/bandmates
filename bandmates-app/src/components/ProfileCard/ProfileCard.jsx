@@ -25,12 +25,13 @@ const ProfileCard = ({ username }) => {
                     username: username
                 })
             });
-            console.log('response:', response)
             if (response.ok) {
                 const data = await response.json();
                 setProfileData(data);
-                setGenres(data.genres)
-                console.log('genres:', data.genres)
+                if (genres) {
+                    setGenres(data.genres);
+                }
+                console.log('genres:', data.genres);
             } else {
                 console.error(`Failed to fetch profile data for ${username}`);
             }
@@ -51,7 +52,7 @@ const ProfileCard = ({ username }) => {
                     display_name: editedName
                 })
             });
-            const data = await response.json()
+            const data = await response.json();
             if (response.ok) {
                 console.log('Display name updated.');
                 window.location.reload();
@@ -59,7 +60,7 @@ const ProfileCard = ({ username }) => {
                 console.log('Failed to update display name:', data.message);
             }
         } catch (error) {
-            console.log('Error updating display name:', error)
+            console.log('Error updating display name:', error);
         }
     }
 
@@ -75,7 +76,7 @@ const ProfileCard = ({ username }) => {
                     location: editedLocation
                 })
             });
-            const data = await response.json()
+            const data = await response.json();
             if (response.ok) {
                 console.log('Location updated.');
                 window.location.reload();
@@ -83,7 +84,7 @@ const ProfileCard = ({ username }) => {
                 console.log('Failed to update location:', data.message);
             }
         } catch (error) {
-            console.log('Error updating location:', error)
+            console.log('Error updating location:', error);
         }
     }
 
@@ -103,13 +104,37 @@ const ProfileCard = ({ username }) => {
             if (response.ok) {
                 console.log(`Genre added.`);
                 setGenres([...genres, newGenre]);
-                setNewGenre(''); // Clear the input field
+                setNewGenre('');
                 // window.location.reload();
             } else {
                 console.log('Failed to add genre:', data.message);
             }
         } catch (error) {
-            console.log('Error adding genre:', error)
+            console.log('Error adding genre:', error);
+        }
+    }
+
+    const removeGenre = async (genre) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/remove_genre`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    genre: genre
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Genre removed.')
+                setGenres(genres.filter(g => g !== genre));
+            } else {
+                console.log('Failed to remove genre:', data.message);
+            }
+        } catch (error) {
+            console.log('Error removing genre:', error)
         }
     }
 
@@ -142,14 +167,14 @@ const ProfileCard = ({ username }) => {
     };
 
     const handleAddGenre = () => {
-        if (newGenre.trim()) { 
+        if (newGenre.trim()) {
             addGenre(); 
             setNewGenre(''); 
-          }
+        }
     };
 
-    const removeGenre = () => {
-
+    const handleRemoveGenre = (genre) => {
+        removeGenre(genre);
     };
 
     return (
@@ -229,10 +254,10 @@ const ProfileCard = ({ username }) => {
                                     <button onClick={handleAddGenre} className="add-button">Add</button>
                                 </div>
                                 <div className="genre-item-container">
-                                    {genres.map((genre, index) => (
+                                    {genres && genres.map((genre, index) => (
                                         <div key={index} className="genre-item">
                                         <span>{genre}</span>
-                                        <button onClick={removeGenre} className="remove-button"><IoMdClose /></button>
+                                        <button onClick={() => handleRemoveGenre(genre)} className="remove-button"><IoMdClose /></button>
                                     </div>
                                     ))}
                                     
