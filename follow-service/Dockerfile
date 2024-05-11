@@ -6,6 +6,6 @@ COPY . /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-EXPOSE 8090
+EXPOSE 8083
 
 CMD ["python", "controller.py"]

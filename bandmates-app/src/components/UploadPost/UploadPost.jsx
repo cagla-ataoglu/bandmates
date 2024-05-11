@@ -6,6 +6,7 @@ import './UploadPost.css';
 const UploadPost = () => {
     const [file, setFile] = useState(null);
     const [description, setDescription] = useState('');
+    const [previewUrl, setPreviewUrl] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,7 +28,7 @@ const UploadPost = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8090/create_post', {
+            const response = await fetch(`${import.meta.env.VITE_POST_API}/create_post`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -52,6 +53,14 @@ const UploadPost = () => {
         }
     };
 
+    const uploadFile = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
+
     return (
         <div className="upload-post-container">
             <div className="upload-post-wrapper">
@@ -59,13 +68,18 @@ const UploadPost = () => {
                     <img src={profilePic} alt="profile pic" className="upload-post-profile-pic" />
                     <textarea placeholder="What is on your mind?" value={description} onChange={(e) => setDescription(e.target.value)} className="upload-post-input" />
                 </div>
+                {previewUrl && (
+                    <div className="preview-container">
+                        <img src={previewUrl} alt="Preview" className="upload-post-preview"/>
+                    </div>
+                )}
                 <hr className="divider" />
                 <div className="bottom">
                     <label className="options">
                         <div className="option">
                             <MdPermMedia className="upload-post-icon" />
-                            <span>Photo or Video</span>
-                            <input type="file" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} />
+                            <span>Choose Photo or Video</span>
+                            <input type="file" onChange={uploadFile} style={{ display: 'none' }} />
                         </div>
                     </label>
                     <button onClick={handleSubmit} className="upload-post-button">Upload</button>

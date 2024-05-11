@@ -3,6 +3,7 @@ import concertIcon from '../../assets/concert.png';
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBCardFooter, MDBBtn } from 'mdb-react-ui-kit';
 import './Rightbar.css';
 
+
 const Rightbar = () => {
   return (
     <div className="container">

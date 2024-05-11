@@ -1,0 +1,3 @@
+CherryPy
+boto3
+requests
