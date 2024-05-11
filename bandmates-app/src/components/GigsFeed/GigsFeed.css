@@ -1,0 +1,20 @@
+.gigsfeed-card {
+    flex: 5.5;
+    background: #ffffff;
+    padding: 20px; /* Add padding to provide space around the content */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    flex-direction: row;
+  }
+
+.gigs-list {
+  margin: 0;
+  padding: 0;
+}
+
+.separator {
+  width: 100%; /* Full width of the container */
+  height: 1px; /* Height of the separator */
+  background-color: #ccc; /* Color of the separator */
+  margin: 10px 0; /* Adjust margin as needed */
+}
