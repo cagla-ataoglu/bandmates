@@ -1,7 +1,7 @@
 import os
 import unittest
 from unittest.mock import patch
-from moto import mock_dynamodb2
+from moto import mock_dynamodb2, mock_s3
 import boto3
 from dynamodb_service import DynamoDBService, sets_to_lists
 
@@ -9,15 +9,18 @@ from dynamodb_service import DynamoDBService, sets_to_lists
 os.environ["AWS_ACCESS_KEY_ID"] = "fake_key"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "fake_secret"
 os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
+os.environ['ENV'] = 'test'
 
 class TestDynamoDBService(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Initialize DynamoDB and create table before all tests."""
-        cls.mock = mock_dynamodb2()
-        cls.mock.start()
-        # Setting up DynamoDB table
+        cls.mock_dynamodb = mock_dynamodb2()
+        cls.mock_dynamodb.start()
+        cls.mock_s3 = mock_s3()
+        cls.mock_s3.start()
+
+        # Continue with your DynamoDB setup
         cls.dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
         cls.table = cls.dynamodb.create_table(
             TableName='Profiles',
@@ -29,8 +32,8 @@ class TestDynamoDBService(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Stop the DynamoDB mock after tests are complete."""
-        cls.mock.stop()
+        cls.mock_dynamodb.stop()
+        cls.mock_s3.stop()
 
     def setUp(self):
         """Instantiate the service before each test."""
