@@ -12,7 +12,7 @@ const Post = ({ post }) => {
 
   const deletePost = async () => {
     try {
-      const response = await fetch('http://localhost:8090/delete_post', {
+      const response = await fetch(`${import.meta.env.VITE_POST_API}/delete_post`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ const Post = ({ post }) => {
 
   const editPostDescription = async () => {
     try {
-      const response = await fetch('http://localhost:8090/edit_post_description', {
+      const response = await fetch(`${import.meta.env.VITE_POST_API}/edit_post_description`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

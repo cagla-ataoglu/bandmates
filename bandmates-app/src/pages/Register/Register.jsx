@@ -25,7 +25,7 @@ const Register = () => {
     }
 
     try {
-      const signup_response = await fetch('http://localhost:8080/signup', {
+      const signup_response = await fetch(`${import.meta.env.VITE_AUTH_API}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ const Register = () => {
       if (signup_response.ok) {
         var profile_creation_response = null
         if (profileType == 'musician') {
-          profile_creation_response = await fetch('http://localhost:8081/create_musician_profile', {
+          profile_creation_response = await fetch(`${import.meta.env.VITE_PROFILE_API}/create_musician_profile`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ const Register = () => {
             })
           })
         } else if (profileType == 'band') {
-          profile_creation_response = await fetch('http://localhost:8081/create_band_profile', {
+          profile_creation_response = await fetch(`${import.meta.env.VITE_PROFILE_API}/create_band_profile`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ const Register = () => {
           })
         }
         if (profile_creation_response && profile_creation_response.ok) {
-          const signin_response = await fetch('http://localhost:8080/signin', {
+          const signin_response = await fetch(`${import.meta.env.VITE_AUTH_API}/signin`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
