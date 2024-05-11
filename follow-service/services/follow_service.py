@@ -7,6 +7,8 @@ class FollowService:
         self.environment = os.getenv('ENV', 'development')
         if self.environment == 'production':
             self.dynamodb = boto3.resource('dynamodb')
+        elif self.environment == 'test':
+            self.dynamodb = boto3.resource('dynamodb')
         else:
             self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
 
@@ -41,6 +43,24 @@ class FollowService:
                     {
                         'AttributeName': 'following',
                         'AttributeType': 'S'
+                    }
+                ],
+                GlobalSecondaryIndexes=[
+                    {
+                        'IndexName': 'FollowingIndex',
+                        'KeySchema': [
+                            {
+                                'AttributeName': 'following',
+                                'KeyType': 'HASH'
+                            },
+                        ],
+                        'Projection': {
+                            'ProjectionType': 'ALL'
+                        },
+                        'ProvisionedThroughput': {
+                            'ReadCapacityUnits': 5,
+                            'WriteCapacityUnits': 5
+                        }
                     }
                 ],
                 ProvisionedThroughput={
@@ -82,6 +102,15 @@ class FollowService:
                 'following': following
             }
         )
+    
+    def delete_follow(self, follower, following):
+        self.follow_table.delete_item(
+            Key={
+                'follower': follower,
+                'following': following
+            }
+        )
+
 
     def get_followings(self, username):
         response = self.follow_table.query(
@@ -92,3 +121,15 @@ class FollowService:
         )
         followings = [item['following'] for item in response['Items']]
         return followings
+
+    def get_followers(self, username):
+        response = self.follow_table.query(
+            IndexName='FollowingIndex',  # Specify the correct GSI name
+            KeyConditionExpression="following = :username",
+            ExpressionAttributeValues={
+                ":username": username
+            }
+        )
+        followers = [item['follower'] for item in response['Items']]
+        return followers
+

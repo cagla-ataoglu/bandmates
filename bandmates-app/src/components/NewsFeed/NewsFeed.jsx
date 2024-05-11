@@ -8,7 +8,7 @@ const NewsFeed = () => {
   useEffect(() => {
     const fetchFollowings = async () => {
       try {
-        const response = await fetch('http://localhost:8083/get_followings', {
+        const response = await fetch(`${import.meta.env.VITE_FOLLOW_API}/get_followings`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ const NewsFeed = () => {
 
     const fetchPosts = async (followings) => {
       try {
-        const response = await fetch('http://localhost:8090/get_posts_by_usernames', {
+        const response = await fetch(`${import.meta.env.VITE_POST_API}/get_posts_by_usernames`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

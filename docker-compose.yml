@@ -73,6 +73,20 @@ services:
       - USER_POOL_NAME=${USER_POOL_NAME}
       - CLIENT_NAME=${CLIENT_NAME}
 
+  follow-service:
+    build: ./follow-service
+    depends_on:
+      - localstack
+    networks:
+      - bandmates-backend
+    ports:
+      - "8083:8083"
+    environment:
+      - LOCALSTACK_HOSTNAME=localstack
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+
   group-service:
     build: ./group-service
     depends_on:
@@ -89,19 +103,18 @@ services:
       - USER_POOL_NAME=${USER_POOL_NAME}
       - CLIENT_NAME=${CLIENT_NAME}
 
-  follow-service:
-    build: ./follow-service
+  frontend:
+    build: ./bandmates-app
     depends_on:
       - localstack
-    networks:
-      - bandmates-backend
+      - follow-service
+      - auth-service
+      - gig-service
+      - profile-service
+      - post-service
+      - group-service
     ports:
-      - "8083:8083"
-    environment:
-      - LOCALSTACK_HOSTNAME=localstack
-      - AWS_DEFAULT_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
+      - "5173:5173"
 
 networks:
   bandmates-backend:

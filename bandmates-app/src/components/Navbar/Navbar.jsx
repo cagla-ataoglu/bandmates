@@ -23,7 +23,7 @@ const Navbar = () => {
 
   const fetchSearchResults = async (prefix) => {
     try {
-      const response = await fetch('http://localhost:8081/search_profiles_by_prefix', {
+      const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/search_profiles_by_prefix`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ const Navbar = () => {
             <div className="searchResults">
               {results.map((profile, idx) => (
                 <div key={idx} className="searchResultItem" onClick={() => {
-                  navigate(`/profile/${profile.username}`);
+                  navigate(`/users/${profile.username}`);
                   setIsDropdownVisible(false);
                 }}>
                   {profile.display_name || profile.username}
@@ -110,7 +110,7 @@ const Navbar = () => {
             <span className="badge">1</span>
             <div className="tabText">Contacts</div>
           </div>
-          <div className="tabIcon">
+          <div className="tabIcon" onClick={() => navigate('/gigs')}>
             <FaGuitar size={25} />
             <span className="badge">1</span>
             <div className="tabText">Gigs</div>

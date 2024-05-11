@@ -13,7 +13,7 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://localhost:8080/signin', {
+            const response = await fetch(`${import.meta.env.VITE_AUTH_API}/signin`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

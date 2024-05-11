@@ -1,0 +1,81 @@
+.custom-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 20px;
+    padding: 20px;
+}
+
+.pc {
+    width: 90%;
+    border: 1px solid #ccc;
+    margin: 20px;
+    border-radius: 8px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+}
+
+.profile-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-down img {
+    height: 150px;
+    width: 150px;
+    border-radius: 100px;
+    margin-top: -75px;
+    padding: 5px;
+    background-color: #ffffff;
+}
+
+.profile-title {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.profile-information {
+    padding: 2px 2px;
+    font-size: 16px;
+}
+
+.posts-title {
+    font-size: 36px;
+    color: black;
+    font-weight: bold;
+}
+
+.gradiant {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-image: linear-gradient(#F06112, #006ad9);
+    height: 125px;
+    border-radius: 4px 4px 0px 0px;
+    margin-bottom: 50px;
+}
+
+.follow-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.follow-button {
+    padding: 10px 20px;
+    background-color: #ff4b2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.follow-button:hover {
+    background-color: #ff416c;
+}

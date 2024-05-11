@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Post Service
+name: CI/CD Pipeline for Follow Service
 
 on:
   push:

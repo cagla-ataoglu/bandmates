@@ -1,0 +1,55 @@
+.post-gig-container {
+    color: #000000;
+    background: #f0f4f7;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .post-gig-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 20px;
+    flex: 1;
+  }
+
+  .post-gig-content-container > * {
+    flex: 1; /* This will make each child grow equally */
+    width: 100%; /* Ensures each child fills the width of the container */
+  }
+  
+  .post-gig-vertical-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .postgig-vertical-content > *:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  .post-gig-container button {
+    margin: 0 auto;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #006ad9;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+  
+.post-gig-container button:hover {
+    background-color: #0053ad;
+}
+
+.post-gig-content-container:nth-child(1) {
+    flex: 20%; /* GigsBar takes 20% */
+}
+
+.post-gig-content-container:nth-child(2) {
+    flex: 80%; /* GigForm takes 80% */
+}
