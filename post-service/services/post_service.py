@@ -11,6 +11,10 @@ class PostService:
             self.dynamodb = boto3.resource('dynamodb')
             self.s3 = boto3.client('s3')
             self.url_base = "https://{bucket_name}.s3.amazonaws.com/{key}"
+        elif self.environment == 'test':
+            self.dynamodb = boto3.resource('dynamodb')
+            self.s3 = boto3.client('s3')
+            self.url_base = "https://{bucket_name}.s3.amazonaws.com/{key}"
         else:
             self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
             self.s3 = boto3.client('s3', endpoint_url='http://localstack:4566')
