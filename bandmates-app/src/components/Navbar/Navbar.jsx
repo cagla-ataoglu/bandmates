@@ -110,7 +110,7 @@ const Navbar = () => {
             <span className="badge">1</span>
             <div className="tabText">Contacts</div>
           </div>
-          <div className="tabIcon">
+          <div className="tabIcon" onClick={() => navigate('/gigs')}>
             <FaGuitar size={25} />
             <span className="badge">1</span>
             <div className="tabText">Gigs</div>

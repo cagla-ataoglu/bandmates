@@ -1,0 +1,56 @@
+.gigs-container {
+    color: #000000;
+    background: #f0f4f7;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .gigs-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    flex: 1;
+  }
+
+  .gigs-content-container > * {
+    flex: 1; /* This will make each child grow equally */
+    width: 100%; /* Ensures each child fills the width of the container */
+  }
+  
+  .gigs-vertical-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .gigs-vertical-content > *:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  .gigs-container button {
+    margin: 0 auto;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #006ad9;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+  
+.gigs-container button:hover {
+    background-color: #0053ad;
+}
+
+.gigs-content-container:nth-child(1),
+.gigs-content-container:nth-child(3) {
+    flex: 20%; /* 20% of the container */
+}
+
+.gigs-content-container:nth-child(2) {
+    flex: 60%; /* 60% of the container */
+}
