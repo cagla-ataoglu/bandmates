@@ -12,8 +12,7 @@ const ProfileCard = ({ username }) => {
     const [editProfilePopUp, setEditProfilePopUp] = useState(false);
     const [newGenre, setNewGenre] = useState('');
 
-    const dummyGenre = ['Rock']; 
-    const [genres, setGenres] = useState(dummyGenre);
+    const [genres, setGenres] = useState([]);
 
     const fetchProfileData = async () => {
         try {
@@ -26,9 +25,12 @@ const ProfileCard = ({ username }) => {
                     username: username
                 })
             });
+            console.log('response:', response)
             if (response.ok) {
                 const data = await response.json();
                 setProfileData(data);
+                setGenres(data.genres)
+                console.log('genres:', data.genres)
             } else {
                 console.error(`Failed to fetch profile data for ${username}`);
             }
@@ -93,13 +95,16 @@ const ProfileCard = ({ username }) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: username
+                    username: username,
+                    genre: newGenre
                 })
             });
             const data = await response.json()
             if (response.ok) {
                 console.log(`Genre added.`);
-                window.location.reload();
+                setGenres([...genres, newGenre]);
+                setNewGenre(''); // Clear the input field
+                // window.location.reload();
             } else {
                 console.log('Failed to add genre:', data.message);
             }
@@ -114,6 +119,7 @@ const ProfileCard = ({ username }) => {
 
     const editProfile = () => {
         setEditProfilePopUp(!editProfilePopUp);
+        fetchProfileData();
         if (profileData) {
             setEditedName(profileData.display_name);
             setEditedLocation(profileData.location);
@@ -137,7 +143,7 @@ const ProfileCard = ({ username }) => {
 
     const handleAddGenre = () => {
         if (newGenre.trim()) { 
-            setGenres([...genres, newGenre]); 
+            addGenre(); 
             setNewGenre(''); 
           }
     };
@@ -163,15 +169,14 @@ const ProfileCard = ({ username }) => {
                             <div className="profile-title">Name: {profileData.display_name}</div>
                             <div className="profile-information">Profile type: {profileData.profile_type}</div>
                             <div className="profile-information">Location: {profileData.location}</div>
-                            <div className="profile-information">Genres: {profileData.genres}</div>
+                            {profileData.genres && (
+                                <div className="profile-information">Genres: {profileData.genres.join(', ')}</div>
+                            )}
                             {profileData.profile_type === "band" && profileData.members && (
                                 <div className="profile-information">Members: {profileData.members.join(', ')}</div>
                             )}
                             {profileData.profile_type === "musician" && profileData.instrument && (
                                 <div className="profile-information">Instruments: {profileData.instruments.join(', ')}</div>
-                            )}
-                            {profileData.genres && (
-                                <div className="profile-information">{profileData.genres.join(', ')}</div>
                             )}
                             {/* <div className="profile-description">{profileData.profile_description}</div> */}
                             {/* <div className="profile-button"><a href={`mailto:${profileData.email}`}>Contact Me</a></div> */}
@@ -224,10 +229,13 @@ const ProfileCard = ({ username }) => {
                                     <button onClick={handleAddGenre} className="add-button">Add</button>
                                 </div>
                                 <div className="genre-item-container">
-                                    <div key={0} className="genre-item">
-                                        <span>{dummyGenre}</span>
+                                    {genres.map((genre, index) => (
+                                        <div key={index} className="genre-item">
+                                        <span>{genre}</span>
                                         <button onClick={removeGenre} className="remove-button"><IoMdClose /></button>
                                     </div>
+                                    ))}
+                                    
                                 </div>
                             </div>
                         </div>
