@@ -1,14 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdOutlineMoreVert } from 'react-icons/md';
-import likeIcon from '../../assets/like.png';
 import "./Post.css"
+import {
+  S3Client,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const Post = ({ post }) => {
-  // Extract the updated fields from the post object
   const { username, Timestamp, description, url } = post;
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [editPostDraft, setPostDraft] = useState(description);
+  const [contentUrl, setContentUrl] = useState('');
+
+  useEffect(() =>{
+    async function fetchSignedUrl() {
+      
+      var s3Client = null;
+      if (import.meta.env.VITE_ENV == 'production') {
+        s3Client = new S3Client({
+          region: import.meta.env.VITE_AWS_DEFAULT_REGION, 
+          credentials: {
+            accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID, 
+            secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
+        }});
+        const bucketName = 'bandmates-media-storage';
+        console.log('url:', url);
+        const parts = url.split('/');
+        const key = parts[parts.length - 1];
+        const command = new GetObjectCommand({Bucket: bucketName, Key: key });
+        const signed_url = await getSignedUrl(s3Client, command, { expiresIn: 15 * 60 });
+        setContentUrl(signed_url);
+      } else {
+        setContentUrl(url);
+      }
+    }
+    fetchSignedUrl();
+  }, []);
 
   const deletePost = async () => {
     try {
@@ -101,7 +130,7 @@ const Post = ({ post }) => {
       </div>
       <div className="post-content">
         <p>{description}</p>
-        {url && <img src={url} alt="Post media" />}
+        {contentUrl && <img src={contentUrl} alt="Post media" />}
       </div>
       {/* Assuming no interactive like and comment features are currently supported */}
       {/* <div className="flex items-center justify-between">
