@@ -13,7 +13,7 @@ def cors_tool():
 
 cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
 
-class FollowController:
+class MessageController:
 
     def __init__(self):
         self.follow_service = FollowService()
@@ -91,7 +91,7 @@ class FollowController:
 
             return {'status': 'success', 'followers': followers}
         return ''
-  
+
 if __name__ == '__main__':
     config = {
         '/': {
