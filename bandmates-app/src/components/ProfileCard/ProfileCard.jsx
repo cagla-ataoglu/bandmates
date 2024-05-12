@@ -311,11 +311,6 @@ const ProfileCard = ({ username }) => {
         <div className="custom-container">
             <div className='pc'>
                 <div className="gradiant"></div>
-                <div className="edit-button">
-                    <button onClick={editProfile}><MdEditNote className="icon" />
-                        <span className="text">Edit Profile</span>
-                    </button>
-                </div>
                 <div className="profile-down">
                     {profileData && (
                         <>
@@ -337,6 +332,11 @@ const ProfileCard = ({ username }) => {
                             {/* <div className="profile-button"><a href={`mailto:${profileData.email}`}>Contact Me</a></div> */}
                         </>
                     )}
+                    <div className="edit-button">
+                        <button onClick={editProfile}><MdEditNote className="icon" />
+                            <span className="text">Edit Profile</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             {editProfilePopUp && (
