@@ -7,10 +7,14 @@ const MiniProfileCard = ({ username }) => {
 
     const fetchProfileData = async () => {
         try {
-            const formData = new FormData();
-            formData.append('username', username)
-            const response = await fetch(`http://localhost:8081/get_profile/${username}`, {
-                method: 'GET',
+            const response = await fetch(`${import.meta.env.VITE_PROFILE_API}/get_profile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username
+                })
             });
             if (response.ok) {
                 const data = await response.json();
@@ -30,24 +34,14 @@ const MiniProfileCard = ({ username }) => {
     return (
         <div className="mpc-container">
             <div className='mpc-pc'>
-                <div className="gradiant"></div>
+                <div className="gradiant" style={{ height: '50px' }}></div>
                 <div className="profile-down">
                     {profileData && (
                         <>
-                            <img src={profileData.profile_picture} alt="" />
-                            <div className="profile-title">{profileData.display_name}</div>
-                            <div className="profile-information">{profileData.profile_type}</div>
-                            <div className="profile-information">{profileData.location}</div>
-                            <div className="profile-information">{profileData.genres}</div>
-                            {profileData.profile_type === "band" && profileData.members && (
-                                <div className="profile-information">Members: {profileData.members.join(', ')}</div>
-                            )}
-                            {profileData.profile_type === "musician" && profileData.instrument && (
-                                <div className="profile-information">{profileData.instruments.join(', ')}</div>
-                            )}
-                            {profileData.genres && (
-                            <div className="profile-information">{profileData.genres.join(', ')}</div>
-                            )}
+                            <img src={profileData.profile_picture} alt="" style={{ height: '75px', width: '75px' }} />
+                            <div className="profile-title" style={{ fontSize: '14px' }}>{profileData.display_name}</div>
+                            <div className="profile-information" style={{ fontSize: '12px' }}>{profileData.profile_type}</div>
+                            <div className="profile-information" style={{ fontSize: '12px' }}>{profileData.location}</div>
                         </>
                     )}
                 </div>
@@ -59,7 +53,6 @@ const MiniProfileCard = ({ username }) => {
 // Prop type validation
 MiniProfileCard.propTypes = {
     username: PropTypes.string.isRequired,
-  };
+};
   
-
 export default MiniProfileCard;
