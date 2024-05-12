@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Post Service &#8212; bandmates 2024 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Profile Service Documentation" href="../profile-service/index.html" />
+    <link rel="prev" title="Group Service Documentation" href="../group-service/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="post-service">
+<h1>Post Service<a class="headerlink" href="#post-service" title="Link to this heading">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+
+<span class="k">class</span> <span class="nc">PostService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PostService is a class to manage posts, including storage in S3 and metadata in DynamoDB.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        environment (str): The environment in which the service is running. Default is &#39;development&#39;.</span>
+<span class="sd">        dynamodb (boto3.resource): The DynamoDB resource.</span>
+<span class="sd">        s3 (boto3.client): The S3 client.</span>
+<span class="sd">        url_base (str): The base URL for accessing S3 objects.</span>
+<span class="sd">        table_name (str): The name of the DynamoDB table for posts.</span>
+<span class="sd">        bucket_name (str): The name of the S3 bucket for storing media files.</span>
+<span class="sd">        posts_table (boto3.resource.Table): The DynamoDB table for posts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes PostService with the necessary resources and table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;development&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">==</span> <span class="s1">&#39;production&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;dynamodb&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url_base</span> <span class="o">=</span> <span class="s2">&quot;https://</span><span class="si">{bucket_name}</span><span class="s2">.s3.amazonaws.com/</span><span class="si">{key}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">==</span> <span class="s1">&#39;test&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;dynamodb&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url_base</span> <span class="o">=</span> <span class="s2">&quot;https://</span><span class="si">{bucket_name}</span><span class="s2">.s3.amazonaws.com/</span><span class="si">{key}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;dynamodb&#39;</span><span class="p">,</span> <span class="n">endpoint_url</span><span class="o">=</span><span class="s1">&#39;http://localstack:4566&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="n">endpoint_url</span><span class="o">=</span><span class="s1">&#39;http://localstack:4566&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url_base</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:4566/</span><span class="si">{bucket_name}</span><span class="s2">/</span><span class="si">{key}</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;Posts&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span> <span class="o">=</span> <span class="s1">&#39;bandmates-media-storage&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Table &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39; already exists. Loading it.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ResourceNotFoundException</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">create_table</span><span class="p">(</span>
+                <span class="n">TableName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+                <span class="n">KeySchema</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span><span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;PostId&#39;</span><span class="p">,</span> <span class="s1">&#39;KeyType&#39;</span><span class="p">:</span> <span class="s1">&#39;HASH&#39;</span><span class="p">}</span>
+                <span class="p">],</span>
+                <span class="n">AttributeDefinitions</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span><span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;PostId&#39;</span><span class="p">,</span> <span class="s1">&#39;AttributeType&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;AttributeType&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">}</span>
+                <span class="p">],</span>
+                <span class="n">ProvisionedThroughput</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;ReadCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                    <span class="s1">&#39;WriteCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span>
+                <span class="p">},</span>
+                <span class="n">GlobalSecondaryIndexes</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;IndexName&#39;</span><span class="p">:</span> <span class="s1">&#39;UsernameIndex&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;KeySchema&#39;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;KeyType&#39;</span><span class="p">:</span> <span class="s1">&#39;HASH&#39;</span><span class="p">}</span>
+                        <span class="p">],</span>
+                        <span class="s1">&#39;Projection&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;ProjectionType&#39;</span><span class="p">:</span> <span class="s1">&#39;ALL&#39;</span>
+                        <span class="p">},</span>
+                        <span class="s1">&#39;ProvisionedThroughput&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;ReadCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                            <span class="s1">&#39;WriteCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s1">&#39;table_exists&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">TableName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Posts table created.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error initializing DynamoDB table: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">head_bucket</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bucket </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span><span class="si">}</span><span class="s2"> exists.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">create_bucket</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bucket </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span><span class="si">}</span><span class="s2"> created.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">post_id</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new post, uploads associated media content to S3, and stores metadata in DynamoDB.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            post_id (str): The unique identifier for the post.</span>
+<span class="sd">            description (str): The description of the post.</span>
+<span class="sd">            content (FileStorage): The content file to be uploaded.</span>
+<span class="sd">            username (str): The username of the user creating the post.</span>
+<span class="sd">            timestamp (float): The timestamp of when the post was created.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Information about the created post.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">file</span>
+        <span class="n">unique_file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">post_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">put_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">unique_file_name</span><span class="p">,</span> <span class="n">Body</span><span class="o">=</span><span class="n">file_content</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">url_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bucket_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">unique_file_name</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">put_item</span><span class="p">(</span>
+                <span class="n">Item</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;PostId&#39;</span><span class="p">:</span> <span class="n">post_id</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+                    <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                    <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+                    <span class="s1">&#39;Timestamp&#39;</span><span class="p">:</span> <span class="n">timestamp</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Post created successfully.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;PostId&#39;</span><span class="p">:</span> <span class="n">post_id</span><span class="p">,</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+                <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+                <span class="s1">&#39;Timestamp&#39;</span><span class="p">:</span> <span class="n">timestamp</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error creating post: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_post_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">post_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a post by its unique identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            post_id (str): The unique identifier of the post.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict or None: Information about the retrieved post, or None if not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">Key</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PostId&#39;</span><span class="p">:</span> <span class="n">post_id</span><span class="p">})</span>
+            <span class="k">if</span> <span class="s1">&#39;Item&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Item&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error retrieving post with post_id </span><span class="si">{</span><span class="n">post_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clear_all_posts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears all posts from the DynamoDB table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Items&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">delete_item</span><span class="p">(</span><span class="n">Key</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PostId&#39;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;PostId&#39;</span><span class="p">]})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All posts deleted successfully.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error clearing posts: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_posts_by_usernames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">usernames</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all posts by the given list of usernames.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            usernames (list): List of usernames.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: List of posts by the given usernames, sorted by timestamp.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_posts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">username</span> <span class="ow">in</span> <span class="n">usernames</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+                    <span class="n">IndexName</span><span class="o">=</span><span class="s1">&#39;UsernameIndex&#39;</span><span class="p">,</span>
+                    <span class="n">KeyConditionExpression</span><span class="o">=</span><span class="n">boto3</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">posts</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Items&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">all_posts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">posts</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error retrieving posts for username </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">all_posts_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_posts</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">post</span><span class="p">:</span> <span class="n">post</span><span class="p">[</span><span class="s1">&#39;Timestamp&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">all_posts_sorted</span>
+
+    <span class="k">def</span> <span class="nf">get_all_posts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all posts from the DynamoDB table.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: List of all posts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Items&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">items</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error retrieving posts: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">post_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a post with the given post_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            post_id (str): The unique identifier of the post.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">delete_item</span><span class="p">(</span><span class="n">Key</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PostId&#39;</span><span class="p">:</span> <span class="n">post_id</span><span class="p">})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Post with id </span><span class="si">{</span><span class="n">post_id</span><span class="si">}</span><span class="s1"> deleted successfully.&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error deleting post with post_id </span><span class="si">{</span><span class="n">post_id</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">edit_post_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">post_id</span><span class="p">,</span> <span class="n">new_description</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edits the description of a post.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            post_id (str): The unique identifier of the post.</span>
+<span class="sd">            new_description (str): The new description for the post.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">posts_table</span><span class="o">.</span><span class="n">update_item</span><span class="p">(</span>
+            <span class="n">Key</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PostId&#39;</span><span class="p">:</span> <span class="n">post_id</span><span class="p">},</span>
+            <span class="n">UpdateExpression</span><span class="o">=</span><span class="s1">&#39;SET #description = :new_description&#39;</span><span class="p">,</span>
+            <span class="n">ExpressionAttributeNames</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;#description&#39;</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span><span class="p">},</span>
+            <span class="n">ExpressionAttributeValues</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;:new_description&#39;</span><span class="p">:</span> <span class="n">new_description</span><span class="p">}</span>
+        <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Description of post with id </span><span class="si">{</span><span class="n">post_id</span><span class="si">}</span><span class="s1"> updated successfully.&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error editing description of post with post_id </span><span class="si">{</span><span class="n">post_id</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Cognito Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../follow-service/index.html">Follow Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">DynamoDB Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Post Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../group-service/index.html" title="previous chapter">Group Service Documentation</a></li>
+      <li>Next: <a href="../profile-service/index.html" title="next chapter">Profile Service Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, PECY.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/post-service/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
