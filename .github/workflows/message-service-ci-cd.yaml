@@ -18,8 +18,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID2 }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY2 }}
         aws-region: us-east-1
 
     - name: Login to Amazon ECR
@@ -39,11 +39,11 @@ jobs:
     - name: Deploy Docker image to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
       with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID2 }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY2 }}
         region: us-east-1
-        application_name: message-service
-        environment_name: Message-service-env
+        application_name: bandmates-message-service
+        environment_name: Bandmates-message-service-env
         version_label: ${{ github.sha }}
         deployment_package: deploy-message.zip
         use_existing_version_if_available: true

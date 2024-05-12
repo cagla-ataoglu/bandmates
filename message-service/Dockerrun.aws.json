@@ -1,7 +1,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-      "Name": "381491972991.dkr.ecr.us-east-1.amazonaws.com/message-service:latest",
+      "Name": "891377121196.dkr.ecr.us-east-1.amazonaws.com/message-service:latest",
       "Update": "true"
     },
     "Ports": [
