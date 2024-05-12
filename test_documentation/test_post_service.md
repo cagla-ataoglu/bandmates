@@ -8,11 +8,15 @@
 ### Setup/Teardown:
 `setUpClass(cls)`: Initializes and starts mocks for DynamoDB and S3, creates an instance of PostService.  
 `tearDownClass(cls)`: Stops the mocked AWS services.  
-`setUp(self)`: Prepares a mock file-like object mimicking Flask's FileStorage.  
+`setUp(self)`: Prepares a mock file-like object mimicking Flask's FileStorage.
+`clear_all_posts(self)`: Clears the mocked services of prior posts to create an isolated environment for each test.
+`tearDown(self)`: Calls clear_all_posts method after each test.
 
 ### Test Functions:
 `test_create_post(self)`: Validates post creation with necessary attributes and verifies the response.  
 `test_get_post_by_id(self)`: Ensures a post can be retrieved by its ID after creation.  
 `test_clear_all_posts(self)`: Tests the removal of all posts, verifying that no posts remain afterwards.  
+`test_get_posts_by_usernames(self)`: Verifies that posts belonging to specific users can be retrieved.
+`test_get_all_posts(self)`: Ensures that all posts can be retrieved.
 `test_edit_post_description(self)`: Confirms that a post's description can be updated and retrieved correctly.  
 `test_delete_post(self)`: Checks deletion functionality by ensuring a post cannot be retrieved after deletion.  

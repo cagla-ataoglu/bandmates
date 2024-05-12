@@ -7,6 +7,8 @@
 `tearDownClass(cls)`: Stops the DynamoDB mock and resets any environment variables altered during setup.  
 
 ### Test Methods:
+`test_send_follow_request()`: Verifies that a follow request is sent from one user to another.
 `test_create_follow()`: Verifies that creating a follow relationship between two users is successful and checks if the followed user is listed correctly.  
 `test_delete_follow()`: Tests the deletion of a follow relationship and ensures the user is no longer followed.  
-`test_get_followers()`: Tests retrieving the list of followers for a specific user to verify the correct followers are returned.  
+`test_get_followers()`: Tests retrieving the list of followers for a specific user to verify the correct followers are returned.
+`test_get_followings()`: Tests retrieving the list of users followed by a specific user to verify the correct users are returned.

@@ -11,7 +11,13 @@
 
 ### Test Functions:
 
-`test_create_musician_profile(self)`: Verifies creating a musician profile and retrieving it.  
-`test_update_display_name(self)`: Checks functionality to update a musician's display name.  
+`test_band_create_profile(self)`: Verifies creating a band profile and retrieving it.
+`test_band_update_location(self)`: Ensures location of a profile can be updated.
+`test_band_add_remove_member(self)`: Tests adding and removing members to and from a band.
+`test_band_add_remove_genre(self)`: Tests adding and removing a genre to and from a band.
+`test_band_update_looking_for_members(self)`: Verifies "looking for members" of a band profile can be toggled.
+`test_musician_create_profile(self)`: Verifies creating a musician profile and retrieving it.  
+`test_musician_update_display_name(self)`: Checks functionality to update a musician's display name.  
 `test_add_remove_genre(self)`: Ensures genres can be added to and removed from a musician's profile.  
-`test_add_remove_instrument(self)`: Tests adding and removing instruments in a musician's profile.  
+`test_add_remove_instrument(self)`: Tests adding and removing instruments in a musician's profile.
+`test_musician_update_looking_for_gigs(self)`: Verifies "looking for gigs" of a musician profile can be toggled.
