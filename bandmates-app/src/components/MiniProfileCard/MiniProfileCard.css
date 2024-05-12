@@ -19,7 +19,7 @@
 
 .gradiant{
     background-image: linear-gradient(#F06112, #F6C624);
-    height: 125px;
+    height: 50px;
     border-radius: 10px 10px 0px 0px;
 }
 
@@ -31,8 +31,8 @@
 }
 
 .profile-down img{
-    height: 150px;
-    width: 150px;
+    height: 75px;
+    width: 75px;
     border-radius: 100px;
     margin-top: -75px;
     padding: 5px;
