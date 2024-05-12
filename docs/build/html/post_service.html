@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Post Service Module &#8212; bandmates 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Profile Service Module" href="profile_service.html" />
+    <link rel="prev" title="Group Service Module" href="group_service.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="post-service-module">
+<h1>Post Service Module<a class="headerlink" href="#post-service-module" title="Permalink to this heading">¶</a></h1>
+<p>This module provides functionalities for creating, retrieving, updating, and deleting posts within a social network application, utilizing DynamoDB for storage and S3 for media hosting.</p>
+<section id="postservice-class">
+<h2>PostService Class<a class="headerlink" href="#postservice-class" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">PostService</span></code> class includes methods for handling post-related operations such as adding new posts, retrieving posts by ID, updating post descriptions, deleting posts, and managing post media via AWS S3.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="post_service.PostService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">post_service.</span></span><span class="sig-name descname"><span class="pre">PostService</span></span><a class="headerlink" href="#post_service.PostService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.clear_all_posts">
+<span class="sig-name descname"><span class="pre">clear_all_posts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.clear_all_posts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.create_post">
+<span class="sig-name descname"><span class="pre">create_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">post_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.create_post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.delete_post">
+<span class="sig-name descname"><span class="pre">delete_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">post_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.delete_post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.edit_post_description">
+<span class="sig-name descname"><span class="pre">edit_post_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">post_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_description</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.edit_post_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.get_all_posts">
+<span class="sig-name descname"><span class="pre">get_all_posts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.get_all_posts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.get_post_by_id">
+<span class="sig-name descname"><span class="pre">get_post_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">post_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.get_post_by_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="post_service.PostService.get_posts_by_usernames">
+<span class="sig-name descname"><span class="pre">get_posts_by_usernames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usernames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#post_service.PostService.get_posts_by_usernames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="auth_service.html">Cognito Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="follow_service.html">Follow Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gig_service.html">DynamoDB Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="group_service.html">Group Service Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Post Service Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#postservice-class">PostService Class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profile_service.html">Profile Service Module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="group_service.html" title="previous chapter">Group Service Module</a></li>
+      <li>Next: <a href="profile_service.html" title="next chapter">Profile Service Module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, PECY.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/post_service.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

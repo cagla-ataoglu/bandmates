@@ -8,6 +8,9 @@ Cagla Ataoglu \
 Yaren Durgun \
 Marika Thors
 
+## Link to wiki
+[Wiki](https://github.com/cagla-ataoglu/bandmates/wiki)
+
 ## How to run Bandmates
 ### Backend
 1. Navigate to directory 'bandmates'
