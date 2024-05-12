@@ -10,6 +10,13 @@ import './SearchGigs.css';
 const SearchGigs = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   const handlePostClick = () => {
       navigate('/post_gig');
   };
