@@ -1,5 +1,5 @@
 import cherrypy
-from services.profile_service import DynamoDBService
+from services.profile_service import ProfileService
 
 def cors_tool():
     if cherrypy.request.method == 'OPTIONS':
@@ -12,10 +12,10 @@ def cors_tool():
 
 cherrypy.tools.cors = cherrypy.Tool('before_finalize', cors_tool, priority=60)
 
-class ProfileService:
+class ProfileController:
 
     def __init__(self):
-        self.profile_service = DynamoDBService()
+        self.profile_service = ProfileService()
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -304,4 +304,4 @@ if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})
     cherrypy.config.update({'server.socket_port': 8081})
 
-    cherrypy.quickstart(ProfileService(), '/', config)
+    cherrypy.quickstart(ProfileController(), '/', config)
