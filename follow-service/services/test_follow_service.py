@@ -33,17 +33,15 @@ class TestFollowService(unittest.TestCase):
         else:
             del os.environ['ENV']
 
-    # problem with follow_requests?
-
-    # def test_send_follow_request(self):
-    #     """Test sending a follow request."""
-    #     # Send a follow request
-    #     self.service.send_follow_request('follower1', 'following1')
+    def test_send_follow_request(self):
+        """Test sending a follow request."""
+        # Send a follow request
+        self.service.send_follow_request('follower1', 'following1')
         
-    #     # Check if the follow request is sent successfully
-    #     print("Follow requests:", self.service.get_follow_requests('following1'))
-    #     follow_requests = self.service.get_follow_requests('following1')
-    #     self.assertIn('follower1', follow_requests)
+        # Check if the follow request is sent successfully
+        print("Follow requests:", self.service.get_follow_requests('follower1'))
+        follow_requests = self.service.get_follow_requests('follower1')
+        self.assertIn('follower1', follow_requests)
 
     def test_create_follow(self):
         """Test creating a follow relationship."""
