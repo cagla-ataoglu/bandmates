@@ -3,8 +3,19 @@ import ChatMessages from '../../components/ChatMessages/ChatMessages';
 import SendChatMessage from '../../components/SendChatMessage/SendChatMessage';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import CreateChat from '../../components/CreateChat/CreateChat';
+import './Chats.css';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Navbar/Navbar';
 
 function Chats() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) {
+        navigate('/login');
+      }
+    }, [navigate]);
     const [chats, setChats] = useState([]);
     const [currentChatId, setCurrentChatId] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -39,6 +50,7 @@ function Chats() {
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data.chats);
                     setChats(data.chats);
                     data.chats.forEach(chat => {
                         ws.current.send(JSON.stringify({ action: "join", chat_id: chat.chat_id }));
@@ -88,35 +100,38 @@ function Chats() {
     };
 
     return (
-        <div>
-            <CreateChat onChatCreated={(chat_id) => {
-                joinRoom();
-                ws.current.send(JSON.stringify({ action: "join", chat_id: chat_id }));
-            }} />
-            <div>
-                <h2>Chats</h2>
-                <ul>
-                    {chats.sort((a, b) => b.new - a.new).map(chat => (
-                        <li key={chat.chat_id} onClick={() => joinRoom(chat.chat_id)} style={{ fontWeight: chat.new ? 'bold' : 'normal' }}>
-                            {chat.chat_id} {chat.chat_name} {chat.new && '🔔'}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div>
-                <h2>Current Chat: {currentChatId}</h2>
-                <ChatMessages messages={messages} />
-                <SendChatMessage onSendMessage={message => {
-                    const sendMessage = JSON.stringify({
-                        action: 'message',
-                        chat_id: currentChatId,
-                        username: localStorage.getItem('username'),
-                        message: message
-                    });
-                    ws.current.send(sendMessage);
+        <>
+            <Navbar />
+            <div className="chats-container">
+                <CreateChat onChatCreated={(chat_id) => {
+                    joinRoom(chat_id);
+                    ws.current.send(JSON.stringify({ action: "join", chat_id: chat_id }));
                 }} />
+                <div className="chats-list">
+                    <h2>Chats</h2>
+                    <ul>
+                        {chats.sort((a, b) => b.new - a.new).map(chat => (
+                            <li key={chat.chat_id} onClick={() => joinRoom(chat.chat_id)} className={chat.new ? 'chat-new' : ''}>
+                                {chat.chat_name} {chat.new && '🔔'}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="chat-window">
+                    <h2>Current Chat: {currentChatId ? chats.find(chat => chat.chat_id === currentChatId)?.chat_name : 'Select a chat'}</h2>
+                    <ChatMessages messages={messages} />
+                    <SendChatMessage onSendMessage={message => {
+                        const sendMessage = JSON.stringify({
+                            action: 'message',
+                            chat_id: currentChatId,
+                            username: localStorage.getItem('username'),
+                            message: message
+                        });
+                        ws.current.send(sendMessage);
+                    }} />
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

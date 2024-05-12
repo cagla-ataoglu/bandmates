@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import './CreateChat.css';
 
 function CreateChat({ onChatCreated }) {
     const [usernames, setUsernames] = useState('');
     const [chatName, setChatName] = useState('');
     const [creating, setCreating] = useState(false);
+
+    useEffect(() => {
+        const currentUser = localStorage.getItem('username');
+        setUsernames(currentUser);
+    }, []);
 
     const handleCreateClick = async () => {
         setCreating(true);
@@ -15,9 +20,9 @@ function CreateChat({ onChatCreated }) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    usernames: usernames.split(',').map(username => username.trim()),
+                    usernames: [usernames, ...usernames.split(',')].map(username => username.trim()).filter(Boolean),
                     chat_name: chatName,
-                    is_group: usernames.split(',').length > 2
+                    is_group: usernames.split(',').length > 1
                 })
             });
             if (response.ok) {
@@ -28,8 +33,7 @@ function CreateChat({ onChatCreated }) {
                 setCreating(false);
                 return data;
             } else {
-                console.error('Failed to create chat:', error);
-                setCreating(false);
+                throw new Error('Failed to create chat');
             }
         } catch (error) {
             console.error('Failed to create chat:', error);
@@ -38,22 +42,26 @@ function CreateChat({ onChatCreated }) {
     };
 
     return (
-        <div>
+        <div className="create-chat-container">
+            <div className="create-chat-header">Create a new chat</div>
             <input
+                className="chat-input"
                 type="text"
                 value={chatName}
                 onChange={e => setChatName(e.target.value)}
                 placeholder="Enter chat name"
                 disabled={creating}
             />
+            <div className="usernames-label">Add users (separated by commas):</div>
             <input
+                className="usernames-input"
                 type="text"
                 value={usernames}
                 onChange={e => setUsernames(e.target.value)}
-                placeholder="Enter usernames, separated by commas"
+                placeholder="Add more users, separated by commas"
                 disabled={creating}
             />
-            <button onClick={handleCreateClick} disabled={creating}>
+            <button className="create-button" onClick={handleCreateClick} disabled={creating}>
                 {creating ? 'Creating...' : 'Create Group Chat'}
             </button>
         </div>
