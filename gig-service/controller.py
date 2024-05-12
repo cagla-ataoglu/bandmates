@@ -1,5 +1,7 @@
 import cherrypy
 from services.dynamodb_service import DynamoDBService
+import uuid
+import time
 
 def cors_tool():
     if cherrypy.request.method == 'OPTIONS':
@@ -28,21 +30,21 @@ class GigService:
     @cherrypy.tools.cors()
     def post_gig(self):
         if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            gig_id = str(uuid.uuid4())
+            gig_name = input_json.get('gig_name')
+            date = input_json.get('date')
+            band_username = input_json.get('band_username')
+            venue = input_json.get('venue')
+            genre = input_json.get('genre')
+            looking_for = input_json.get('looking_for')
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+
+            if not gig_id or not band_username:
+                raise cherrypy.HTTPError(400, 'Gig ID and band username are required.')
+
             try:
-                input_json = cherrypy.request.json
-                gig_name = input_json.get('gig_name')
-                date = input_json.get('date')
-
-                if not gig_name or not date:
-                    raise cherrypy.HTTPError(400, 'Gig name and date are required.')
-
-                band_name = input_json.get('band_name')
-                venue = input_json.get('venue')
-                genre = input_json.get('genre')
-                looking_for = input_json.get('looking_for')
-
-                self.dynamodb_service.create_gig(gig_name, date, band_name, venue, genre, looking_for)
-
+                self.dynamodb_service.create_gig(gig_id, gig_name, date, band_username, venue, genre, looking_for, timestamp)
                 return {'status': 'success', 'message': 'Gig creation successful.'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
@@ -55,7 +57,7 @@ class GigService:
         if cherrypy.request.method == 'POST':
             try:
                 gig_postings = self.dynamodb_service.scan_table()
-                return {'Gig postings': gig_postings}
+                return {'status': 'success', 'posts': gig_postings}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
         return ''
@@ -66,12 +68,14 @@ class GigService:
     @cherrypy.tools.cors()
     def get_gig(self):
         if cherrypy.request.method == 'POST':
-            try:
-                input_json = cherrypy.request.json
-                gig_name = input_json.get('gig_name')
-                date = input_json.get('date')
+            input_json = cherrypy.request.json
+            gig_id = input_json.get('gig_id')
 
-                gig = self.dynamodb_service.get_gig(gig_name, date)
+            if not gig_id:
+                raise cherrypy.HTTPError(400, 'Gig ID is required.')
+
+            try:
+                gig = self.dynamodb_service.get_gig(gig_id)
                 if gig:
                     return {'status': 'success', 'gig': gig}
                 else:
@@ -84,15 +88,18 @@ class GigService:
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     @cherrypy.tools.cors()
-    def update_gig(self, **kwargs):
+    def update_gig(self):
         if cherrypy.request.method == 'POST':
+            input_json = cherrypy.request.json
+            gig_id = input_json.get('gig_id')
+            update_data = input_json
+
+            if not gig_id:
+                raise cherrypy.HTTPError(400, 'Gig ID is required.')
+
             try:
-                gig_name = kwargs.get('gig_name')
-                date = kwargs.get('date')
-                update_data = cherrypy.request.json
-            
-                self.dynamodb_service.update_gig(gig_name, date, **update_data)
-                return {'status': 'success', 'message': 'Gig posting updated successfully'}
+                self.dynamodb_service.update_gig(gig_id, **update_data)
+                return {'status': 'success', 'message': 'Gig updated successfully'}
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
         return ''
@@ -103,20 +110,21 @@ class GigService:
     @cherrypy.tools.cors()
     def delete_gig(self):
         if cherrypy.request.method == 'POST':
-            try:
-                input_json = cherrypy.request.json
-                gig_name = input_json.get('gig_name')
-                date = input_json.get('date')
+            input_json = cherrypy.request.json
+            gig_id = input_json.get('gig_id')
 
-                success = self.dynamodb_service.delete_gig(gig_name, date)
+            if not gig_id:
+                raise cherrypy.HTTPError(400, 'Gig ID is required.')
+
+            try:
+                success = self.dynamodb_service.delete_gig(gig_id)
                 if success:
                     return {'status': 'success', 'message': 'Gig deleted successfully'}
                 else:
                     return {'status': 'error', 'message': 'Failed to delete gig'}
             except Exception as e:
-                return {'status': 'error', 'message': str(e)}      
+                return {'status': 'error', 'message': str(e)}
         return ''
-
 
 if __name__ == '__main__':
     config = {

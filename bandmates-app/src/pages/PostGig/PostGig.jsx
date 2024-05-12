@@ -21,7 +21,7 @@ const PostGig = () => {
       <Navbar />
       <div className="post-gig-container">
         <div className="post-gig-content-container">
-          <MiniProfileCard />
+          <MiniProfileCard username={localStorage.getItem('username')}/>
           <GigsBar />
         </div>
         <div className="post-gig-content-container">

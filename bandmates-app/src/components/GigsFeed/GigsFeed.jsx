@@ -11,15 +11,15 @@ const GigsFeed = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('http://localhost:8082/get_git_postings', {
+      const response = await fetch(`${import.meta.env.VITE_GIG_API}/get_gig_postings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         if (data.status === 'success') {
           const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
           setPosts(sortedPosts);
