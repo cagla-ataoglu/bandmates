@@ -90,6 +90,7 @@ class MessageController:
     def ws(self):
         handler = cherrypy.request.ws_handler
 
+
 if __name__ == '__main__':
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
