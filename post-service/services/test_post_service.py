@@ -29,6 +29,25 @@ class TestPostService(unittest.TestCase):
         cls.mock_dynamodb.stop()
         cls.mock_s3.stop()
 
+    @classmethod
+    def clear_all_posts(self):
+        # Scan to get all items
+        response = self.dynamodb_table.scan()
+        items = response.get('Items', [])
+
+        # Delete each item using the PostId
+        for item in items:
+            self.dynamodb_table.delete_item(
+                Key={
+                    'PostId': item['PostId']
+                }
+            )
+
+    @classmethod
+    def tearDown(self):
+        # Clear all posts after each test to ensure a clean slate
+        self.service.clear_all_posts()
+
     def setUp(self):
         # Prepare a file-like object
         self.content = io.BytesIO(b"dummy image data")
@@ -65,6 +84,85 @@ class TestPostService(unittest.TestCase):
         self.service.clear_all_posts()
         posts = self.service.get_all_posts()
         self.assertEqual(len(posts), 0)
+
+    def test_get_posts_by_usernames(self):
+        username_1 = "user1"
+        username_2 = "user2"
+        username_3 = "user3"
+
+        post_id_1 = "001"
+        description_1 = "Test post number 1"
+        timestamp_1 = 1592208000
+
+        post_id_2 = "002"
+        description_2 = "Test post number 2"
+        timestamp_2 = 1592208000
+
+        post_id_3 = "003"
+        description_3 = "Test post number 3"
+        timestamp_3 = 1592208000
+
+        post_id_4 = "004"
+        description_4 = "Test post number 4"
+        timestamp_4 = 1592208000
+
+        # create posts with the information created above
+        self.service.create_post(post_id_1, description_1, self.content, username_1, timestamp_1)
+        self.service.create_post(post_id_2, description_2, self.content, username_1, timestamp_2)
+        self.service.create_post(post_id_3, description_3, self.content, username_2, timestamp_3)
+        self.service.create_post(post_id_4, description_4, self.content, username_3, timestamp_4)
+
+        usernames = [username_1, username_2]
+        posts = self.service.get_posts_by_usernames(usernames)
+
+        # use get_post_by_id method to get the expected posts
+        # get_posts_by_id was tested and works without errors
+        expected_posts = []
+        expected_posts.append(self.service.get_post_by_id(post_id_1))
+        expected_posts.append(self.service.get_post_by_id(post_id_2))
+        expected_posts.append(self.service.get_post_by_id(post_id_3))
+
+        self.assertEqual(posts, expected_posts)
+
+    def test_get_all_posts(self):
+        username_1 = "user1"
+        username_2 = "user2"
+        username_3 = "user3"
+
+        post_id_1 = "001"
+        description_1 = "Test post number 1"
+        timestamp_1 = 1592208000
+
+        post_id_2 = "002"
+        description_2 = "Test post number 2"
+        timestamp_2 = 1592208000
+
+        post_id_3 = "003"
+        description_3 = "Test post number 3"
+        timestamp_3 = 1592208000
+
+        post_id_4 = "004"
+        description_4 = "Test post number 4"
+        timestamp_4 = 1592208000
+
+        # create posts with the information created above
+        self.service.create_post(post_id_1, description_1, self.content, username_1, timestamp_1)
+        self.service.create_post(post_id_2, description_2, self.content, username_1, timestamp_2)
+        self.service.create_post(post_id_3, description_3, self.content, username_2, timestamp_3)
+        self.service.create_post(post_id_4, description_4, self.content, username_3, timestamp_4)
+
+        posts = self.service.get_all_posts()
+
+        # use get_post_by_id method to get the expected posts
+        # get_posts_by_id was tested and works without errors
+        expected_posts = []
+        expected_posts.append(self.service.get_post_by_id(post_id_1))
+        expected_posts.append(self.service.get_post_by_id(post_id_2))
+        expected_posts.append(self.service.get_post_by_id(post_id_3))
+        expected_posts.append(self.service.get_post_by_id(post_id_4))
+
+        self.assertEqual(posts, expected_posts)
+
 
     def test_edit_post_description(self):
         post_id = "004"
