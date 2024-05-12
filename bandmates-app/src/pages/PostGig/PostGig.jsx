@@ -4,8 +4,18 @@ import GigForm from '../../components/GigForm/GigForm';
 import GigsBar from '../../components/GigsBar/GigsBar';
 import MiniProfileCard from '../../components/MiniProfileCard/MiniProfileCard';
 import './PostGig.css';
+import { useNavigate } from 'react-router-dom';
 
 const PostGig = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   return (
     <>
       <Navbar />
