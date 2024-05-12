@@ -105,29 +105,13 @@ const Navbar = () => {
             <FaHome size={25} />
             <div className="tabText" >Home</div>
           </div>
-          <div className="tabIcon">
-            <IoPersonSharp size={25} />
-            <span className="badge">1</span>
-            <div className="tabText">Contacts</div>
-          </div>
           <div className="tabIcon" onClick={() => navigate('/gigs')}>
             <FaGuitar size={25} />
-            <span className="badge">1</span>
             <div className="tabText">Gigs</div>
           </div>
-          <div className="tabIcon">
+          <div className="tabIcon" onClick={() => navigate('/chats')}>
             <IoChatboxEllipsesSharp size={25} />
-            <span className="badge">2</span>
-            <div className="tabText">Messages</div>
-          </div>
-          <div className="tabIcon">
-            <IoNotifications size={25} />
-            <span className="badge">5</span>
-            <div className="tabText">Notifications</div>
-          </div>
-          <div className="tabIcon">
-            <IoSettingsSharp size={25} />
-            <div className="tabText">Settings</div>
+            <div className="tabText">Chats</div>
           </div>
         </div>
         <div className="profilePicDiv" onClick={() => navigate('/profile')}>

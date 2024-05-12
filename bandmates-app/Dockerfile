@@ -9,7 +9,7 @@ RUN npm install
 RUN npm install lodash.debounce
 RUN npm install @aws-sdk/client-s3
 RUN npm install @aws-sdk/s3-request-presigner
-RUN npm install axios reconnecting-websocket
+RUN npm install reconnecting-websocket
 
 EXPOSE 5173
 

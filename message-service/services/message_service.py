@@ -40,7 +40,10 @@ class MessageService:
                         {
                             'IndexName': 'UserChatsIndex',
                             'KeySchema': [{'AttributeName': 'username', 'KeyType': 'HASH'}],
-                            'Projection': {'ProjectionType': 'INCLUDE', 'NonKeyAttributes': ['chat_id']},
+                            'Projection': {
+                                'ProjectionType': 'INCLUDE', 
+                                'NonKeyAttributes': ['chat_id', 'chat_name', 'new']
+                            },
                             'ProvisionedThroughput': {'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
                         }
                     ],
@@ -83,7 +86,9 @@ class MessageService:
             self.chat_members_table.put_item(
                 Item={
                     'chat_id': chat_id,
-                    'username': username
+                    'chat_name': chat_name,
+                    'username': username,
+                    'new': 'false'
                 }
             )
         self.chat_table.put_item(
@@ -118,6 +123,7 @@ class MessageService:
             ExpressionAttributeValues={":username": username},
             ScanIndexForward=False
         )
+        print(response['Items'])
         return response['Items']
 
     def get_messages(self, chat_id):

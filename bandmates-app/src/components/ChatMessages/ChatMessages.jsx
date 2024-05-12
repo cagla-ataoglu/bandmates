@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import './ChatMessages.css';
+
 
 const ChatMessages = ({ messages }) => {
+    const [currentUser, setCurrentUser] = useState(null);
+
+    useEffect(() => {
+        const username = localStorage.getItem('username');
+        setCurrentUser(username);
+    }, []);
+
     return (
         <div className="messages-display">
             <ul>
                 {messages.map((msg, index) => (
-                    <li key={index} className={msg.sender_id === "your_user_id" ? "my-message" : "other-message"}>
-                        <strong>{msg.sender_id}:</strong> {msg.message}
+                    <li key={index} 
+                        className={msg.username === currentUser ? "my-message" : "other-message"}>
+                        <strong>{msg.username}:</strong> {msg.message}
                     </li>
                 ))}
             </ul>
