@@ -13,7 +13,9 @@ class GigAlreadyExistsException(Exception):
 class DynamoDBService:
     def __init__(self):
         self.environment = os.getenv('ENV', 'development')
-        if self.environment == 'test':
+        if self.environment == 'production':
+            self.dynamodb = boto3.resource('dynamodb')
+        elif self.environment == 'test':
             self.dynamodb = boto3.resource('dynamodb')
         else:
             self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')

@@ -87,21 +87,19 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
 
-  group-service:
-    build: ./group-service
+  message-service:
+    build: ./message-service
     depends_on:
       - localstack
     networks:
       - bandmates-backend
     ports:
-      - "8088:8088"
+      - "8091:8091"
     environment:
       - LOCALSTACK_HOSTNAME=localstack
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
-      - USER_POOL_NAME=${USER_POOL_NAME}
-      - CLIENT_NAME=${CLIENT_NAME}
 
   frontend:
     build: ./bandmates-app
@@ -112,6 +110,7 @@ services:
       - gig-service
       - profile-service
       - post-service
+      - message-service
     ports:
       - "5173:5173"
 
