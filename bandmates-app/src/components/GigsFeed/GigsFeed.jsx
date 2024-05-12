@@ -12,19 +12,22 @@ const GigsFeed = () => {
   const fetchPosts = async () => {
     try {
       const response = await fetch('http://localhost:8082/get_git_postings', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-      const data = await response.json();
-      if (data.status === 'success') {
-        const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
-        setPosts(sortedPosts);
-      } else {
-        console.error('Failed to fetch posts:', data.message);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'success') {
+          const sortedPosts = data.posts.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+          setPosts(sortedPosts);
+        } else {
+          console.error('Failed to fetch posts:', data.message);
+        }
       }
+      
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
