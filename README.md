@@ -5,7 +5,8 @@ Advanced Software Engineering FS24 Group Project
 Pia Rosebelle M. Dela Paz \
 Efe Saman \
 Cagla Ataoglu \
-Yaren Durgun 
+Yaren Durgun \
+Marika Thors
 
 ## How to run Bandmates
 ### Backend
@@ -24,6 +25,9 @@ Yaren Durgun
 
 
 ### Unit tests
-Prerequisite: Make sure to have moto v2.0.0 installed, newer versions are not guaranteed to work.
+Prerequisite: Make sure to have moto v2.0.0 installed, newer versions are not guaranteed to work, as well as pytest and unittest.
 1. Go to microservice with a test file in the command line.
-2. Type `pytest -p no:warnings test_<name of service>_service.py`
+2. Run `pytest -p no:warnings test_<name of service>_service.py`
+Alternatively to run all tests at once:
+1. Go to root of project
+2. Run `pytest -p no:warnings`
