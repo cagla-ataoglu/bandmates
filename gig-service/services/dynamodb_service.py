@@ -52,7 +52,7 @@ class DynamoDBService:
             item = {
                 'GigId': gig_id,
                 'GigName': gig_name,
-                'Date': date,
+                'GigDate': date,
                 'BandUsername': band_username,
                 'Venue': venue,
                 'Genre': genre,
