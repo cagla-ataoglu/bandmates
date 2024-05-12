@@ -1,0 +1,4 @@
+CherryPy
+boto3
+requests
+ws4py

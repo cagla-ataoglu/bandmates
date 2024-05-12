@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import GigsFeed from '../../components/GigsFeed/GigsFeed';
@@ -10,8 +10,15 @@ import './SearchGigs.css';
 const SearchGigs = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   const handlePostClick = () => {
-      navigate('/post_gig');
+    navigate('/post_gig');
   };
 
   return (
@@ -19,11 +26,11 @@ const SearchGigs = () => {
       <Navbar />
       <div className="gigs-container">
         <div className="gigs-content-container">
-          <MiniProfileCard />
+          <MiniProfileCard username={localStorage.getItem('username')}/>
           <GigsBar />
-          <button className="gigs-container button"  onClick={handlePostClick}>
-                        Post a Gig
-            </button>
+          <button className="gigs-container button" onClick={handlePostClick}>
+            Post a Gig
+          </button>
         </div>
         <div className="gigs-content-container">
           <div className="gigs-vertical-content">
