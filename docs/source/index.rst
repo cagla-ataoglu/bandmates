@@ -14,6 +14,7 @@ Welcome to bandmates's documentation!
    follow_service
    gig_service
    group_service
+   message_service
    post_service
    profile_service
 

@@ -43,6 +43,7 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
@@ -85,12 +86,14 @@
 </li>
       <li><a href="auth_service.html#cognito_service.CognitoService">CognitoService (class in cognito_service)</a>
 </li>
-      <li><a href="follow_service.html#follow_service.FollowService.create_follow">create_follow() (follow_service.FollowService method)</a>
+      <li><a href="message_service.html#message_service.MessageService.create_chat">create_chat() (message_service.MessageService method)</a>
 </li>
-      <li><a href="gig_service.html#dynamodb_service.DynamoDBService.create_gig">create_gig() (dynamodb_service.DynamoDBService method)</a>
+      <li><a href="follow_service.html#follow_service.FollowService.create_follow">create_follow() (follow_service.FollowService method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="gig_service.html#dynamodb_service.DynamoDBService.create_gig">create_gig() (dynamodb_service.DynamoDBService method)</a>
+</li>
       <li><a href="group_service.html#group_service.GroupService.create_group">create_group() (group_service.GroupService method)</a>
 </li>
       <li><a href="group_service.html#group_service.GroupService.create_post">create_post() (group_service.GroupService method)</a>
@@ -139,6 +142,8 @@
 </li>
       <li><a href="follow_service.html#follow_service.FollowService.ensure_follow_table">ensure_follow_table() (follow_service.FollowService method)</a>
 </li>
+      <li><a href="message_service.html#message_service.MessageService.ensure_table">ensure_table() (message_service.MessageService method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -169,6 +174,8 @@
 </li>
       <li><a href="auth_service.html#cognito_service.CognitoService.get_jwks">get_jwks() (cognito_service.CognitoService method)</a>
 </li>
+      <li><a href="message_service.html#message_service.MessageService.get_messages">get_messages() (message_service.MessageService method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="post_service.html#post_service.PostService.get_post_by_id">get_post_by_id() (post_service.PostService method)</a>
@@ -176,6 +183,8 @@
       <li><a href="post_service.html#post_service.PostService.get_posts_by_usernames">get_posts_by_usernames() (post_service.PostService method)</a>
 </li>
       <li><a href="group_service.html#group_service.GroupService.get_posts_in_group">get_posts_in_group() (group_service.GroupService method)</a>
+</li>
+      <li><a href="message_service.html#message_service.MessageService.get_user_chats">get_user_chats() (message_service.MessageService method)</a>
 </li>
       <li><a href="profile_service.html#profile_service.ProfileService.getProfile">getProfile() (profile_service.ProfileService method)</a>
 </li>
@@ -194,6 +203,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="group_service.html#group_service.GroupService.initialize_table">initialize_table() (group_service.GroupService method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="message_service.html#message_service.MessageService">MessageService (class in message_service)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -236,6 +253,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="follow_service.html#follow_service.FollowService.send_follow_request">send_follow_request() (follow_service.FollowService method)</a>
+</li>
+      <li><a href="message_service.html#message_service.MessageService.send_message">send_message() (message_service.MessageService method)</a>
 </li>
       <li><a href="auth_service.html#cognito_service.CognitoService.signup_user">signup_user() (cognito_service.CognitoService method)</a>
 </li>
@@ -294,6 +313,7 @@
 <li class="toctree-l1"><a class="reference internal" href="follow_service.html">Follow Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gig_service.html">DynamoDB Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="group_service.html">Group Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_service.html">Message Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="post_service.html">Post Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="profile_service.html">Profile Service Module</a></li>
 </ul>
