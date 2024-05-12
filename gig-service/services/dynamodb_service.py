@@ -19,8 +19,9 @@ class DynamoDBService:
             self.dynamodb = boto3.resource('dynamodb')
         else:
             self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566')
+        
         self.table_name = 'Gigs'
-        # Ensure Gigs table exists
+        
         try:
             self.dynamodb.Table(self.table_name).load()
             print(f"Table '{self.table_name}' already exists. Loading it.")
@@ -28,24 +29,31 @@ class DynamoDBService:
             if e.response['Error']['Code'] == 'ResourceNotFoundException':
                 table = self.dynamodb.create_table(
                     TableName='Gigs',
-                    KeySchema=[{'AttributeName': 'Date', 'KeyType': 'HASH'}, {'AttributeName': 'GigName', 'KeyType': 'RANGE'}],
-                    AttributeDefinitions=[{'AttributeName': 'Date', 'AttributeType': 'S'}, {'AttributeName': 'GigName', 'AttributeType': 'S'}],
-                    ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
+                    KeySchema=[
+                        {'AttributeName': 'Date', 'KeyType': 'HASH'},
+                        {'AttributeName': 'GigName', 'KeyType': 'RANGE'}
+                    ],
+                    AttributeDefinitions=[
+                        {'AttributeName': 'Date', 'AttributeType': 'S'},
+                        {'AttributeName': 'GigName', 'AttributeType': 'S'}
+                    ],
+                    ProvisionedThroughput={
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
                 )
-                table.meta.client.get_waiter('table_exists').wait(TableName='Gigs')
+                table.meta.client.get_waiter('table_exists').wait(TableName=self.table_name)
                 print("Gigs table created.")
             else:
                 raise
-        self.gigs_table = self.dynamodb.Table('Gigs')
+        self.gigs_table = self.dynamodb.Table(self.table_name)
 
-    # method to check if a given gig exists
     def gig_exists(self, gig_name, date):
         response = self.dynamodb.Table(self.table_name).query(
             KeyConditionExpression=Key('Date').eq(date) & Key('GigName').eq(gig_name)
         )
         return len(response['Items']) > 0
 
-    # method to create a gig
     def create_gig(self, gig_name, date, band_name, venue, genre, looking_for):
         if self.gig_exists(gig_name, date):
             raise GigAlreadyExistsException(f"Gig '{gig_name}' on {date} already exists.")
@@ -62,7 +70,6 @@ class DynamoDBService:
             )
             print("Gig created.")
 
-    # method to read a gig
     def get_gig(self, gig_name, date):
         response = self.dynamodb.Table(self.table_name).get_item(Key={'Date': date, 'GigName': gig_name})
         
@@ -71,12 +78,10 @@ class DynamoDBService:
         else:
             return None
 
-    # method to read all the gigs
     def scan_table(self):
         response = self.dynamodb.Table(self.table_name).scan()
         return response['Items']
 
-    # method to update a gig
     def update_gig(self, gig_name, date, **kwargs):
         # check if the gig exists
         if not self.gig_exists(gig_name, date):
@@ -106,7 +111,6 @@ class DynamoDBService:
             ExpressionAttributeNames=expression_attribute_names
         )
 
-    # method to delete a gig
     def delete_gig(self, gig_name, date):
         try:
             self.dynamodb.Table(self.table_name).delete_item(
@@ -119,4 +123,3 @@ class DynamoDBService:
         except Exception as e:
             print(f"Error deleting gig: {e}")
             return False
-
