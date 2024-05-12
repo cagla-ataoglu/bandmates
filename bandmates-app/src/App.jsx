@@ -7,6 +7,7 @@ import Profile from './pages/Profile/Profile';
 import SearchGigs from './pages/SearchGigs/SearchGigs';
 import PostGig from './pages/PostGig/PostGig';
 import OtherUser from './pages/OtherUser/OtherUser';
+import Chats from './pages/Chats/Chats';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
       <Route path="/gigs" element={<SearchGigs />}/>
       <Route path="/post_gig" element={<PostGig />}/>
       <Route path="/users/:username" element={<OtherUser />}/>
+      <Route path="/chats" element={<Chats />}/>
     </Routes>
   )
 }
