@@ -108,11 +108,17 @@
   .logout-button {
     margin-left: 10px;
     margin-right: 10px;
-    background-color: grey;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
+    font-weight: bold;
+    background: #006ad9;
+    color: white;
     cursor: pointer;
+    border: none;
+    padding: 7px;
+    border-radius: 5px;
+  }
+
+  .logout-button:hover {
+    background-color: #0053ad;
   }
   
   .searchInput {
@@ -141,5 +147,4 @@
   .searchResultItem:hover {
     background-color: #f0f0f0;
   }
-  
   
