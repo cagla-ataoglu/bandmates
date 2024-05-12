@@ -1,0 +1,59 @@
+.message-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    width: 300px;
+    position: fixed;
+    bottom: 20px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
+    transition: height 0.3s ease; /* Smooth transition for collapsing/expanding */
+  }
+  
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  
+  .message-body {
+    max-height: 200px; /* Adjust as needed */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .message-input {
+    display: flex;
+  }
+  
+  .message-input textarea {
+    flex: 1;
+    resize: none;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    margin-right: 10px;
+  }
+  
+  .message-input button {
+    padding: 5px 10px;
+    background-color: #0077b5; /* LinkedIn's primary color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .collapsed {
+    height: 40px; /* Adjust the collapsed height as needed */
+    overflow: hidden;
+  }
+  
+  .collapsed .message-body,
+  .collapsed .message-input {
+    display: none;
+  }
+  
