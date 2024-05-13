@@ -5,16 +5,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Follow Service &#8212; bandmates 2024 documentation</title>
+    <title>Follow Service Module &#8212; bandmates 1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
-    <script src="../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="../gig-service/index.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="../auth-service/index.html" />
+    <link rel="next" title="DynamoDB Service" href="../gig-service/index.html" />
+    <link rel="prev" title="Auth Service Module" href="../auth-service/index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,214 +32,100 @@
 
           <div class="body" role="main">
             
-  <section id="follow-service">
-<h1>Follow Service<a class="headerlink" href="#follow-service" title="Link to this heading">¶</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">boto3</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
+  <section id="follow-service-module">
+<h1>Follow Service Module<a class="headerlink" href="#follow-service-module" title="Link to this heading">¶</a></h1>
+<p>This module contains the <code class="docutils literal notranslate"><span class="pre">FollowService</span></code> class, which manages follow relationships between users in a DynamoDB database. It includes functionalities to handle follow requests, create follow connections, and query followers and followings.</p>
+<section id="follow-service-class">
+<h2>Follow Service Class<a class="headerlink" href="#follow-service-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">FollowService</span></code> class handles the creation and management of follow relationships stored in DynamoDB tables. It provides methods for sending follow requests, creating follow connections, and retrieving follow-related data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="follow_service.FollowService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">follow_service.</span></span><span class="sig-name descname"><span class="pre">FollowService</span></span><a class="headerlink" href="#follow_service.FollowService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.create_follow">
+<span class="sig-name descname"><span class="pre">create_follow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">follower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.create_follow" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a follow relation between two users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>follower (str): The username of the follower.
+following (str): The username of the user being followed.</p>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="k">class</span> <span class="nc">FollowService</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FollowService is a class to manage follow requests and follow relations</span>
-<span class="sd">    between users in a social media platform.</span>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.delete_follow">
+<span class="sig-name descname"><span class="pre">delete_follow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">follower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.delete_follow" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a follow relation between two users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>follower (str): The username of the follower.
+following (str): The username of the user being followed.</p>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        environment (str): The environment in which the service is running. Default is &#39;development&#39;.</span>
-<span class="sd">        dynamodb (boto3.resource): The DynamoDB resource.</span>
-<span class="sd">        follow (str): The name of the main follow table.</span>
-<span class="sd">        follow_requests (str): The name of the follow requests table.</span>
-<span class="sd">        follow_table (boto3.resource.Table): The DynamoDB table for follows.</span>
-<span class="sd">        follow_requests_table (boto3.resource.Table): The DynamoDB table for follow requests.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.ensure_follow_table">
+<span class="sig-name descname"><span class="pre">ensure_follow_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.ensure_follow_table" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures that the specified DynamoDB table exists, otherwise creates it.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>table_name (str): The name of the table to ensure.</p>
+</dd>
+<dt>Returns:</dt><dd><p>boto3.resource.Table: The DynamoDB table.</p>
+</dd>
+</dl>
+</dd></dl>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes FollowService with the necessary resources and tables.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;development&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">==</span> <span class="s1">&#39;production&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">==</span> <span class="s1">&#39;test&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;dynamodb&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;dynamodb&#39;</span><span class="p">,</span> <span class="n">endpoint_url</span><span class="o">=</span><span class="s1">&#39;http://localstack:4566&#39;</span><span class="p">)</span>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.get_follow_requests">
+<span class="sig-name descname"><span class="pre">get_follow_requests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.get_follow_requests" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves follow requests for a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of usernames who sent follow requests.</p>
+</dd>
+</dl>
+</dd></dl>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">follow</span> <span class="o">=</span> <span class="s1">&#39;Follow&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">follow_requests</span> <span class="o">=</span> <span class="s1">&#39;Follow_requests&#39;</span>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.get_followers">
+<span class="sig-name descname"><span class="pre">get_followers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.get_followers" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves users who are following a given user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of usernames who are following the given user.</p>
+</dd>
+</dl>
+</dd></dl>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">follow_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_follow_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">follow</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">follow_requests_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_follow_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_requests</span><span class="p">)</span>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.get_followings">
+<span class="sig-name descname"><span class="pre">get_followings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.get_followings" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves users that a given user is following.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of usernames being followed by the given user.</p>
+</dd>
+</dl>
+</dd></dl>
 
-    <span class="k">def</span> <span class="nf">ensure_follow_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Ensures that the specified DynamoDB table exists, otherwise creates it.</span>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.send_follow_request">
+<span class="sig-name descname"><span class="pre">send_follow_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">follower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.send_follow_request" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a follow request from one user to another.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>follower (str): The username of the user sending the request.
+following (str): The username of the user to whom the request is sent.</p>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="sd">        Args:</span>
-<span class="sd">            table_name (str): The name of the table to ensure.</span>
+</dd></dl>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            boto3.resource.Table: The DynamoDB table.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Table </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s1"> already exists. Loading it.&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ResourceNotFoundException</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">create_table</span><span class="p">(</span>
-                <span class="n">TableName</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
-                <span class="n">KeySchema</span><span class="o">=</span><span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;follower&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;KeyType&#39;</span><span class="p">:</span> <span class="s1">&#39;HASH&#39;</span>
-                    <span class="p">},</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;following&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;KeyType&#39;</span><span class="p">:</span> <span class="s1">&#39;RANGE&#39;</span>
-                    <span class="p">}</span>
-                <span class="p">],</span>
-                <span class="n">AttributeDefinitions</span><span class="o">=</span><span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;follower&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;AttributeType&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span>
-                    <span class="p">},</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;following&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;AttributeType&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span>
-                    <span class="p">}</span>
-                <span class="p">],</span>
-                <span class="n">GlobalSecondaryIndexes</span><span class="o">=</span><span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;IndexName&#39;</span><span class="p">:</span> <span class="s1">&#39;FollowingIndex&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;KeySchema&#39;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="p">{</span>
-                                <span class="s1">&#39;AttributeName&#39;</span><span class="p">:</span> <span class="s1">&#39;following&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;KeyType&#39;</span><span class="p">:</span> <span class="s1">&#39;HASH&#39;</span>
-                            <span class="p">},</span>
-                        <span class="p">],</span>
-                        <span class="s1">&#39;Projection&#39;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s1">&#39;ProjectionType&#39;</span><span class="p">:</span> <span class="s1">&#39;ALL&#39;</span>
-                        <span class="p">},</span>
-                        <span class="s1">&#39;ProvisionedThroughput&#39;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s1">&#39;ReadCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                            <span class="s1">&#39;WriteCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">],</span>
-                <span class="n">ProvisionedThroughput</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s1">&#39;ReadCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                    <span class="s1">&#39;WriteCapacityUnits&#39;</span><span class="p">:</span> <span class="mi">5</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s1">&#39;table_exists&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">TableName</span><span class="o">=</span><span class="n">table_name</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connections table created.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">send_follow_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">follower</span><span class="p">,</span> <span class="n">following</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sends a follow request from one user to another.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            follower (str): The username of the user sending the request.</span>
-<span class="sd">            following (str): The username of the user to whom the request is sent.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">follow_requests_table</span><span class="o">.</span><span class="n">put_item</span><span class="p">(</span>
-                <span class="n">Item</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s1">&#39;follower&#39;</span><span class="p">:</span> <span class="n">follower</span><span class="p">,</span>
-                    <span class="s1">&#39;following&#39;</span><span class="p">:</span> <span class="n">following</span>
-                <span class="p">},</span>
-                <span class="n">ConditionExpression</span><span class="o">=</span><span class="s2">&quot;attribute_not_exists(follower) AND attribute_not_exists(following)&quot;</span>
-            <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Follow request sent successfully.&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamodb</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConditionalCheckFailedException</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Follow request already exists.&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_follow_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves follow requests for a user.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            username (str): The username of the user.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list: A list of usernames who sent follow requests.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">follow_requests_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="n">KeyConditionExpression</span><span class="o">=</span><span class="s2">&quot;following = :username&quot;</span><span class="p">,</span>
-            <span class="n">ExpressionAttributeValues</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;:username&quot;</span><span class="p">:</span> <span class="n">username</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="n">requests</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;follower&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Items&#39;</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">requests</span>
-
-    <span class="k">def</span> <span class="nf">create_follow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">follower</span><span class="p">,</span> <span class="n">following</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a follow relation between two users.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            follower (str): The username of the follower.</span>
-<span class="sd">            following (str): The username of the user being followed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">follow_table</span><span class="o">.</span><span class="n">put_item</span><span class="p">(</span>
-            <span class="n">Item</span><span class="o">=</span><span class="p">{</span>
-                <span class="s1">&#39;follower&#39;</span><span class="p">:</span> <span class="n">follower</span><span class="p">,</span>
-                <span class="s1">&#39;following&#39;</span><span class="p">:</span> <span class="n">following</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">delete_follow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">follower</span><span class="p">,</span> <span class="n">following</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deletes a follow relation between two users.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            follower (str): The username of the follower.</span>
-<span class="sd">            following (str): The username of the user being followed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">follow_table</span><span class="o">.</span><span class="n">delete_item</span><span class="p">(</span>
-            <span class="n">Key</span><span class="o">=</span><span class="p">{</span>
-                <span class="s1">&#39;follower&#39;</span><span class="p">:</span> <span class="n">follower</span><span class="p">,</span>
-                <span class="s1">&#39;following&#39;</span><span class="p">:</span> <span class="n">following</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_followings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves users that a given user is following.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            username (str): The username of the user.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list: A list of usernames being followed by the given user.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">follow_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="n">KeyConditionExpression</span><span class="o">=</span><span class="s2">&quot;follower = :username&quot;</span><span class="p">,</span>
-            <span class="n">ExpressionAttributeValues</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;:username&quot;</span><span class="p">:</span> <span class="n">username</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="n">followings</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;following&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Items&#39;</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">followings</span>
-
-    <span class="k">def</span> <span class="nf">get_followers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves users who are following a given user.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            username (str): The username of the user.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list: A list of usernames who are following the given user.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">follow_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="n">IndexName</span><span class="o">=</span><span class="s1">&#39;FollowingIndex&#39;</span><span class="p">,</span>  <span class="c1"># Specify the correct GSI name</span>
-            <span class="n">KeyConditionExpression</span><span class="o">=</span><span class="s2">&quot;following = :username&quot;</span><span class="p">,</span>
-            <span class="n">ExpressionAttributeValues</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;:username&quot;</span><span class="p">:</span> <span class="n">username</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="n">followers</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;follower&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Items&#39;</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">followers</span>
-</pre></div>
-</div>
+</section>
 </section>
 
 
@@ -261,15 +147,23 @@
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Follow Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Auth Service Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Follow Service Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#follow-service-class">Follow Service Class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">DynamoDB Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Documentation</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../auth-service/index.html" title="previous chapter">&lt;no title&gt;</a></li>
-      <li>Next: <a href="../gig-service/index.html" title="next chapter">&lt;no title&gt;</a></li>
+      <li>Previous: <a href="../auth-service/index.html" title="previous chapter">Auth Service Module</a></li>
+      <li>Next: <a href="../gig-service/index.html" title="next chapter">DynamoDB Service</a></li>
   </ul></li>
 </ul>
 </div>

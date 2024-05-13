@@ -4,6 +4,9 @@ import os
 
 class FollowService:
     def __init__(self):
+        """
+            Initializes FollowService with the necessary resources and tables.
+        """
         self.environment = os.getenv('ENV', 'development')
         if self.environment == 'production':
             self.dynamodb = boto3.resource('dynamodb')
@@ -19,6 +22,15 @@ class FollowService:
         self.follow_requests_table = self.ensure_follow_table(self.follow_requests)
 
     def ensure_follow_table(self, table_name):
+        """
+            Ensures that the specified DynamoDB table exists, otherwise creates it.
+
+            Args:
+                table_name (str): The name of the table to ensure.
+
+            Returns:
+                boto3.resource.Table: The DynamoDB table.
+        """
         try:
             self.dynamodb.Table(table_name).load()
             print(f'Table {table_name} already exists. Loading it.')
@@ -73,6 +85,13 @@ class FollowService:
         return self.dynamodb.Table(table_name)
         
     def send_follow_request(self, follower, following):
+        """
+            Sends a follow request from one user to another.
+
+            Args:
+                follower (str): The username of the user sending the request.
+                following (str): The username of the user to whom the request is sent.
+        """
         try:
             self.follow_requests_table.put_item(
                 Item={
@@ -86,6 +105,15 @@ class FollowService:
             print("Follow request already exists.")
 
     def get_follow_requests(self, username):
+        """
+            Retrieves follow requests for a user.
+
+            Args:
+                username (str): The username of the user.
+
+            Returns:
+                list: A list of usernames who sent follow requests.
+        """
         response = self.follow_requests_table.query(
             KeyConditionExpression="following = :username",
             ExpressionAttributeValues={
@@ -96,6 +124,13 @@ class FollowService:
         return requests
 
     def create_follow(self, follower, following):
+        """
+            Creates a follow relation between two users.
+
+            Args:
+                follower (str): The username of the follower.
+                following (str): The username of the user being followed.
+        """
         self.follow_table.put_item(
             Item={
                 'follower': follower,
@@ -104,6 +139,13 @@ class FollowService:
         )
     
     def delete_follow(self, follower, following):
+        """
+            Deletes a follow relation between two users.
+
+            Args:
+                follower (str): The username of the follower.
+                following (str): The username of the user being followed.
+        """
         self.follow_table.delete_item(
             Key={
                 'follower': follower,
@@ -113,6 +155,15 @@ class FollowService:
 
 
     def get_followings(self, username):
+        """
+            Retrieves users that a given user is following.
+
+            Args:
+                username (str): The username of the user.
+
+            Returns:
+                list: A list of usernames being followed by the given user.
+        """
         response = self.follow_table.query(
             KeyConditionExpression="follower = :username",
             ExpressionAttributeValues={
@@ -123,6 +174,15 @@ class FollowService:
         return followings
 
     def get_followers(self, username):
+        """
+            Retrieves users who are following a given user.
+
+            Args:
+                username (str): The username of the user.
+
+            Returns:
+                list: A list of usernames who are following the given user.
+        """
         response = self.follow_table.query(
             IndexName='FollowingIndex',  # Specify the correct GSI name
             KeyConditionExpression="following = :username",

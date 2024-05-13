@@ -12,6 +12,9 @@ class GigAlreadyExistsException(Exception):
 
 class DynamoDBService:
     def __init__(self):
+        """
+            Initializes DynamoDBService with the necessary resources and table.
+        """
         self.environment = os.getenv('ENV', 'development')
         if self.environment == 'production':
             self.dynamodb = boto3.resource('dynamodb')
@@ -38,15 +41,37 @@ class DynamoDBService:
                 raise
         self.gigs_table = self.dynamodb.Table('Gigs')
 
-    # method to check if a given gig exists
     def gig_exists(self, gig_name, date):
+        """
+            Checks if a given gig exists.
+
+            Args:
+                gig_name (str): The name of the gig.
+                date (str): The date of the gig.
+
+            Returns:
+                bool: True if the gig exists, False otherwise.
+        """
         response = self.dynamodb.Table(self.table_name).query(
             KeyConditionExpression=Key('Date').eq(date) & Key('GigName').eq(gig_name)
         )
         return len(response['Items']) > 0
 
-    # method to create a gig
     def create_gig(self, gig_name, date, band_name, venue, genre, looking_for):
+        """
+            Creates a new gig entry in the DynamoDB table.
+
+            Args:
+                gig_name (str): The name of the gig.
+                date (str): The date of the gig.
+                band_name (str): The name of the band performing.
+                venue (str): The venue of the gig.
+                genre (str): The genre of the gig.
+                looking_for (str): The type of participants the gig is looking for.
+
+            Raises:
+                GigAlreadyExistsException: If a gig with the same name and date already exists.
+        """
         if self.gig_exists(gig_name, date):
             raise GigAlreadyExistsException(f"Gig '{gig_name}' on {date} already exists.")
         else: 
@@ -62,8 +87,17 @@ class DynamoDBService:
             )
             print("Gig created.")
 
-    # method to read a gig
     def get_gig(self, gig_name, date):
+        """
+            Retrieves information about a specific gig.
+
+            Args:
+                gig_name (str): The name of the gig.
+                date (str): The date of the gig.
+
+            Returns:
+                dict or None: Information about the gig if found, None otherwise.
+        """
         response = self.dynamodb.Table(self.table_name).get_item(Key={'Date': date, 'GigName': gig_name})
         
         if 'Item' in response:
@@ -71,13 +105,29 @@ class DynamoDBService:
         else:
             return None
 
-    # method to read all the gigs
     def scan_table(self):
+        """
+            Scans the DynamoDB table and retrieves all gig entries.
+
+            Returns:
+                list: A list of dictionaries representing gig entries.
+        """
         response = self.dynamodb.Table(self.table_name).scan()
         return response['Items']
 
-    # method to update a gig
     def update_gig(self, gig_name, date, **kwargs):
+        """
+            Updates information about a gig.
+
+            Args:
+                gig_name (str): The name of the gig.
+                date (str): The date of the gig.
+                kwargs: Additional attributes to update.
+
+            Raises:
+                GigNotFoundException: If the specified gig is not found.
+        """
+
         # check if the gig exists
         if not self.gig_exists(gig_name, date):
             raise GigNotFoundException(f"Gig '{gig_name}' on {date} not found.")
@@ -106,8 +156,17 @@ class DynamoDBService:
             ExpressionAttributeNames=expression_attribute_names
         )
 
-    # method to delete a gig
     def delete_gig(self, gig_name, date):
+        """
+            Deletes a gig entry from the DynamoDB table.
+
+            Args:
+                gig_name (str): The name of the gig.
+                date (str): The date of the gig.
+
+            Returns:
+                bool: True if the deletion was successful, False otherwise.
+        """
         try:
             self.dynamodb.Table(self.table_name).delete_item(
                 Key={

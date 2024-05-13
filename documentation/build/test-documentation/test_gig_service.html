@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Test gig service documentation &#8212; bandmates 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="test-gig-service-documentation">
+<h1>Test gig service documentation<a class="headerlink" href="#test-gig-service-documentation" title="Link to this heading">¶</a></h1>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h2>
+<p>Environment Variables: Mock AWS credentials and settings are configured to facilitate testing without real AWS services (<code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_DEFAULT_REGION</span></code>, <code class="docutils literal notranslate"><span class="pre">ENV</span></code>).</p>
+</section>
+<section id="setup-teardown">
+<h2>Setup/Teardown<a class="headerlink" href="#setup-teardown" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">setUpClass(cls)</span></code>: Initializes the mock environment and sets up the DynamoDB table used to store gig data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tearDownClass(cls)</span></code>: Tears down the mock environment and deletes the DynamoDB table.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setUp(self)</span></code>: Creates an instance of DynamoDBService for use in each test method.</p></li>
+</ul>
+</section>
+<section id="test-methods">
+<h2>Test Methods<a class="headerlink" href="#test-methods" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">test_create_gig()</span></code>: Tests the creation of a gig and verifies the entry’s correct storage and retrieval.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_create_gig_already_exists()</span></code>: Ensures that attempting to create a duplicate gig entry raises a GigAlreadyExistsException.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_get_gig_not_found()</span></code>: Attempts to retrieve a non-existent gig to ensure that the appropriate response (none) is returned.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_update_gig()</span></code>: Tests updating the details of an existing gig and checks if the updates are accurately reflected.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_update_gig_not_found()</span></code>: Confirms that trying to update a non-existent gig raises a GigNotFoundException.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_delete_gig()</span></code>: Validates the functionality to delete a gig and ensure it no longer exists in the database.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Auth Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../follow-service/index.html">Follow Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">Gig Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, PECY.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/test-documentation/test_gig_service.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -7,7 +7,7 @@ Welcome to bandmates's documentation!
 =====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
    
    auth-service/index
@@ -16,6 +16,7 @@ Welcome to bandmates's documentation!
    group-service/index
    post-service/index
    profile-service/index
+   test-documentation/index
 
 
 
