@@ -9,19 +9,11 @@ Yaren Durgun \
 Marika Thors
 
 ## How to run Bandmates
-### Backend
 1. Navigate to directory 'bandmates'
 2. Make sure the docker engine is running on your machine
 3. Run the following command: \
   `docker-compose up --build`
-
-### Frontend
-1. Navigate to directory 'bandmates-app'
-2. If vite is not installed, run: \
-   `npm create vite@latest` \
-   `npm install vite`
-3. Run the following command: \
-   `npm run dev`
+4. The application should be accessible on localhost:5173
 
 
 ### Unit tests
