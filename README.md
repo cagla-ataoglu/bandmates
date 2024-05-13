@@ -20,6 +20,7 @@ Marika Thors
 Prerequisite: Make sure to have moto v2.0.0 installed, newer versions are not guaranteed to work, as well as pytest and unittest.
 1. Go to microservice with a test file in the command line.
 2. Run `pytest -p no:warnings test_<name of service>_service.py`
+
 Alternatively to run all tests at once:
 1. Go to root of project
 2. Run `pytest -p no:warnings`
