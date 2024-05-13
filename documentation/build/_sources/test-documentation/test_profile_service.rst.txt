@@ -1,5 +1,5 @@
-Test profile service documentation
-===================================
+Profile Service Test
+====================
 
 Setup
 -----

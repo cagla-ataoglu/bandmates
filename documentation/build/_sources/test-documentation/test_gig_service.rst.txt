@@ -1,5 +1,5 @@
-Test gig service documentation
-==============================
+Gig Service Test
+================
 
 Setup
 -----
