@@ -1,5 +1,5 @@
-Test group service documentation
-================================
+Group Service Test
+==================
 
 Setup
 -----
