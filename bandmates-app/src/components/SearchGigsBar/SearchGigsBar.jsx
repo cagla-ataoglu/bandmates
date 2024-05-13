@@ -1,56 +1,67 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes
-import './SearchGigsBar.css'; // Import CSS file
+import PropTypes from 'prop-types';
+import './SearchGigsBar.css';
 
-const SearchBar = ({ onSearch, onFilterChange }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const SearchBar = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
-    date: '',
-    place: '',
+    gigName: '',
+    dateFrom: '',
+    dateTo: '',
     instrument: '',
   });
 
-  const handleSearch = () => {
-    onSearch(searchTerm);
-  };
-
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
-    onFilterChange(filters);
+    setFilters(prev => ({ ...prev, [name]: value }));
+    onFilterChange({ ...filters, [name]: value }); // This ensures the parent state is updated immediately
   };
 
   return (
     <div className="search-bar">
-        <div className="search-bar-card">
-            <h1>Search Gig</h1>
-        <input
+      <div className="search-bar-card">
+        <h1>Search Gig</h1>
+        <div className='search-bar-field'>
+          <input
             type="text"
-            placeholder="Search by name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <select name="date" onChange={handleFilterChange}>
-            <option value="">Select Date</option>
-            {/* Add options for dates */}
-        </select>
-        <select name="place" onChange={handleFilterChange}>
-            <option value="">Select Place</option>
-            {/* Add options for places */}
-        </select>
-        <select name="instrument" onChange={handleFilterChange}>
-            <option value="">Select Instrument</option>
-            {/* Add options for instruments */}
-        </select>
+            name="gigName"
+            placeholder="Search by gig name"
+            value={filters.gigName}
+            onChange={handleFilterChange}
+          />
+        </div>
+        <div className='search-bar-field'>
+          <input
+            type="date"
+            name="dateFrom"
+            value={filters.dateFrom}
+            onChange={handleFilterChange}
+            placeholder="From date"
+          />
+        </div>
+        <div className='search-bar-field'>
+          <input
+            type="date"
+            name="dateTo"
+            value={filters.dateTo}
+            onChange={handleFilterChange}
+            placeholder="To date"
+          />
+        </div>
+        <div className='search-bar-field'>
+          <input
+            type="text"
+            name="instrument"
+            placeholder="Search by instrument"
+            value={filters.instrument}
+            onChange={handleFilterChange}
+          />
+        </div>
       </div>
-      <button onClick={handleSearch}>Search</button>
     </div>
   );
 };
 
-// Prop type validation
 SearchBar.propTypes = {
-  onSearch: PropTypes.func.isRequired,
   onFilterChange: PropTypes.func.isRequired,
 };
 
