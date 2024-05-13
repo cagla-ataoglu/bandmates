@@ -30,7 +30,7 @@ function Chats() {
             } else {
                 setChats(prev => prev.map(chat => {
                     if (chat.chat_id === data.chat_id) {
-                        return { ...chat, new: true };
+                        return { ...chat, new: 'true' };
                     }
                     return chat;
                 }));
@@ -86,7 +86,7 @@ function Chats() {
                     const data = await response.json();
                     setMessages(data.messages);
                     setChats(chats => chats.map(chat => {
-                        if (chat.chat_id === chatId) return { ...chat, new: false };
+                        if (chat.chat_id === chatId) return { ...chat, new: 'false' };
                         return chat;
                     }));
                 } else {
@@ -112,7 +112,7 @@ function Chats() {
                     <ul>
                         {chats.sort((a, b) => b.new - a.new).map(chat => (
                             <li key={chat.chat_id} onClick={() => joinRoom(chat.chat_id)} className={chat.new ? 'chat-new' : ''}>
-                                {chat.chat_name} {chat.new && '🔔'}
+                                {chat.chat_name} {chat.new == 'true' && '🔔'}
                             </li>
                         ))}
                     </ul>
