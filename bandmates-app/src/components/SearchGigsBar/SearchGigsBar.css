@@ -17,6 +17,7 @@
   }
   
   .search-bar input[type="text"],
+  .search-bar input[type="date"],
   .search-bar-field {
     background-color: #CAE4F6;
     border-radius: 15px;

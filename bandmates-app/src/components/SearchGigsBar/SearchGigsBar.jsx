@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import './SearchGigsBar.css';
 
 const SearchBar = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
