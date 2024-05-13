@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Follow Service Module &#8212; bandmates 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Gig Service Module" href="../gig-service/index.html" />
+    <link rel="prev" title="Auth Service Module" href="../auth-service/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="follow-service-module">
+<h1>Follow Service Module<a class="headerlink" href="#follow-service-module" title="Link to this heading">¶</a></h1>
+<p>This module contains the <code class="docutils literal notranslate"><span class="pre">FollowService</span></code> class, which manages follow relationships between users in a DynamoDB database. It includes functionalities to handle follow requests, create follow connections, and query followers and followings.</p>
+<section id="follow-service-class">
+<h2>Follow Service Class<a class="headerlink" href="#follow-service-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">FollowService</span></code> class handles the creation and management of follow relationships stored in DynamoDB tables. It provides methods for sending follow requests, creating follow connections, and retrieving follow-related data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="follow_service.FollowService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">follow_service.</span></span><span class="sig-name descname"><span class="pre">FollowService</span></span><a class="headerlink" href="#follow_service.FollowService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.create_follow">
+<span class="sig-name descname"><span class="pre">create_follow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">follower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.create_follow" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a follow relation between two users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>follower (str): The username of the follower.
+following (str): The username of the user being followed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.delete_follow">
+<span class="sig-name descname"><span class="pre">delete_follow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">follower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.delete_follow" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a follow relation between two users.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>follower (str): The username of the follower.
+following (str): The username of the user being followed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.ensure_follow_table">
+<span class="sig-name descname"><span class="pre">ensure_follow_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.ensure_follow_table" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures that the specified DynamoDB table exists, otherwise creates it.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>table_name (str): The name of the table to ensure.</p>
+</dd>
+<dt>Returns:</dt><dd><p>boto3.resource.Table: The DynamoDB table.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.get_follow_requests">
+<span class="sig-name descname"><span class="pre">get_follow_requests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.get_follow_requests" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves follow requests for a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of usernames who sent follow requests.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.get_followers">
+<span class="sig-name descname"><span class="pre">get_followers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.get_followers" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves users who are following a given user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of usernames who are following the given user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.get_followings">
+<span class="sig-name descname"><span class="pre">get_followings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.get_followings" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves users that a given user is following.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list of usernames being followed by the given user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="follow_service.FollowService.send_follow_request">
+<span class="sig-name descname"><span class="pre">send_follow_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">follower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_service.FollowService.send_follow_request" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a follow request from one user to another.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>follower (str): The username of the user sending the request.
+following (str): The username of the user to whom the request is sent.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Auth Service Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Follow Service Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#follow-service-class">Follow Service Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#follow_service.FollowService"><code class="docutils literal notranslate"><span class="pre">FollowService</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">Gig Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test-documentation/index.html">Test Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technologies Used and Why</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../auth-service/index.html" title="previous chapter">Auth Service Module</a></li>
+      <li>Next: <a href="../gig-service/index.html" title="next chapter">Gig Service Module</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, PECY.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/follow-service/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

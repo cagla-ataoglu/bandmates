@@ -9,11 +9,15 @@ Yaren Durgun \
 Marika Thors
 
 ## How to run Bandmates
+### Running Locally
 1. Navigate to directory 'bandmates'
 2. Make sure the docker engine is running on your machine
 3. Run the following command: \
   `docker-compose up --build`
 4. The application should be accessible on localhost:5173
+
+### Production
+The production code is accessible at http://frontend-env.eba-ysjktnpu.us-east-1.elasticbeanstalk.com/
 
 
 ### Unit tests

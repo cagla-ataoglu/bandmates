@@ -4,6 +4,12 @@ import os
 
 class ProfileService:
     def __init__(self):
+        """
+            Initializes the ProfileService.
+
+            Raises:
+                RuntimeError: If there's an error initializing the DynamoDB table.
+        """
         self.environment = os.getenv('ENV', 'development')
         if self.environment == 'production':
             self.dynamodb = boto3.resource('dynamodb')
@@ -54,6 +60,14 @@ class ProfileService:
         
 
     def createMusicianProfile(self, username, display_name, location):
+        """
+            Creates a musician profile.
+
+            Args:
+                username (str): The username of the musician.
+                display_name (str): The display name of the musician.
+                location (str): The location of the musician.
+        """
         profile_item = {
             'username': username,
             'display_name': display_name,
@@ -67,6 +81,14 @@ class ProfileService:
         print(f'Musician profile created for {username}.')
 
     def createBandProfile(self, username, display_name, location):
+        """
+            Creates a band profile.
+
+            Args:
+                username (str): The username of the band.
+                display_name (str): The display name of the band.
+                location (str): The location of the band.
+        """
         profile_item = {
             'username': username,
             'display_name': display_name,
@@ -80,6 +102,15 @@ class ProfileService:
         print(f'Band profile created for {username}.')
 
     def getProfile(self, username):
+        """
+            Retrieves a profile by username.
+
+            Args:
+                username (str): The username of the profile to retrieve.
+
+            Returns:
+                dict or None: The profile data if found, else None.
+        """
         response = self.profiles_table.get_item(Key={'username': username})
         if 'Item' in response:
             return sets_to_lists(response['Item'])
@@ -88,6 +119,13 @@ class ProfileService:
             return None
         
     def updateDisplayName(self, username, new_display_name):
+        """
+            Updates the display name of a profile.
+
+            Args:
+                username (str): The username of the profile.
+                new_display_name (str): The new display name.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='SET #display_name = :display_name',
@@ -97,6 +135,13 @@ class ProfileService:
         print(f'Display name updated for {username} to {new_display_name}.')
 
     def updateLocation(self, username, new_location):
+        """
+            Updates the location of a profile.
+
+            Args:
+                username (str): The username of the profile.
+                new_location (str): The new location.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='SET #location = :location',
@@ -106,6 +151,13 @@ class ProfileService:
         print(f'Location updated for {username} to {new_location}.')
 
     def addGenre(self, username, genre):
+        """
+            Adds a genre to an user's profile.
+
+            Args:
+                username (str): The username of the user.
+                genre (str): The genre to add.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='ADD genres :genre',
@@ -114,6 +166,13 @@ class ProfileService:
         print(f'Genre {genre} added to {username}.')
 
     def removeGenre(self, username, genre):
+        """
+            Removes a genre from an user's profile.
+
+            Args:
+                username (str): The username of the user.
+                genre (str): The genre to remove.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='DELETE genres :genre',
@@ -122,6 +181,13 @@ class ProfileService:
         print(f'Genre {genre} removed from {username}.')
 
     def addInstrument(self, username, instrument):
+        """
+            Adds an instrument to a musician's profile.
+
+            Args:
+                username (str): The username of the musician.
+                instrument (str): The instrument to add.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='ADD instruments :instrument',
@@ -134,6 +200,13 @@ class ProfileService:
         print(f'Instrument {instrument} added to musician {username}.')
 
     def removeInstrument(self, username, instrument):
+        """
+            Removes an instrument from a musician's profile.
+
+            Args:
+                username (str): The username of the musician.
+                instrument (str): The instrument to remove.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='DELETE instruments :instrument',
@@ -146,6 +219,13 @@ class ProfileService:
         print(f'Instrument {instrument} removed from musician {username}.')
 
     def addMember(self, username, member):
+        """
+            Adds a member to a band's profile.
+
+            Args:
+                username (str): The username of the band.
+                member (str): The member to add.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='ADD members :member',
@@ -158,6 +238,13 @@ class ProfileService:
         print(f'Member {member} added to band {username}.')
 
     def removeMember(self, username, member):
+        """
+            Removes a member from a band's profile.
+
+            Args:
+                username (str): The username of the band.
+                member (str): The member to remove.
+        """
         response = self.profiles_table.update_item(
             Key={'username': username},
             UpdateExpression='DELETE members :member',
@@ -170,6 +257,13 @@ class ProfileService:
         print(f'Member {member} removed from band {username}.')
 
     def updateLookingForGigs(self, username, state):
+        """
+            Updates the 'looking for gigs' status of a musician's profile.
+
+            Args:
+                username (str): The username of the musician.
+                state (str): The new state, either 'true' or 'false'.
+        """
         state_bool = state.lower() == 'true'
 
         response = self.profiles_table.update_item(
@@ -185,6 +279,13 @@ class ProfileService:
         print(f'Looking for gigs set to {state_bool} for musician {username}.')
 
     def updateLookingForMembers(self, username, state):
+        """
+            Updates the 'looking for members' status of a band's profile.
+
+            Args:
+                username (str): The username of the band.
+                state (str): The new state, either 'true' or 'false'.
+        """
         state_bool = state.lower() == 'true'
 
         response = self.profiles_table.update_item(
@@ -200,6 +301,13 @@ class ProfileService:
         print(f'Looking for members set to {state_bool} for band {username}.')
 
     def updateProfilePicture(self, username, picture):
+        """
+            Updates the profile picture of a profile.
+
+            Args:
+                username (str): The username of the profile.
+                picture (File): The picture file.
+        """
         file_name = f'{username}_{picture.filename}'
         file_content = picture.file
         self.s3.put_object(Bucket=self.bucket_name, Key=file_name, Body=file_content)
@@ -214,6 +322,16 @@ class ProfileService:
         print(f'service: Profile picture updated for {username}.')
 
     def searchProfilesByUsernamePrefix(self, username_prefix, limit=7):
+        """
+            Searches for profiles by username prefix.
+
+            Args:
+                username_prefix (str): The prefix of the username to search for.
+                limit (int): The maximum number of profiles to return. Default is 7.
+
+            Returns:
+                list: List of profile data.
+        """
         response = self.profiles_table.scan(
             FilterExpression='begins_with(username, :prefix)',
             ExpressionAttributeValues={':prefix': username_prefix},
@@ -226,6 +344,15 @@ class ProfileService:
 
 
 def sets_to_lists(data):
+    """
+        Converts sets in nested data structures to lists.
+
+        Args:
+            data: Data structure possibly containing sets.
+
+        Returns:
+            Data structure with sets replaced by lists.
+    """
     if isinstance(data, set):
         return list(data)
     elif isinstance(data, dict):
