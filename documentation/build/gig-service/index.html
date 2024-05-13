@@ -61,15 +61,17 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.create_gig">
-<span class="sig-name descname"><span class="pre">create_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">looking_for</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.create_gig" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">looking_for</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.create_gig" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new gig entry in the DynamoDB table.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>gig_name (str): The name of the gig.
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.
+gig_name (str): The name of the gig.
 date (str): The date of the gig.
-band_name (str): The name of the band performing.
+band_username (str): The username of the band performing.
 venue (str): The venue of the gig.
 genre (str): The genre of the gig.
-looking_for (str): The type of participants the gig is looking for.</p>
+looking_for (str): The type of participants the gig is looking for.
+timestamp (str): The time the gig is posted.</p>
 </dd>
 <dt>Raises:</dt><dd><p>GigAlreadyExistsException: If a gig with the same name and date already exists.</p>
 </dd>
@@ -78,11 +80,10 @@ looking_for (str): The type of participants the gig is looking for.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.delete_gig">
-<span class="sig-name descname"><span class="pre">delete_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.delete_gig" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">delete_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.delete_gig" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes a gig entry from the DynamoDB table.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>gig_name (str): The name of the gig.
-date (str): The date of the gig.</p>
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.</p>
 </dd>
 <dt>Returns:</dt><dd><p>bool: True if the deletion was successful, False otherwise.</p>
 </dd>
@@ -91,11 +92,10 @@ date (str): The date of the gig.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.get_gig">
-<span class="sig-name descname"><span class="pre">get_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.get_gig" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.get_gig" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieves information about a specific gig.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>gig_name (str): The name of the gig.
-date (str): The date of the gig.</p>
+<dt>Args:</dt><dd><p>gig_id(str): The id of the gig.</p>
 </dd>
 <dt>Returns:</dt><dd><p>dict or None: Information about the gig if found, None otherwise.</p>
 </dd>
@@ -104,11 +104,10 @@ date (str): The date of the gig.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.gig_exists">
-<span class="sig-name descname"><span class="pre">gig_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.gig_exists" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">gig_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.gig_exists" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if a given gig exists.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>gig_name (str): The name of the gig.
-date (str): The date of the gig.</p>
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.</p>
 </dd>
 <dt>Returns:</dt><dd><p>bool: True if the gig exists, False otherwise.</p>
 </dd>
@@ -118,20 +117,14 @@ date (str): The date of the gig.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.scan_table">
 <span class="sig-name descname"><span class="pre">scan_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.scan_table" title="Link to this definition">¶</a></dt>
-<dd><p>Scans the DynamoDB table and retrieves all gig entries.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>list: A list of dictionaries representing gig entries.</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.update_gig">
-<span class="sig-name descname"><span class="pre">update_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.update_gig" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.update_gig" title="Link to this definition">¶</a></dt>
 <dd><p>Updates information about a gig.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>gig_name (str): The name of the gig.
-date (str): The date of the gig.
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.
 kwargs: Additional attributes to update.</p>
 </dd>
 <dt>Raises:</dt><dd><p>GigNotFoundException: If the specified gig is not found.</p>
@@ -181,7 +174,7 @@ kwargs: Additional attributes to update.</p>
 <li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../test-documentation/index.html">Test Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technologies Used and Why</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technology Stack and Motivation</a></li>
 </ul>
 
 <div class="relations">

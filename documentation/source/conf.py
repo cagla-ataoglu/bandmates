@@ -15,7 +15,6 @@ import sys
 sys.path.insert(0, os.path.abspath('../../auth-service/services/'))
 sys.path.insert(0, os.path.abspath('../../follow-service/services/'))
 sys.path.insert(0, os.path.abspath('../../gig-service/services/'))
-sys.path.insert(0, os.path.abspath('../../group-service/services/'))
 sys.path.insert(0, os.path.abspath('../../post-service/services/'))
 sys.path.insert(0, os.path.abspath('../../profile-service/services/'))
 

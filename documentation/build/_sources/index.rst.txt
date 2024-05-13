@@ -13,7 +13,6 @@ Welcome to bandmates's documentation!
    auth-service/index
    follow-service/index
    gig-service/index
-   group-service/index
    post-service/index
    profile-service/index
    test-documentation/index

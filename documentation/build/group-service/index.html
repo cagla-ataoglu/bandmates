@@ -13,8 +13,6 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Post Service Module" href="../post-service/index.html" />
-    <link rel="prev" title="Gig Service Module" href="../gig-service/index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,172 +36,6 @@
 <section id="groupservice-class">
 <h2>GroupService Class<a class="headerlink" href="#groupservice-class" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">GroupService</span></code> class handles operations related to groups. It provides methods for creating and deleting groups, editing group details, managing the members and the posts of a group.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="group_service.GroupService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">group_service.</span></span><span class="sig-name descname"><span class="pre">GroupService</span></span><a class="headerlink" href="#group_service.GroupService" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService._get_dynamodb_resource">
-<span class="sig-name descname"><span class="pre">_get_dynamodb_resource</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService._get_dynamodb_resource" title="Link to this definition">¶</a></dt>
-<dd><p>Retrieves the DynamoDB resource based on the environment. It defaults to ‘development’ but switches to ‘test’ if specified.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.add_user_to_group">
-<span class="sig-name descname"><span class="pre">add_user_to_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.add_user_to_group" title="Link to this definition">¶</a></dt>
-<dd><p>Adds a user to a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>user_id: ID of the user to be added.
-group_id: Unique identifier for the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the user cannot be added to the group.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.create_group">
-<span class="sig-name descname"><span class="pre">create_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.create_group" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a new group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.
-group_name: Name of the group.
-description: Description of the group.
-user_id: ID of the user creating the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the group cannot be created.</p>
-</dd>
-<dt>Returns:</dt><dd><p>dict: The created group.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.create_post">
-<span class="sig-name descname"><span class="pre">create_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posted_by</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.create_post" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a new post within a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.
-content: Content of the post.
-posted_by: ID of the user posting the content.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the post cannot be created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.delete_post">
-<span class="sig-name descname"><span class="pre">delete_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.delete_post" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes a post within a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.
-post_id: Unique identifier for the post.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the post cannot be deleted.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.edit_group_description">
-<span class="sig-name descname"><span class="pre">edit_group_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_description</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.edit_group_description" title="Link to this definition">¶</a></dt>
-<dd><p>Modifies the description of a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.
-updated_description: New description for the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the group description cannot be edited.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.edit_post">
-<span class="sig-name descname"><span class="pre">edit_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.edit_post" title="Link to this definition">¶</a></dt>
-<dd><p>Modifies the content of a post within a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.
-post_id: Unique identifier for the post.
-updated_content: New content for the post.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the post cannot be edited.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.get_group">
-<span class="sig-name descname"><span class="pre">get_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.get_group" title="Link to this definition">¶</a></dt>
-<dd><p>Retrieves group details based on the group ID.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the group cannot be retrieved.</p>
-</dd>
-<dt>Returns:</dt><dd><p>dict: The group.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.get_group_members">
-<span class="sig-name descname"><span class="pre">get_group_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.get_group_members" title="Link to this definition">¶</a></dt>
-<dd><p>Retrieves members of a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the group members be retrieved.</p>
-</dd>
-<dt>Returns:</dt><dd><p>list: Members of the group.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.get_posts_in_group">
-<span class="sig-name descname"><span class="pre">get_posts_in_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.get_posts_in_group" title="Link to this definition">¶</a></dt>
-<dd><p>Retrieves all posts within a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>group_id: Unique identifier for the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the group posts cannot be retrieved.</p>
-</dd>
-<dt>Returns:</dt><dd><p>list: Posts in the group.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.initialize_table">
-<span class="sig-name descname"><span class="pre">initialize_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gsi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.initialize_table" title="Link to this definition">¶</a></dt>
-<dd><p>Initializes a DynamoDB table with specified attributes.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>table_name: Name of the DynamoDB table.
-hash_key: Hash key attribute.
-sort_key: Sort key attribute (optional).
-gsi: Global Secondary Index details (optional).</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the table cannot be initialized.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="group_service.GroupService.remove_user_from_group">
-<span class="sig-name descname"><span class="pre">remove_user_from_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#group_service.GroupService.remove_user_from_group" title="Link to this definition">¶</a></dt>
-<dd><p>Removes a user from a group.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>user_id: ID of the user to be removed.
-group_id: Unique identifier for the group.</p>
-</dd>
-<dt>Raises:</dt><dd><p>RuntimeError: If the user cannot be removed from the group.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -225,29 +57,20 @@ group_id: Unique identifier for the group.</p>
 
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Auth Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../follow-service/index.html">Follow Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">Gig Service Module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Group Service Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#groupservice-class">GroupService Class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#group_service.GroupService"><code class="docutils literal notranslate"><span class="pre">GroupService</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../test-documentation/index.html">Test Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technologies Used and Why</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technology Stack and Motivation</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../gig-service/index.html" title="previous chapter">Gig Service Module</a></li>
-      <li>Next: <a href="../post-service/index.html" title="next chapter">Post Service Module</a></li>
   </ul></li>
 </ul>
 </div>
