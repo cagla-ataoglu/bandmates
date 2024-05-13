@@ -26,10 +26,10 @@ jobs:
         pip install pytest pytest-cov boto3
 
     - name: Run tests with pytest
-      run: pytest -p no:warnings --cov-report xml
+      run: pytest -p no:warnings --cov --cov-report xml
 
     - name: Coveralls
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path--to-lcov: coverage.xml
+        path-to-lcov: coverage.xml
