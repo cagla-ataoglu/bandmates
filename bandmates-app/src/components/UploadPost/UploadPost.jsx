@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import profilePic from '../../assets/musician_pfp.jpg';  // Ensure this path is correct for your profile picture
+import React, { useState, useEffect } from 'react';
+import profilePic from '../../assets/musician_pfp.jpg'; // Ensure this path is correct for your profile picture
 import { MdPermMedia } from 'react-icons/md';
 import './UploadPost.css';
 
@@ -7,6 +7,14 @@ const UploadPost = () => {
     const [file, setFile] = useState(null);
     const [description, setDescription] = useState('');
     const [previewUrl, setPreviewUrl] = useState('');
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,11 +28,10 @@ const UploadPost = () => {
         formData.append('content', file);
         formData.append('description', description);
 
-        const token = localStorage.getItem('access_token'); 
-
+        const token = localStorage.getItem('access_token');
         if (!token) {
             console.error('No access token provided.');
-            return; 
+            return;
         }
 
         try {
@@ -70,7 +77,11 @@ const UploadPost = () => {
                 </div>
                 {previewUrl && (
                     <div className="preview-container">
-                        <img src={previewUrl} alt="Preview" className="upload-post-preview"/>
+                        {file && file.type.startsWith('video/') ? (
+                            <video controls src={previewUrl} className="upload-post-preview"></video>
+                        ) : (
+                            <img src={previewUrl} alt="Preview" className="upload-post-preview" />
+                        )}
                     </div>
                 )}
                 <hr className="divider" />
@@ -79,7 +90,7 @@ const UploadPost = () => {
                         <div className="option">
                             <MdPermMedia className="upload-post-icon" />
                             <span>Choose Photo or Video</span>
-                            <input type="file" onChange={uploadFile} style={{ display: 'none' }} />
+                            <input type="file" accept="image/*,video/*" onChange={uploadFile} style={{ display: 'none' }} />
                         </div>
                     </label>
                     <button onClick={handleSubmit} className="upload-post-button">Upload</button>

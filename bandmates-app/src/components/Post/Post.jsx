@@ -121,6 +121,15 @@ const Post = ({ post }) => {
     };
   }, [searchRef]);
 
+  const renderMediaContent = () => {
+    const fileExtension = contentUrl.split('.').pop();
+    if (['mp4', 'webm', 'ogg', 'mov'].includes(fileExtension)) {
+      return <video controls src={contentUrl} className="post-media"></video>;
+    } else {
+      return <img src={contentUrl} alt="Post media" className="post-media"/>;
+    }
+  };
+
   return (
     <div className="post-container">
       <div className="p-[10px]">
@@ -143,7 +152,7 @@ const Post = ({ post }) => {
       </div>
       <div className="post-content">
         <p>{description}</p>
-        {contentUrl && <img src={contentUrl} alt="Post media" />}
+        {contentUrl && renderMediaContent()}
       </div>
       {/* Assuming no interactive like and comment features are currently supported */}
       {/* <div className="flex items-center justify-between">
