@@ -24,3 +24,6 @@ Prerequisite: Make sure to have moto v2.0.0 installed, newer versions are not gu
 Alternatively to run all tests at once:
 1. Go to root of project
 2. Run `pytest -p no:warnings`
+
+## Documentation, Organization and More
+For more information on the project, please see the wiki. If you are viewing the project on your local device, you can also go to `bandmates/documentation/build` directory and view index.html to see the documentation.
