@@ -17,6 +17,7 @@ Welcome to bandmates's documentation!
    post-service/index
    profile-service/index
    test-documentation/index
+   technologies/index
 
 
 
