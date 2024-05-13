@@ -12,11 +12,14 @@ class GigAlreadyExistsException(Exception):
 
 class DynamoDBService:
     def __init__(self):
+        """
+            Initializes DynamoDBService with the necessary resources and table.
+        """
         self.environment = os.getenv('ENV', 'development')
         self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localstack:4566' if self.environment == 'development' else None)
-        
+
         self.table_name = 'Gigs'
-        
+
         try:
             self.dynamodb.Table(self.table_name).load()
             print(f"Table '{self.table_name}' already exists. Loading it.")
@@ -42,10 +45,35 @@ class DynamoDBService:
         self.gigs_table = self.dynamodb.Table(self.table_name)
 
     def gig_exists(self, gig_id):
+        """
+            Checks if a given gig exists.
+
+            Args:
+                gig_id (str): The id of the gig.
+
+            Returns:
+                bool: True if the gig exists, False otherwise.
+        """
         response = self.gigs_table.get_item(Key={'GigId': gig_id})
         return 'Item' in response
 
     def create_gig(self, gig_id, gig_name, date, band_username, venue, genre, looking_for, timestamp):
+        """
+            Creates a new gig entry in the DynamoDB table.
+
+            Args:
+                gig_id (str): The id of the gig.
+                gig_name (str): The name of the gig.
+                date (str): The date of the gig.
+                band_username (str): The username of the band performing.
+                venue (str): The venue of the gig.
+                genre (str): The genre of the gig.
+                looking_for (str): The type of participants the gig is looking for.
+                timestamp (str): The time the gig is posted.
+
+            Raises:
+                GigAlreadyExistsException: If a gig with the same name and date already exists.
+        """
         if self.gig_exists(gig_id):
             raise GigAlreadyExistsException(f"Gig with ID '{gig_id}' already exists.")
         else:
@@ -63,6 +91,15 @@ class DynamoDBService:
             print("Gig created.", item)
 
     def get_gig(self, gig_id):
+        """
+            Retrieves information about a specific gig.
+
+            Args:
+                gig_id(str): The id of the gig.
+
+            Returns:
+                dict or None: Information about the gig if found, None otherwise.
+        """
         response = self.gigs_table.get_item(Key={'GigId': gig_id})
         return response.get('Item')
 
@@ -71,6 +108,16 @@ class DynamoDBService:
         return response['Items']
 
     def update_gig(self, gig_id, **kwargs):
+        """
+            Updates information about a gig.
+
+            Args:
+                gig_id (str): The id of the gig.
+                kwargs: Additional attributes to update.
+
+            Raises:
+                GigNotFoundException: If the specified gig is not found.
+        """
         if not self.gig_exists(gig_id):
             raise GigNotFoundException(f"Gig with ID '{gig_id}' not found.")
 
@@ -86,6 +133,15 @@ class DynamoDBService:
         )
 
     def delete_gig(self, gig_id):
+        """
+            Deletes a gig entry from the DynamoDB table.
+
+            Args:
+                gig_id (str): The id of the gig.
+
+            Returns:
+                bool: True if the deletion was successful, False otherwise.
+        """
         try:
             self.gigs_table.delete_item(Key={'GigId': gig_id})
             return True

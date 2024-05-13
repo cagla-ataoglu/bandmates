@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Gig Service Module &#8212; bandmates 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Group Service Module" href="../group-service/index.html" />
+    <link rel="prev" title="Follow Service Module" href="../follow-service/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="gig-service-module">
+<h1>Gig Service Module<a class="headerlink" href="#gig-service-module" title="Link to this heading">¶</a></h1>
+<p>This module provides functionalities for managing gigs stored in a DynamoDB table, including creating, updating, and deleting gigs. It also includes custom exceptions for handling specific errors related to gig operations.</p>
+<section id="custom-exceptions">
+<h2>Custom Exceptions<a class="headerlink" href="#custom-exceptions" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dynamodb_service.GigNotFoundException">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dynamodb_service.</span></span><span class="sig-name descname"><span class="pre">GigNotFoundException</span></span><a class="headerlink" href="#dynamodb_service.GigNotFoundException" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when a gig is not found.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dynamodb_service.GigAlreadyExistsException">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dynamodb_service.</span></span><span class="sig-name descname"><span class="pre">GigAlreadyExistsException</span></span><a class="headerlink" href="#dynamodb_service.GigAlreadyExistsException" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when a gig already exists.</p>
+</dd></dl>
+
+</section>
+<section id="dynamodb-service-class">
+<h2>DynamoDB Service Class<a class="headerlink" href="#dynamodb-service-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DynamoDBService</span></code> class encapsulates methods for interacting with the DynamoDB to manage gig-related data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dynamodb_service.</span></span><span class="sig-name descname"><span class="pre">DynamoDBService</span></span><a class="headerlink" href="#dynamodb_service.DynamoDBService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.create_gig">
+<span class="sig-name descname"><span class="pre">create_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gig_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">looking_for</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.create_gig" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new gig entry in the DynamoDB table.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.
+gig_name (str): The name of the gig.
+date (str): The date of the gig.
+band_username (str): The username of the band performing.
+venue (str): The venue of the gig.
+genre (str): The genre of the gig.
+looking_for (str): The type of participants the gig is looking for.
+timestamp (str): The time the gig is posted.</p>
+</dd>
+<dt>Raises:</dt><dd><p>GigAlreadyExistsException: If a gig with the same name and date already exists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.delete_gig">
+<span class="sig-name descname"><span class="pre">delete_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.delete_gig" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a gig entry from the DynamoDB table.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the deletion was successful, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.get_gig">
+<span class="sig-name descname"><span class="pre">get_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.get_gig" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves information about a specific gig.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>gig_id(str): The id of the gig.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict or None: Information about the gig if found, None otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.gig_exists">
+<span class="sig-name descname"><span class="pre">gig_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.gig_exists" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if a given gig exists.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the gig exists, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.scan_table">
+<span class="sig-name descname"><span class="pre">scan_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.scan_table" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dynamodb_service.DynamoDBService.update_gig">
+<span class="sig-name descname"><span class="pre">update_gig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gig_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dynamodb_service.DynamoDBService.update_gig" title="Link to this definition">¶</a></dt>
+<dd><p>Updates information about a gig.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>gig_id (str): The id of the gig.
+kwargs: Additional attributes to update.</p>
+</dd>
+<dt>Raises:</dt><dd><p>GigNotFoundException: If the specified gig is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Auth Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../follow-service/index.html">Follow Service Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gig Service Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#custom-exceptions">Custom Exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dynamodb_service.GigNotFoundException"><code class="docutils literal notranslate"><span class="pre">GigNotFoundException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamodb_service.GigAlreadyExistsException"><code class="docutils literal notranslate"><span class="pre">GigAlreadyExistsException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dynamodb-service-class">DynamoDB Service Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dynamodb_service.DynamoDBService"><code class="docutils literal notranslate"><span class="pre">DynamoDBService</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test-documentation/index.html">Test Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technology Stack and Motivation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../follow-service/index.html" title="previous chapter">Follow Service Module</a></li>
+      <li>Next: <a href="../group-service/index.html" title="next chapter">Group Service Module</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, PECY.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/gig-service/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -7,6 +7,9 @@ import json
 
 class CognitoService:
     def __init__(self):
+        """
+            Initializes CognitoService with the necessary resources and configurations.
+        """
         self.environment = os.getenv('ENV', 'development')
         self.region = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
 
@@ -52,6 +55,17 @@ class CognitoService:
         
 
     def signup_user(self, username, password, email):
+        """
+            Signs up a user in the Cognito user pool.
+
+            Args:
+                username (str): The username of the user.
+                password (str): The password of the user.
+                email (str): The email address of the user.
+
+            Returns:
+                dict: Response from Cognito.
+        """
         response = self.cognito.sign_up(
             ClientId=self.client_id,
             Username=username,
@@ -65,6 +79,17 @@ class CognitoService:
         return response
 
     def change_password(self, access_token, old_password, new_password):
+        """
+            Changes the password of a user.
+
+            Args:
+                access_token (str): The access token of the user.
+                old_password (str): The old password of the user.
+                new_password (str): The new password to set.
+
+            Returns:
+                dict: Response indicating success or failure.
+        """
         try:
             response = self.cognito.change_password(
                 PreviousPassword=old_password,
@@ -76,6 +101,16 @@ class CognitoService:
             return {'status': 'error', 'message': str(e)}
 
     def authenticate_user(self, username, password):
+        """
+            Authenticates a user with username and password.
+
+            Args:
+                username (str): The username of the user.
+                password (str): The password of the user.
+
+            Returns:
+                dict: Authentication tokens.
+        """
         response = self.cognito.initiate_auth(
             AuthFlow='USER_PASSWORD_AUTH',
             AuthParameters={'USERNAME': username, 'PASSWORD': password},
@@ -88,6 +123,12 @@ class CognitoService:
         }
 
     def get_jwks(self):
+        """
+            Retrieves the JWKS (JSON Web Key Set).
+
+            Returns:
+                dict: JWKS data.
+        """
         current_time = time.time()
         if not self.jwks_cache or current_time - self.jwks_last_updated > self.jwks_cache_duration:
             jwks_url = self.jwks_url_base + "/.well-known/jwks.json"
@@ -96,6 +137,15 @@ class CognitoService:
         return self.jwks_cache
 
     def validate_token(self, token):
+        """
+            Validates a JWT token.
+
+            Args:
+                token (str): The JWT token to validate.
+
+            Returns:
+                dict: Validation result.
+        """
         try:
             jwks = self.get_jwks()
             public_keys = {}

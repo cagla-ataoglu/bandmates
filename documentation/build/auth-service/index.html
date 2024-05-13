@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Auth Service Module &#8212; bandmates 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Follow Service Module" href="../follow-service/index.html" />
+    <link rel="prev" title="Welcome to bandmates’s documentation!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="auth-service-module">
+<h1>Auth Service Module<a class="headerlink" href="#auth-service-module" title="Link to this heading">¶</a></h1>
+<p>This module provides a service for managing user authentication and registration using AWS Cognito. It includes functionalities such as user signup, password management, and token validation.</p>
+<section id="cognitoservice-class">
+<h2>CognitoService Class<a class="headerlink" href="#cognitoservice-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">CognitoService</span></code> class encapsulates the interaction with AWS Cognito. It supports operations such as signing up new users, changing passwords, authenticating users, and validating JWTs for secure service access.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cognito_service.CognitoService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cognito_service.</span></span><span class="sig-name descname"><span class="pre">CognitoService</span></span><a class="headerlink" href="#cognito_service.CognitoService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cognito_service.CognitoService.authenticate_user">
+<span class="sig-name descname"><span class="pre">authenticate_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cognito_service.CognitoService.authenticate_user" title="Link to this definition">¶</a></dt>
+<dd><p>Authenticates a user with username and password.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.
+password (str): The password of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Authentication tokens.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cognito_service.CognitoService.change_password">
+<span class="sig-name descname"><span class="pre">change_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">access_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_password</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cognito_service.CognitoService.change_password" title="Link to this definition">¶</a></dt>
+<dd><p>Changes the password of a user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>access_token (str): The access token of the user.
+old_password (str): The old password of the user.
+new_password (str): The new password to set.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Response indicating success or failure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cognito_service.CognitoService.get_jwks">
+<span class="sig-name descname"><span class="pre">get_jwks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cognito_service.CognitoService.get_jwks" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves the JWKS (JSON Web Key Set).</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: JWKS data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cognito_service.CognitoService.signup_user">
+<span class="sig-name descname"><span class="pre">signup_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cognito_service.CognitoService.signup_user" title="Link to this definition">¶</a></dt>
+<dd><p>Signs up a user in the Cognito user pool.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.
+password (str): The password of the user.
+email (str): The email address of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Response from Cognito.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cognito_service.CognitoService.validate_token">
+<span class="sig-name descname"><span class="pre">validate_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cognito_service.CognitoService.validate_token" title="Link to this definition">¶</a></dt>
+<dd><p>Validates a JWT token.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>token (str): The JWT token to validate.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: Validation result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Auth Service Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cognitoservice-class">CognitoService Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cognito_service.CognitoService"><code class="docutils literal notranslate"><span class="pre">CognitoService</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../follow-service/index.html">Follow Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">Gig Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profile-service/index.html">Profile Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test-documentation/index.html">Test Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technology Stack and Motivation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to bandmates’s documentation!</a></li>
+      <li>Next: <a href="../follow-service/index.html" title="next chapter">Follow Service Module</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, PECY.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/auth-service/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

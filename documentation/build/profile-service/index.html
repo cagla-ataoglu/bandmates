@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Profile Service Module &#8212; bandmates 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Test Documentation" href="../test-documentation/index.html" />
+    <link rel="prev" title="Post Service Module" href="../post-service/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="profile-service-module">
+<h1>Profile Service Module<a class="headerlink" href="#profile-service-module" title="Link to this heading">¶</a></h1>
+<p>This module manages user profiles in a social network, including creation, modification, and querying of musician and band profiles using DynamoDB and Amazon S3 for image storage.</p>
+<section id="profileservice-class">
+<h2>ProfileService Class<a class="headerlink" href="#profileservice-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ProfileService</span></code> class handles operations related to user profiles. It provides methods for creating musician and band profiles, updating profile details, and managing associated media.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="profile_service.ProfileService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">profile_service.</span></span><span class="sig-name descname"><span class="pre">ProfileService</span></span><a class="headerlink" href="#profile_service.ProfileService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.addGenre">
+<span class="sig-name descname"><span class="pre">addGenre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genre</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.addGenre" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a genre to an user’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.
+genre (str): The genre to add.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.addInstrument">
+<span class="sig-name descname"><span class="pre">addInstrument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.addInstrument" title="Link to this definition">¶</a></dt>
+<dd><p>Adds an instrument to a musician’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the musician.
+instrument (str): The instrument to add.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.addMember">
+<span class="sig-name descname"><span class="pre">addMember</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.addMember" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a member to a band’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the band.
+member (str): The member to add.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.createBandProfile">
+<span class="sig-name descname"><span class="pre">createBandProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.createBandProfile" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a band profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the band.
+display_name (str): The display name of the band.
+location (str): The location of the band.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.createMusicianProfile">
+<span class="sig-name descname"><span class="pre">createMusicianProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.createMusicianProfile" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a musician profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the musician.
+display_name (str): The display name of the musician.
+location (str): The location of the musician.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.getProfile">
+<span class="sig-name descname"><span class="pre">getProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.getProfile" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a profile by username.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the profile to retrieve.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict or None: The profile data if found, else None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.removeGenre">
+<span class="sig-name descname"><span class="pre">removeGenre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genre</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.removeGenre" title="Link to this definition">¶</a></dt>
+<dd><p>Removes a genre from an user’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user.
+genre (str): The genre to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.removeInstrument">
+<span class="sig-name descname"><span class="pre">removeInstrument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.removeInstrument" title="Link to this definition">¶</a></dt>
+<dd><p>Removes an instrument from a musician’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the musician.
+instrument (str): The instrument to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.removeMember">
+<span class="sig-name descname"><span class="pre">removeMember</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.removeMember" title="Link to this definition">¶</a></dt>
+<dd><p>Removes a member from a band’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the band.
+member (str): The member to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.searchProfilesByUsernamePrefix">
+<span class="sig-name descname"><span class="pre">searchProfilesByUsernamePrefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.searchProfilesByUsernamePrefix" title="Link to this definition">¶</a></dt>
+<dd><p>Searches for profiles by username prefix.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username_prefix (str): The prefix of the username to search for.
+limit (int): The maximum number of profiles to return. Default is 7.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of profile data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.updateDisplayName">
+<span class="sig-name descname"><span class="pre">updateDisplayName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_display_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.updateDisplayName" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the display name of a profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the profile.
+new_display_name (str): The new display name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.updateLocation">
+<span class="sig-name descname"><span class="pre">updateLocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.updateLocation" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the location of a profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the profile.
+new_location (str): The new location.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.updateLookingForGigs">
+<span class="sig-name descname"><span class="pre">updateLookingForGigs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.updateLookingForGigs" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the ‘looking for gigs’ status of a musician’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the musician.
+state (str): The new state, either ‘true’ or ‘false’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.updateLookingForMembers">
+<span class="sig-name descname"><span class="pre">updateLookingForMembers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.updateLookingForMembers" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the ‘looking for members’ status of a band’s profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the band.
+state (str): The new state, either ‘true’ or ‘false’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="profile_service.ProfileService.updateProfilePicture">
+<span class="sig-name descname"><span class="pre">updateProfilePicture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picture</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#profile_service.ProfileService.updateProfilePicture" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the profile picture of a profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the profile.
+picture (File): The picture file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">bandmates</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../auth-service/index.html">Auth Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../follow-service/index.html">Follow Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gig-service/index.html">Gig Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../group-service/index.html">Group Service Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post-service/index.html">Post Service Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Profile Service Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#profileservice-class">ProfileService Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#profile_service.ProfileService"><code class="docutils literal notranslate"><span class="pre">ProfileService</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../test-documentation/index.html">Test Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technologies/index.html">Technology Stack and Motivation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../post-service/index.html" title="previous chapter">Post Service Module</a></li>
+      <li>Next: <a href="../test-documentation/index.html" title="next chapter">Test Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, PECY.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/profile-service/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
