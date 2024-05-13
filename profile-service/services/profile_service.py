@@ -152,10 +152,10 @@ class ProfileService:
 
     def addGenre(self, username, genre):
         """
-            Adds a genre to a musician's profile.
+            Adds a genre to an user's profile.
 
             Args:
-                username (str): The username of the musician.
+                username (str): The username of the user.
                 genre (str): The genre to add.
         """
         response = self.profiles_table.update_item(
@@ -167,10 +167,10 @@ class ProfileService:
 
     def removeGenre(self, username, genre):
         """
-            Removes a genre from a musician's profile.
+            Removes a genre from an user's profile.
 
             Args:
-                username (str): The username of the musician.
+                username (str): The username of the user.
                 genre (str): The genre to remove.
         """
         response = self.profiles_table.update_item(
